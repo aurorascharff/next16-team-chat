@@ -399,6 +399,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   User: 'User',
   Channel: 'Channel',
+  ChannelGroup: 'ChannelGroup',
   ChannelMember: 'ChannelMember',
   Message: 'Message',
   PinnedItem: 'PinnedItem'
@@ -417,7 +418,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "channel" | "channelMember" | "message" | "pinnedItem"
+    modelProps: "user" | "channel" | "channelGroup" | "channelMember" | "message" | "pinnedItem"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -566,6 +567,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ChannelCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ChannelCountAggregateOutputType> | number
+        }
+      }
+    }
+    ChannelGroup: {
+      payload: Prisma.$ChannelGroupPayload<ExtArgs>
+      fields: Prisma.ChannelGroupFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ChannelGroupFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChannelGroupPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ChannelGroupFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChannelGroupPayload>
+        }
+        findFirst: {
+          args: Prisma.ChannelGroupFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChannelGroupPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ChannelGroupFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChannelGroupPayload>
+        }
+        findMany: {
+          args: Prisma.ChannelGroupFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChannelGroupPayload>[]
+        }
+        create: {
+          args: Prisma.ChannelGroupCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChannelGroupPayload>
+        }
+        createMany: {
+          args: Prisma.ChannelGroupCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ChannelGroupCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChannelGroupPayload>[]
+        }
+        delete: {
+          args: Prisma.ChannelGroupDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChannelGroupPayload>
+        }
+        update: {
+          args: Prisma.ChannelGroupUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChannelGroupPayload>
+        }
+        deleteMany: {
+          args: Prisma.ChannelGroupDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ChannelGroupUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ChannelGroupUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChannelGroupPayload>[]
+        }
+        upsert: {
+          args: Prisma.ChannelGroupUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChannelGroupPayload>
+        }
+        aggregate: {
+          args: Prisma.ChannelGroupAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateChannelGroup>
+        }
+        groupBy: {
+          args: Prisma.ChannelGroupGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChannelGroupGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ChannelGroupCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChannelGroupCountAggregateOutputType> | number
         }
       }
     }
@@ -856,9 +931,21 @@ export const ChannelScalarFieldEnum = {
 export type ChannelScalarFieldEnum = (typeof ChannelScalarFieldEnum)[keyof typeof ChannelScalarFieldEnum]
 
 
+export const ChannelGroupScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  position: 'position'
+} as const
+
+export type ChannelGroupScalarFieldEnum = (typeof ChannelGroupScalarFieldEnum)[keyof typeof ChannelGroupScalarFieldEnum]
+
+
 export const ChannelMemberScalarFieldEnum = {
   channelId: 'channelId',
-  userId: 'userId'
+  userId: 'userId',
+  groupId: 'groupId',
+  position: 'position'
 } as const
 
 export type ChannelMemberScalarFieldEnum = (typeof ChannelMemberScalarFieldEnum)[keyof typeof ChannelMemberScalarFieldEnum]
@@ -1130,6 +1217,7 @@ export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaC
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   channel?: Prisma.ChannelOmit
+  channelGroup?: Prisma.ChannelGroupOmit
   channelMember?: Prisma.ChannelMemberOmit
   message?: Prisma.MessageOmit
   pinnedItem?: Prisma.PinnedItemOmit

@@ -1,7 +1,8 @@
 'use client'
 
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { X } from 'lucide-react'
+import { Suspense } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   messagesQueryOptions,
@@ -23,7 +24,6 @@ export function ThreadPanel({
   const parent = messages.find((message) => {
     return message.id === messageId
   })
-  const replies = useQuery(repliesQueryOptions(messageId))
 
   return (
     <aside
@@ -48,20 +48,9 @@ export function ThreadPanel({
       </header>
       <div className="flex-1 overflow-y-auto py-2">
         {parent ? <MessageRow message={parent} /> : null}
-        <div className="border-divider dark:border-divider-dark text-muted dark:text-muted-dark mx-5 my-2 flex items-center gap-3 border-t pt-3 text-xs font-medium">
-          {replies.data
-            ? `${replies.data.length} ${
-                replies.data.length === 1 ? 'reply' : 'replies'
-              }`
-            : 'Loading replies…'}
-        </div>
-        {replies.isPending ? (
-          <ReplySkeleton />
-        ) : (
-          replies.data?.map((reply) => {
-            return <MessageRow key={reply.id} message={reply} />
-          })
-        )}
+        <Suspense fallback={<ThreadRepliesSkeleton />}>
+          <ThreadReplies messageId={messageId} />
+        </Suspense>
       </div>
       <MessageComposer
         channelId={channelId}
@@ -72,9 +61,27 @@ export function ThreadPanel({
   )
 }
 
-function ReplySkeleton() {
+function ThreadReplies({ messageId }: { messageId: string }) {
+  const { data: replies } = useSuspenseQuery(repliesQueryOptions(messageId))
+
+  return (
+    <>
+      <div className="border-divider dark:border-divider-dark text-muted dark:text-muted-dark mx-5 my-2 flex items-center gap-3 border-t pt-3 text-xs font-medium">
+        {replies.length} {replies.length === 1 ? 'reply' : 'replies'}
+      </div>
+      {replies.map((reply) => {
+        return <MessageRow key={reply.id} message={reply} />
+      })}
+    </>
+  )
+}
+
+function ThreadRepliesSkeleton() {
   return (
     <div className="flex flex-col gap-1">
+      <div className="mx-5 my-2 border-t border-transparent pt-3">
+        <Skeleton className="h-3 w-16 rounded-full" />
+      </div>
       {['w-2/3', 'w-1/2'].map((width, i) => {
         return (
           <div className="flex gap-3 px-5 py-2.5" key={i}>

@@ -16,6 +16,7 @@ model User {
 
   messages    Message[]
   memberships ChannelMember[]
+  groups      ChannelGroup[]
 }
 
 model Channel {
@@ -34,15 +35,33 @@ model Channel {
   pinned   PinnedItem[]
 }
 
+// A user-owned, editable grouping of channels in their sidebar (e.g. NOW, DAILY).
+model ChannelGroup {
+  id       String @id
+  userId   String
+  name     String
+  position Int
+
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  members ChannelMember[]
+
+  @@unique([userId, name])
+  @@index([userId, position])
+}
+
 model ChannelMember {
   channelId String
   userId    String
+  groupId   String?
+  position  Int     @default(0)
 
-  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channel Channel       @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  user    User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group   ChannelGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
 
   @@id([channelId, userId])
   @@index([userId])
+  @@index([groupId, position])
 }
 
 model Message {

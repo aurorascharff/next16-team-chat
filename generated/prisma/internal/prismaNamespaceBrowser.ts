@@ -53,6 +53,7 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   Channel: 'Channel',
+  ChannelGroup: 'ChannelGroup',
   ChannelMember: 'ChannelMember',
   Message: 'Message',
   PinnedItem: 'PinnedItem'
@@ -100,9 +101,21 @@ export const ChannelScalarFieldEnum = {
 export type ChannelScalarFieldEnum = (typeof ChannelScalarFieldEnum)[keyof typeof ChannelScalarFieldEnum]
 
 
+export const ChannelGroupScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  position: 'position'
+} as const
+
+export type ChannelGroupScalarFieldEnum = (typeof ChannelGroupScalarFieldEnum)[keyof typeof ChannelGroupScalarFieldEnum]
+
+
 export const ChannelMemberScalarFieldEnum = {
   channelId: 'channelId',
-  userId: 'userId'
+  userId: 'userId',
+  groupId: 'groupId',
+  position: 'position'
 } as const
 
 export type ChannelMemberScalarFieldEnum = (typeof ChannelMemberScalarFieldEnum)[keyof typeof ChannelMemberScalarFieldEnum]

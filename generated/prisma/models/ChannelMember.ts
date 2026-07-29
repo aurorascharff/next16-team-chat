@@ -20,40 +20,70 @@ export type ChannelMemberModel = runtime.Types.Result.DefaultSelection<Prisma.$C
 
 export type AggregateChannelMember = {
   _count: ChannelMemberCountAggregateOutputType | null
+  _avg: ChannelMemberAvgAggregateOutputType | null
+  _sum: ChannelMemberSumAggregateOutputType | null
   _min: ChannelMemberMinAggregateOutputType | null
   _max: ChannelMemberMaxAggregateOutputType | null
+}
+
+export type ChannelMemberAvgAggregateOutputType = {
+  position: number | null
+}
+
+export type ChannelMemberSumAggregateOutputType = {
+  position: number | null
 }
 
 export type ChannelMemberMinAggregateOutputType = {
   channelId: string | null
   userId: string | null
+  groupId: string | null
+  position: number | null
 }
 
 export type ChannelMemberMaxAggregateOutputType = {
   channelId: string | null
   userId: string | null
+  groupId: string | null
+  position: number | null
 }
 
 export type ChannelMemberCountAggregateOutputType = {
   channelId: number
   userId: number
+  groupId: number
+  position: number
   _all: number
 }
 
 
+export type ChannelMemberAvgAggregateInputType = {
+  position?: true
+}
+
+export type ChannelMemberSumAggregateInputType = {
+  position?: true
+}
+
 export type ChannelMemberMinAggregateInputType = {
   channelId?: true
   userId?: true
+  groupId?: true
+  position?: true
 }
 
 export type ChannelMemberMaxAggregateInputType = {
   channelId?: true
   userId?: true
+  groupId?: true
+  position?: true
 }
 
 export type ChannelMemberCountAggregateInputType = {
   channelId?: true
   userId?: true
+  groupId?: true
+  position?: true
   _all?: true
 }
 
@@ -95,6 +125,18 @@ export type ChannelMemberAggregateArgs<ExtArgs extends runtime.Types.Extensions.
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: ChannelMemberAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: ChannelMemberSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: ChannelMemberMinAggregateInputType
@@ -125,6 +167,8 @@ export type ChannelMemberGroupByArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   _count?: ChannelMemberCountAggregateInputType | true
+  _avg?: ChannelMemberAvgAggregateInputType
+  _sum?: ChannelMemberSumAggregateInputType
   _min?: ChannelMemberMinAggregateInputType
   _max?: ChannelMemberMaxAggregateInputType
 }
@@ -132,7 +176,11 @@ export type ChannelMemberGroupByArgs<ExtArgs extends runtime.Types.Extensions.In
 export type ChannelMemberGroupByOutputType = {
   channelId: string
   userId: string
+  groupId: string | null
+  position: number
   _count: ChannelMemberCountAggregateOutputType | null
+  _avg: ChannelMemberAvgAggregateOutputType | null
+  _sum: ChannelMemberSumAggregateOutputType | null
   _min: ChannelMemberMinAggregateOutputType | null
   _max: ChannelMemberMaxAggregateOutputType | null
 }
@@ -158,15 +206,21 @@ export type ChannelMemberWhereInput = {
   NOT?: Prisma.ChannelMemberWhereInput | Prisma.ChannelMemberWhereInput[]
   channelId?: Prisma.StringFilter<"ChannelMember"> | string
   userId?: Prisma.StringFilter<"ChannelMember"> | string
+  groupId?: Prisma.StringNullableFilter<"ChannelMember"> | string | null
+  position?: Prisma.IntFilter<"ChannelMember"> | number
   channel?: Prisma.XOR<Prisma.ChannelScalarRelationFilter, Prisma.ChannelWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  group?: Prisma.XOR<Prisma.ChannelGroupNullableScalarRelationFilter, Prisma.ChannelGroupWhereInput> | null
 }
 
 export type ChannelMemberOrderByWithRelationInput = {
   channelId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  groupId?: Prisma.SortOrderInput | Prisma.SortOrder
+  position?: Prisma.SortOrder
   channel?: Prisma.ChannelOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
+  group?: Prisma.ChannelGroupOrderByWithRelationInput
 }
 
 export type ChannelMemberWhereUniqueInput = Prisma.AtLeast<{
@@ -176,16 +230,23 @@ export type ChannelMemberWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ChannelMemberWhereInput | Prisma.ChannelMemberWhereInput[]
   channelId?: Prisma.StringFilter<"ChannelMember"> | string
   userId?: Prisma.StringFilter<"ChannelMember"> | string
+  groupId?: Prisma.StringNullableFilter<"ChannelMember"> | string | null
+  position?: Prisma.IntFilter<"ChannelMember"> | number
   channel?: Prisma.XOR<Prisma.ChannelScalarRelationFilter, Prisma.ChannelWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  group?: Prisma.XOR<Prisma.ChannelGroupNullableScalarRelationFilter, Prisma.ChannelGroupWhereInput> | null
 }, "channelId_userId">
 
 export type ChannelMemberOrderByWithAggregationInput = {
   channelId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  groupId?: Prisma.SortOrderInput | Prisma.SortOrder
+  position?: Prisma.SortOrder
   _count?: Prisma.ChannelMemberCountOrderByAggregateInput
+  _avg?: Prisma.ChannelMemberAvgOrderByAggregateInput
   _max?: Prisma.ChannelMemberMaxOrderByAggregateInput
   _min?: Prisma.ChannelMemberMinOrderByAggregateInput
+  _sum?: Prisma.ChannelMemberSumOrderByAggregateInput
 }
 
 export type ChannelMemberScalarWhereWithAggregatesInput = {
@@ -194,40 +255,54 @@ export type ChannelMemberScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ChannelMemberScalarWhereWithAggregatesInput | Prisma.ChannelMemberScalarWhereWithAggregatesInput[]
   channelId?: Prisma.StringWithAggregatesFilter<"ChannelMember"> | string
   userId?: Prisma.StringWithAggregatesFilter<"ChannelMember"> | string
+  groupId?: Prisma.StringNullableWithAggregatesFilter<"ChannelMember"> | string | null
+  position?: Prisma.IntWithAggregatesFilter<"ChannelMember"> | number
 }
 
 export type ChannelMemberCreateInput = {
+  position?: number
   channel: Prisma.ChannelCreateNestedOneWithoutMembersInput
   user: Prisma.UserCreateNestedOneWithoutMembershipsInput
+  group?: Prisma.ChannelGroupCreateNestedOneWithoutMembersInput
 }
 
 export type ChannelMemberUncheckedCreateInput = {
   channelId: string
   userId: string
+  groupId?: string | null
+  position?: number
 }
 
 export type ChannelMemberUpdateInput = {
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   channel?: Prisma.ChannelUpdateOneRequiredWithoutMembersNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutMembershipsNestedInput
+  group?: Prisma.ChannelGroupUpdateOneWithoutMembersNestedInput
 }
 
 export type ChannelMemberUncheckedUpdateInput = {
   channelId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ChannelMemberCreateManyInput = {
   channelId: string
   userId: string
+  groupId?: string | null
+  position?: number
 }
 
 export type ChannelMemberUpdateManyMutationInput = {
-
+  position?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ChannelMemberUncheckedUpdateManyInput = {
   channelId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ChannelMemberListRelationFilter = {
@@ -248,16 +323,30 @@ export type ChannelMemberChannelIdUserIdCompoundUniqueInput = {
 export type ChannelMemberCountOrderByAggregateInput = {
   channelId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
+  position?: Prisma.SortOrder
+}
+
+export type ChannelMemberAvgOrderByAggregateInput = {
+  position?: Prisma.SortOrder
 }
 
 export type ChannelMemberMaxOrderByAggregateInput = {
   channelId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
+  position?: Prisma.SortOrder
 }
 
 export type ChannelMemberMinOrderByAggregateInput = {
   channelId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
+  position?: Prisma.SortOrder
+}
+
+export type ChannelMemberSumOrderByAggregateInput = {
+  position?: Prisma.SortOrder
 }
 
 export type ChannelMemberCreateNestedManyWithoutUserInput = {
@@ -344,12 +433,62 @@ export type ChannelMemberUncheckedUpdateManyWithoutChannelNestedInput = {
   deleteMany?: Prisma.ChannelMemberScalarWhereInput | Prisma.ChannelMemberScalarWhereInput[]
 }
 
+export type ChannelMemberCreateNestedManyWithoutGroupInput = {
+  create?: Prisma.XOR<Prisma.ChannelMemberCreateWithoutGroupInput, Prisma.ChannelMemberUncheckedCreateWithoutGroupInput> | Prisma.ChannelMemberCreateWithoutGroupInput[] | Prisma.ChannelMemberUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.ChannelMemberCreateOrConnectWithoutGroupInput | Prisma.ChannelMemberCreateOrConnectWithoutGroupInput[]
+  createMany?: Prisma.ChannelMemberCreateManyGroupInputEnvelope
+  connect?: Prisma.ChannelMemberWhereUniqueInput | Prisma.ChannelMemberWhereUniqueInput[]
+}
+
+export type ChannelMemberUncheckedCreateNestedManyWithoutGroupInput = {
+  create?: Prisma.XOR<Prisma.ChannelMemberCreateWithoutGroupInput, Prisma.ChannelMemberUncheckedCreateWithoutGroupInput> | Prisma.ChannelMemberCreateWithoutGroupInput[] | Prisma.ChannelMemberUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.ChannelMemberCreateOrConnectWithoutGroupInput | Prisma.ChannelMemberCreateOrConnectWithoutGroupInput[]
+  createMany?: Prisma.ChannelMemberCreateManyGroupInputEnvelope
+  connect?: Prisma.ChannelMemberWhereUniqueInput | Prisma.ChannelMemberWhereUniqueInput[]
+}
+
+export type ChannelMemberUpdateManyWithoutGroupNestedInput = {
+  create?: Prisma.XOR<Prisma.ChannelMemberCreateWithoutGroupInput, Prisma.ChannelMemberUncheckedCreateWithoutGroupInput> | Prisma.ChannelMemberCreateWithoutGroupInput[] | Prisma.ChannelMemberUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.ChannelMemberCreateOrConnectWithoutGroupInput | Prisma.ChannelMemberCreateOrConnectWithoutGroupInput[]
+  upsert?: Prisma.ChannelMemberUpsertWithWhereUniqueWithoutGroupInput | Prisma.ChannelMemberUpsertWithWhereUniqueWithoutGroupInput[]
+  createMany?: Prisma.ChannelMemberCreateManyGroupInputEnvelope
+  set?: Prisma.ChannelMemberWhereUniqueInput | Prisma.ChannelMemberWhereUniqueInput[]
+  disconnect?: Prisma.ChannelMemberWhereUniqueInput | Prisma.ChannelMemberWhereUniqueInput[]
+  delete?: Prisma.ChannelMemberWhereUniqueInput | Prisma.ChannelMemberWhereUniqueInput[]
+  connect?: Prisma.ChannelMemberWhereUniqueInput | Prisma.ChannelMemberWhereUniqueInput[]
+  update?: Prisma.ChannelMemberUpdateWithWhereUniqueWithoutGroupInput | Prisma.ChannelMemberUpdateWithWhereUniqueWithoutGroupInput[]
+  updateMany?: Prisma.ChannelMemberUpdateManyWithWhereWithoutGroupInput | Prisma.ChannelMemberUpdateManyWithWhereWithoutGroupInput[]
+  deleteMany?: Prisma.ChannelMemberScalarWhereInput | Prisma.ChannelMemberScalarWhereInput[]
+}
+
+export type ChannelMemberUncheckedUpdateManyWithoutGroupNestedInput = {
+  create?: Prisma.XOR<Prisma.ChannelMemberCreateWithoutGroupInput, Prisma.ChannelMemberUncheckedCreateWithoutGroupInput> | Prisma.ChannelMemberCreateWithoutGroupInput[] | Prisma.ChannelMemberUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.ChannelMemberCreateOrConnectWithoutGroupInput | Prisma.ChannelMemberCreateOrConnectWithoutGroupInput[]
+  upsert?: Prisma.ChannelMemberUpsertWithWhereUniqueWithoutGroupInput | Prisma.ChannelMemberUpsertWithWhereUniqueWithoutGroupInput[]
+  createMany?: Prisma.ChannelMemberCreateManyGroupInputEnvelope
+  set?: Prisma.ChannelMemberWhereUniqueInput | Prisma.ChannelMemberWhereUniqueInput[]
+  disconnect?: Prisma.ChannelMemberWhereUniqueInput | Prisma.ChannelMemberWhereUniqueInput[]
+  delete?: Prisma.ChannelMemberWhereUniqueInput | Prisma.ChannelMemberWhereUniqueInput[]
+  connect?: Prisma.ChannelMemberWhereUniqueInput | Prisma.ChannelMemberWhereUniqueInput[]
+  update?: Prisma.ChannelMemberUpdateWithWhereUniqueWithoutGroupInput | Prisma.ChannelMemberUpdateWithWhereUniqueWithoutGroupInput[]
+  updateMany?: Prisma.ChannelMemberUpdateManyWithWhereWithoutGroupInput | Prisma.ChannelMemberUpdateManyWithWhereWithoutGroupInput[]
+  deleteMany?: Prisma.ChannelMemberScalarWhereInput | Prisma.ChannelMemberScalarWhereInput[]
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
+}
+
 export type ChannelMemberCreateWithoutUserInput = {
+  position?: number
   channel: Prisma.ChannelCreateNestedOneWithoutMembersInput
+  group?: Prisma.ChannelGroupCreateNestedOneWithoutMembersInput
 }
 
 export type ChannelMemberUncheckedCreateWithoutUserInput = {
   channelId: string
+  groupId?: string | null
+  position?: number
 }
 
 export type ChannelMemberCreateOrConnectWithoutUserInput = {
@@ -384,14 +523,20 @@ export type ChannelMemberScalarWhereInput = {
   NOT?: Prisma.ChannelMemberScalarWhereInput | Prisma.ChannelMemberScalarWhereInput[]
   channelId?: Prisma.StringFilter<"ChannelMember"> | string
   userId?: Prisma.StringFilter<"ChannelMember"> | string
+  groupId?: Prisma.StringNullableFilter<"ChannelMember"> | string | null
+  position?: Prisma.IntFilter<"ChannelMember"> | number
 }
 
 export type ChannelMemberCreateWithoutChannelInput = {
+  position?: number
   user: Prisma.UserCreateNestedOneWithoutMembershipsInput
+  group?: Prisma.ChannelGroupCreateNestedOneWithoutMembersInput
 }
 
 export type ChannelMemberUncheckedCreateWithoutChannelInput = {
   userId: string
+  groupId?: string | null
+  position?: number
 }
 
 export type ChannelMemberCreateOrConnectWithoutChannelInput = {
@@ -420,36 +565,114 @@ export type ChannelMemberUpdateManyWithWhereWithoutChannelInput = {
   data: Prisma.XOR<Prisma.ChannelMemberUpdateManyMutationInput, Prisma.ChannelMemberUncheckedUpdateManyWithoutChannelInput>
 }
 
+export type ChannelMemberCreateWithoutGroupInput = {
+  position?: number
+  channel: Prisma.ChannelCreateNestedOneWithoutMembersInput
+  user: Prisma.UserCreateNestedOneWithoutMembershipsInput
+}
+
+export type ChannelMemberUncheckedCreateWithoutGroupInput = {
+  channelId: string
+  userId: string
+  position?: number
+}
+
+export type ChannelMemberCreateOrConnectWithoutGroupInput = {
+  where: Prisma.ChannelMemberWhereUniqueInput
+  create: Prisma.XOR<Prisma.ChannelMemberCreateWithoutGroupInput, Prisma.ChannelMemberUncheckedCreateWithoutGroupInput>
+}
+
+export type ChannelMemberCreateManyGroupInputEnvelope = {
+  data: Prisma.ChannelMemberCreateManyGroupInput | Prisma.ChannelMemberCreateManyGroupInput[]
+  skipDuplicates?: boolean
+}
+
+export type ChannelMemberUpsertWithWhereUniqueWithoutGroupInput = {
+  where: Prisma.ChannelMemberWhereUniqueInput
+  update: Prisma.XOR<Prisma.ChannelMemberUpdateWithoutGroupInput, Prisma.ChannelMemberUncheckedUpdateWithoutGroupInput>
+  create: Prisma.XOR<Prisma.ChannelMemberCreateWithoutGroupInput, Prisma.ChannelMemberUncheckedCreateWithoutGroupInput>
+}
+
+export type ChannelMemberUpdateWithWhereUniqueWithoutGroupInput = {
+  where: Prisma.ChannelMemberWhereUniqueInput
+  data: Prisma.XOR<Prisma.ChannelMemberUpdateWithoutGroupInput, Prisma.ChannelMemberUncheckedUpdateWithoutGroupInput>
+}
+
+export type ChannelMemberUpdateManyWithWhereWithoutGroupInput = {
+  where: Prisma.ChannelMemberScalarWhereInput
+  data: Prisma.XOR<Prisma.ChannelMemberUpdateManyMutationInput, Prisma.ChannelMemberUncheckedUpdateManyWithoutGroupInput>
+}
+
 export type ChannelMemberCreateManyUserInput = {
   channelId: string
+  groupId?: string | null
+  position?: number
 }
 
 export type ChannelMemberUpdateWithoutUserInput = {
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   channel?: Prisma.ChannelUpdateOneRequiredWithoutMembersNestedInput
+  group?: Prisma.ChannelGroupUpdateOneWithoutMembersNestedInput
 }
 
 export type ChannelMemberUncheckedUpdateWithoutUserInput = {
   channelId?: Prisma.StringFieldUpdateOperationsInput | string
+  groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ChannelMemberUncheckedUpdateManyWithoutUserInput = {
   channelId?: Prisma.StringFieldUpdateOperationsInput | string
+  groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ChannelMemberCreateManyChannelInput = {
   userId: string
+  groupId?: string | null
+  position?: number
 }
 
 export type ChannelMemberUpdateWithoutChannelInput = {
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   user?: Prisma.UserUpdateOneRequiredWithoutMembershipsNestedInput
+  group?: Prisma.ChannelGroupUpdateOneWithoutMembersNestedInput
 }
 
 export type ChannelMemberUncheckedUpdateWithoutChannelInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type ChannelMemberUncheckedUpdateManyWithoutChannelInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type ChannelMemberCreateManyGroupInput = {
+  channelId: string
+  userId: string
+  position?: number
+}
+
+export type ChannelMemberUpdateWithoutGroupInput = {
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  channel?: Prisma.ChannelUpdateOneRequiredWithoutMembersNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutMembershipsNestedInput
+}
+
+export type ChannelMemberUncheckedUpdateWithoutGroupInput = {
+  channelId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type ChannelMemberUncheckedUpdateManyWithoutGroupInput = {
+  channelId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  position?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
@@ -457,41 +680,55 @@ export type ChannelMemberUncheckedUpdateManyWithoutChannelInput = {
 export type ChannelMemberSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   channelId?: boolean
   userId?: boolean
+  groupId?: boolean
+  position?: boolean
   channel?: boolean | Prisma.ChannelDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  group?: boolean | Prisma.ChannelMember$groupArgs<ExtArgs>
 }, ExtArgs["result"]["channelMember"]>
 
 export type ChannelMemberSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   channelId?: boolean
   userId?: boolean
+  groupId?: boolean
+  position?: boolean
   channel?: boolean | Prisma.ChannelDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  group?: boolean | Prisma.ChannelMember$groupArgs<ExtArgs>
 }, ExtArgs["result"]["channelMember"]>
 
 export type ChannelMemberSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   channelId?: boolean
   userId?: boolean
+  groupId?: boolean
+  position?: boolean
   channel?: boolean | Prisma.ChannelDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  group?: boolean | Prisma.ChannelMember$groupArgs<ExtArgs>
 }, ExtArgs["result"]["channelMember"]>
 
 export type ChannelMemberSelectScalar = {
   channelId?: boolean
   userId?: boolean
+  groupId?: boolean
+  position?: boolean
 }
 
-export type ChannelMemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"channelId" | "userId", ExtArgs["result"]["channelMember"]>
+export type ChannelMemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"channelId" | "userId" | "groupId" | "position", ExtArgs["result"]["channelMember"]>
 export type ChannelMemberInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   channel?: boolean | Prisma.ChannelDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  group?: boolean | Prisma.ChannelMember$groupArgs<ExtArgs>
 }
 export type ChannelMemberIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   channel?: boolean | Prisma.ChannelDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  group?: boolean | Prisma.ChannelMember$groupArgs<ExtArgs>
 }
 export type ChannelMemberIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   channel?: boolean | Prisma.ChannelDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  group?: boolean | Prisma.ChannelMember$groupArgs<ExtArgs>
 }
 
 export type $ChannelMemberPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -499,10 +736,13 @@ export type $ChannelMemberPayload<ExtArgs extends runtime.Types.Extensions.Inter
   objects: {
     channel: Prisma.$ChannelPayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs>
+    group: Prisma.$ChannelGroupPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     channelId: string
     userId: string
+    groupId: string | null
+    position: number
   }, ExtArgs["result"]["channelMember"]>
   composites: {}
 }
@@ -899,6 +1139,7 @@ export interface Prisma__ChannelMemberClient<T, Null = never, ExtArgs extends ru
   readonly [Symbol.toStringTag]: "PrismaPromise"
   channel<T extends Prisma.ChannelDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChannelDefaultArgs<ExtArgs>>): Prisma.Prisma__ChannelClient<runtime.Types.Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  group<T extends Prisma.ChannelMember$groupArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChannelMember$groupArgs<ExtArgs>>): Prisma.Prisma__ChannelGroupClient<runtime.Types.Result.GetResult<Prisma.$ChannelGroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -930,6 +1171,8 @@ export interface Prisma__ChannelMemberClient<T, Null = never, ExtArgs extends ru
 export interface ChannelMemberFieldRefs {
   readonly channelId: Prisma.FieldRef<"ChannelMember", 'String'>
   readonly userId: Prisma.FieldRef<"ChannelMember", 'String'>
+  readonly groupId: Prisma.FieldRef<"ChannelMember", 'String'>
+  readonly position: Prisma.FieldRef<"ChannelMember", 'Int'>
 }
     
 
@@ -1328,6 +1571,25 @@ export type ChannelMemberDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many ChannelMembers to delete.
    */
   limit?: number
+}
+
+/**
+ * ChannelMember.group
+ */
+export type ChannelMember$groupArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChannelGroup
+   */
+  select?: Prisma.ChannelGroupSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ChannelGroup
+   */
+  omit?: Prisma.ChannelGroupOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChannelGroupInclude<ExtArgs> | null
+  where?: Prisma.ChannelGroupWhereInput
 }
 
 /**

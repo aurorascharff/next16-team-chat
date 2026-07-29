@@ -10,9 +10,9 @@ export default function NotFound() {
       >
         <Link
           className="bg-accent hover:bg-accent-hover flex min-h-9 items-center justify-center rounded-lg px-3.5 text-[0.8125rem] font-semibold text-white transition-colors"
-          href="/channel/proj-ship-room"
+          href="/"
         >
-          Back to ship-room
+          Back to Huddle
         </Link>
       </EmptyState>
     </main>

@@ -7,7 +7,7 @@ export type ChannelSummary = {
   id: string
   name: string
   description: string
-  category: string
+  group: string
   isPrivate: boolean
   memberCount: number
   unread?: number
@@ -22,20 +22,24 @@ export type ChannelDetail = ChannelSummary & {
   threadCount: number
 }
 
+const UNGROUPED = 'Channels'
+
 type ChannelRow = {
   id: string
   name: string
   description: string
-  category: string
   isPrivate: boolean
   unread: number
   members?: unknown[]
 }
 
-function toChannelSummary(channel: ChannelRow): ChannelSummary {
+function toChannelSummary(
+  channel: ChannelRow,
+  group = UNGROUPED,
+): ChannelSummary {
   return {
-    category: channel.category,
     description: channel.description,
+    group,
     id: channel.id,
     isPrivate: channel.isPrivate,
     memberCount: channel.members?.length ?? 0,
@@ -44,13 +48,62 @@ function toChannelSummary(channel: ChannelRow): ChannelSummary {
   }
 }
 
-export async function listChannels() {
-  const channels = await prisma.channel.findMany({
-    include: { members: true },
-    orderBy: { createdAt: 'asc' },
+// Channels visible to a user, tagged with that user's editable group name and
+// ordered by the user's group positions, then by channel position within a group.
+export async function listChannels(userId: string) {
+  const memberships = await prisma.channelMember.findMany({
+    include: {
+      channel: { include: { members: true } },
+      group: true,
+    },
+    where: { userId },
   })
 
-  return channels.map(toChannelSummary)
+  return memberships
+    .map((membership) => {
+      return {
+        ...toChannelSummary(
+          membership.channel,
+          membership.group?.name ?? UNGROUPED,
+        ),
+        groupId: membership.groupId,
+        groupPosition: membership.group?.position ?? Number.MAX_SAFE_INTEGER,
+        position: membership.position,
+      }
+    })
+    .sort((a, b) => {
+      return (
+        a.groupPosition - b.groupPosition ||
+        a.position - b.position ||
+        a.name.localeCompare(b.name)
+      )
+    })
+}
+
+// A user's full sidebar layout: every group in order (including empty ones) with
+// its channels sorted by position. Ungrouped channels fall into a trailing group.
+export async function listChannelLayout(userId: string) {
+  const [groups, channels] = await Promise.all([
+    prisma.channelGroup.findMany({
+      orderBy: { position: 'asc' },
+      where: { userId },
+    }),
+    listChannels(userId),
+  ])
+
+  const layout = groups.map((group) => {
+    return {
+      channels: channels.filter((channel) => channel.groupId === group.id),
+      name: group.name,
+    }
+  })
+
+  const ungrouped = channels.filter((channel) => !channel.groupId)
+  if (ungrouped.length > 0) {
+    layout.push({ channels: ungrouped, name: UNGROUPED })
+  }
+
+  return layout
 }
 
 export async function listUnreadChannels() {
@@ -64,6 +117,45 @@ export async function listUnreadChannels() {
       return [channel.id, channel.unread]
     }),
   ) as Record<string, number>
+}
+
+// Persist a user's full sidebar layout: group order plus each channel's group
+// assignment and position within its group.
+export async function reorderChannels(
+  userId: string,
+  layout: { groups: { name: string; channelIds: string[] }[] },
+) {
+  const existingGroups = await prisma.channelGroup.findMany({
+    where: { userId },
+  })
+  const groupIdByName = new Map(
+    existingGroups.map((group) => [group.name, group.id]),
+  )
+
+  await prisma.$transaction(async (tx) => {
+    for (const [position, group] of layout.groups.entries()) {
+      let groupId = groupIdByName.get(group.name)
+      if (groupId) {
+        await tx.channelGroup.update({
+          data: { position },
+          where: { id: groupId },
+        })
+      } else {
+        groupId = `${userId}-group-${crypto.randomUUID()}`
+        await tx.channelGroup.create({
+          data: { id: groupId, name: group.name, position, userId },
+        })
+        groupIdByName.set(group.name, groupId)
+      }
+
+      for (const [channelPosition, channelId] of group.channelIds.entries()) {
+        await tx.channelMember.update({
+          data: { groupId, position: channelPosition },
+          where: { channelId_userId: { channelId, userId } },
+        })
+      }
+    }
+  })
 }
 
 export async function findChannel(channelId: string) {

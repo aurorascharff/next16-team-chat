@@ -15,6 +15,7 @@ const users = [
 
 const channels = [
   {
+    cadence: 'NOW',
     category: 'Projects',
     description: 'Daily build notes, release work, and review handoffs.',
     handoff:
@@ -26,6 +27,7 @@ const channels = [
     unread: 3,
   },
   {
+    cadence: 'NOW',
     category: 'Projects',
     description: 'Agent traces, eval notes, and prompt fixes.',
     handoff:
@@ -38,6 +40,7 @@ const channels = [
     unread: 2,
   },
   {
+    cadence: 'DAILY',
     category: 'Projects',
     description: 'Screenshots, interaction polish, and mobile pass.',
     handoff: 'Check header CLS, mobile channel strip, and message density.',
@@ -47,6 +50,7 @@ const channels = [
     status: 'Polish pass',
   },
   {
+    cadence: 'DAILY',
     category: 'Coordination',
     description: 'Prefetch costs, route shells, and navigation traces.',
     handoff: 'Document the full-prefetch cost without duplicating the guide.',
@@ -56,6 +60,7 @@ const channels = [
     status: 'Research',
   },
   {
+    cadence: 'DAILY',
     category: 'Coordination',
     description: 'Release notes, comments, and final blog post copy.',
     handoff: 'Keep the upgrade guide source-led and remove stale MCP language.',
@@ -66,6 +71,7 @@ const channels = [
     unread: 1,
   },
   {
+    cadence: 'WEEKLY',
     category: 'Coordination',
     description: 'Dev server health, deploy checks, and flaky CI.',
     handoff: 'Watch preview build output and keep the dev server clean.',
@@ -75,6 +81,7 @@ const channels = [
     status: 'Green',
   },
   {
+    cadence: 'WEEKLY',
     category: 'Random',
     description: 'Loose notes and things not ready for a real thread.',
     handoff: 'Use this room for loose notes before they become a thread.',
@@ -84,6 +91,7 @@ const channels = [
     status: 'Quiet',
   },
   {
+    cadence: 'WEEKLY',
     category: 'Random',
     description: 'Groan-worthy jokes. Posting is mandatory, laughing is not.',
     handoff: 'Rotate whose turn it is to post the daily groaner.',
@@ -93,6 +101,7 @@ const channels = [
     status: 'Punny',
   },
   {
+    cadence: 'NEVER',
     category: 'Random',
     description: 'Explain your bug out loud. The duck is always listening.',
     handoff: 'If the duck solved it, write down what you learned.',
@@ -102,6 +111,7 @@ const channels = [
     status: 'Quack',
   },
   {
+    cadence: 'NEVER',
     category: 'Random',
     description: 'Spicy opinions about tabs, semicolons, and CSS-in-JS.',
     handoff: 'Keep it playful. No takes get shipped to production.',
@@ -264,6 +274,7 @@ async function main() {
   await prisma.message.deleteMany()
   await prisma.pinnedItem.deleteMany()
   await prisma.channelMember.deleteMany()
+  await prisma.channelGroup.deleteMany()
   await prisma.channel.deleteMany()
   await prisma.user.deleteMany()
 
@@ -277,11 +288,6 @@ async function main() {
         handoff: channel.handoff,
         id: channel.id,
         isPrivate: channel.isPrivate ?? false,
-        members: {
-          createMany: {
-            data: users.map((user) => ({ userId: user.id })),
-          },
-        },
         name: channel.name,
         pinned: {
           createMany: {
@@ -295,6 +301,41 @@ async function main() {
         unread: channel.unread ?? 0,
       },
     })
+  }
+
+  // My user (Aurora) gets custom, ordered channel groups seeded from each
+  // channel's cadence. Other users stay ungrouped ("Channels").
+  const MY_USER = 'ada'
+  const groupOrder = ['NOW', 'DAILY', 'WEEKLY', 'NEVER']
+  const groupIds = new Map<string, string>()
+  const groupPositions = new Map<string, number>()
+
+  for (const [position, name] of groupOrder.entries()) {
+    const id = `${MY_USER}-group-${name.toLowerCase()}`
+    groupIds.set(name, id)
+    await prisma.channelGroup.create({
+      data: { id, name, position, userId: MY_USER },
+    })
+  }
+
+  for (const channel of channels) {
+    for (const user of users) {
+      const groupId =
+        user.id === MY_USER ? (groupIds.get(channel.cadence) ?? null) : null
+      const position =
+        user.id === MY_USER ? (groupPositions.get(channel.cadence) ?? 0) : 0
+      if (user.id === MY_USER) {
+        groupPositions.set(channel.cadence, position + 1)
+      }
+      await prisma.channelMember.create({
+        data: {
+          channelId: channel.id,
+          groupId,
+          position,
+          userId: user.id,
+        },
+      })
+    }
   }
 
   await prisma.message.createMany({

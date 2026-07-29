@@ -23,7 +23,7 @@ export async function WorkspaceNav() {
     <div className="flex flex-col gap-3">
       <Link
         className="hover:bg-card dark:hover:bg-card-dark flex items-center gap-2.5 rounded-lg p-1.5 transition-colors"
-        href="/channel/proj-ship-room"
+        href="/"
         prefetch={true}
       >
         <BrandMark />

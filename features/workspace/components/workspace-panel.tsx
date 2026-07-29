@@ -34,10 +34,10 @@ export function WorkspacePanelHeader({ view }: { view: WorkspaceView }) {
       </div>
       <Link
         className="bg-accent hover:bg-accent-hover flex min-h-9 shrink-0 items-center gap-1.5 rounded-lg px-3 text-[0.8125rem] font-semibold text-white transition-colors"
-        href="/channel/proj-ship-room"
+        href="/"
         prefetch={true}
       >
-        Open ship-room
+        Open channels
         <ArrowRight aria-hidden className="size-3.5" strokeWidth={2.25} />
       </Link>
     </header>

@@ -33,8 +33,8 @@ async function toItems(
   })
 }
 
-/** Inbox = top-level messages that have replies (things awaiting a follow-up). */
-export async function listInbox() {
+/** Inbox = your messages that others have replied to (awaiting your follow-up). */
+export async function listInbox(userId: string) {
   const messages = await prisma.message.findMany({
     include: {
       _count: { select: { replies: true } },
@@ -42,13 +42,17 @@ export async function listInbox() {
       user: true,
     },
     orderBy: { createdAt: 'desc' },
-    where: { parentId: null, replies: { some: {} } },
+    where: {
+      parentId: null,
+      replies: { some: { NOT: { userId } } },
+      userId,
+    },
   })
 
   return toItems(messages)
 }
 
-/** Threads = every top-level message that started a thread. */
+/** Threads = every top-level message that started a thread, across all channels. */
 export async function listThreads() {
   const messages = await prisma.message.findMany({
     include: {

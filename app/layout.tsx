@@ -15,6 +15,7 @@ import {
   WorkspaceNavSkeleton,
 } from '@/features/workspace/components/workspace-nav'
 import { SidebarControls } from '@/features/workspace/components/sidebar-controls'
+import { MobileTabBar, MobileTabBarSkeleton } from '@/components/mobile-tab-bar'
 import { Providers } from './providers'
 import './globals.css'
 
@@ -48,22 +49,27 @@ export default function RootLayout({
     >
       <body>
         <Providers>
-          <div className="grid min-h-dvh w-full grid-cols-1 md:grid-cols-[16rem_minmax(0,1fr)]">
-            <aside className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark sticky top-0 z-20 flex h-dvh flex-col gap-4 border-b p-3 max-md:h-auto md:border-r md:border-b-0">
-              <Suspense fallback={<WorkspaceNavSkeleton />}>
-                <WorkspaceNav />
-              </Suspense>
-              <Suspense fallback={<ChannelListSkeleton />}>
-                <ChannelList />
-              </Suspense>
-              <div className="mt-auto flex flex-col gap-3">
-                <SidebarControls />
-                <Suspense fallback={<CurrentUserCardSkeleton />}>
-                  <CurrentUserCard />
+          <div className="flex min-h-dvh flex-col">
+            <div className="grid w-full flex-1 grid-cols-1 md:grid-cols-[16rem_minmax(0,1fr)]">
+              <aside className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark sticky top-0 z-20 hidden h-dvh flex-col gap-4 border-r p-3 md:flex">
+                <Suspense fallback={<WorkspaceNavSkeleton />}>
+                  <WorkspaceNav />
                 </Suspense>
-              </div>
-            </aside>
-            <main className="min-w-0">{children}</main>
+                <Suspense fallback={<ChannelListSkeleton />}>
+                  <ChannelList />
+                </Suspense>
+                <div className="mt-auto flex flex-col gap-3">
+                  <SidebarControls />
+                  <Suspense fallback={<CurrentUserCardSkeleton />}>
+                    <CurrentUserCard />
+                  </Suspense>
+                </div>
+              </aside>
+              <main className="min-w-0">{children}</main>
+            </div>
+            <Suspense fallback={<MobileTabBarSkeleton />}>
+              <MobileTabBar />
+            </Suspense>
           </div>
         </Providers>
       </body>

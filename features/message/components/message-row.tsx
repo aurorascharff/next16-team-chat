@@ -69,10 +69,10 @@ export function MessageRow({
         ) : null}
       </div>
       {showThreadAffordance && !sending && !failed ? (
-        <div className="absolute -top-3 right-4 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+        <div className="absolute top-1 right-4 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
           <button
             aria-label="Reply in thread"
-            className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark text-muted dark:text-muted-dark hover:text-accent flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium shadow-sm transition-colors"
+            className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark text-muted dark:text-muted-dark hover:border-accent hover:text-accent flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium shadow-sm transition-colors"
             onClick={() => {
               return openThread(message.channelId, message.id)
             }}

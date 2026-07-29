@@ -24,7 +24,9 @@ export async function ChannelHeader({ channelId }: { channelId: string }) {
         </p>
       </div>
       <div className="flex items-center gap-2.5 max-md:w-full max-md:justify-between">
-        <SlowModeToggle enabled={slow} />
+        <span className="max-md:hidden">
+          <SlowModeToggle enabled={slow} />
+        </span>
         <div className="border-divider dark:border-divider-dark text-muted dark:text-muted-dark flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-xs font-medium">
           <Users aria-hidden className="size-3.5" strokeWidth={2} />
           {channel.memberCount}
@@ -46,7 +48,7 @@ export function ChannelHeaderSkeleton() {
         </p>
       </div>
       <div className="flex items-center gap-2.5 max-md:w-full max-md:justify-between">
-        <Skeleton className="h-8 w-20 rounded-full" />
+        <Skeleton className="h-8 w-20 rounded-full max-md:hidden" />
         <Skeleton className="h-7 w-14 rounded-full" />
       </div>
     </header>
