@@ -5,5 +5,7 @@ type Props = {
 }
 
 export function Skeleton({ className }: Props) {
-  return <span aria-hidden className={cn('skeleton-animation block', className)} />
+  return (
+    <span aria-hidden className={cn('skeleton-animation block', className)} />
+  )
 }

@@ -845,6 +845,7 @@ export const ChannelScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
+  category: 'category',
   isPrivate: 'isPrivate',
   unread: 'unread',
   status: 'status',

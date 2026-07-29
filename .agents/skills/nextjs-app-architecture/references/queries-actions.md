@@ -9,16 +9,16 @@ This page covers the universal data layer that applies to every Next.js App Rout
 Create `features/<domain>/<domain>-queries.ts`. Mark it `import 'server-only'` — that's the invariant. Default to plain async exports.
 
 ```ts
-import 'server-only';
+import 'server-only'
 
 export async function getFeed(userId: string) {
-  return db.post.findMany({ where: { userId } });
+  return db.post.findMany({ where: { userId } })
 }
 ```
 
 Use [`cache()`](https://react.dev/reference/react/cache) from React only for **request-level deduplication** when the same dynamic query is called multiple times with the same arguments in one render. Highest-value cases: a session/user lookup used by many queries, or a shared expensive read used by metadata + page sections. Don't wrap every query "just in case" — it adds indirection and can hide when data is intentionally dynamic.
 
-`cache()` dedups within a request; `'use cache'` + `cacheTag` (Cache Components) shares results *across* requests. Don't add React `cache()` to a function only because it already uses `'use cache'`; that is double-caching unless you have a separate, proven same-request duplication problem. See `references/cache-components.md`.
+`cache()` dedups within a request; `'use cache'` + `cacheTag` (Cache Components) shares results _across_ requests. Don't add React `cache()` to a function only because it already uses `'use cache'`; that is double-caching unless you have a separate, proven same-request duplication problem. See `references/cache-components.md`.
 
 ## Actions
 
@@ -31,20 +31,20 @@ Create `features/<domain>/<domain>-actions.ts`. Mark with `'use server'` at the 
 5. Return a result (`{ ok }` or `{ error }`).
 
 ```tsx
-'use server';
+'use server'
 
-import { refresh } from 'next/cache';
+import { refresh } from 'next/cache'
 
 export async function createPost(formData: FormData) {
-  const user = await verifyUser();
-  const parsed = schema.safeParse({ body: formData.get('body') });
+  const user = await verifyUser()
+  const parsed = schema.safeParse({ body: formData.get('body') })
   if (!parsed.success) {
-    return { ok: false as const, error: parsed.error.issues[0].message };
+    return { ok: false as const, error: parsed.error.issues[0].message }
   }
 
-  await db.post.create({ data: { body: parsed.data.body, userId: user.id } });
-  refresh();
-  return { ok: true as const };
+  await db.post.create({ data: { body: parsed.data.body, userId: user.id } })
+  refresh()
+  return { ok: true as const }
 }
 ```
 
@@ -60,18 +60,18 @@ Client components import server actions directly. **Don't** pass an action as a 
 
 ```tsx
 // Right
-'use client';
-import { likePost } from '@/features/post/post-actions';
+'use client'
+import { likePost } from '@/features/post/post-actions'
 
 export function LikeButton({ postId }: { postId: string }) {
-  return <button onClick={() => likePost(postId)}>Like</button>;
+  return <button onClick={() => likePost(postId)}>Like</button>
 }
 ```
 
 ```tsx
 // Wrong — adds indirection with no benefit
 async function Post({ id }: { id: string }) {
-  return <LikeButton postId={id} onLike={likePost} />;
+  return <LikeButton postId={id} onLike={likePost} />
 }
 ```
 
@@ -88,7 +88,8 @@ For one-off buttons, `onClick={() => action(args)}` is fine. Wrap in [`startTran
 Return a discriminated union from actions that can fail:
 
 ```tsx
-export type ActionResult<T = void> = { ok: true; data?: T } | { ok: false; error: string };
+export type ActionResult<T = void> =
+  { ok: true; data?: T } | { ok: false; error: string }
 ```
 
 Toast on `ok: false` from the client. Skip success toasts when an optimistic UI already shows the result.
@@ -101,13 +102,16 @@ If your DB rows have shapes you don't want to leak to components (extra columns,
 
 ```ts
 export async function getPost(id: string) {
-  const row = await db.post.findUnique({ where: { id }, include: { author: true } });
-  if (!row) notFound();
-  return toPost(row);
+  const row = await db.post.findUnique({
+    where: { id },
+    include: { author: true },
+  })
+  if (!row) notFound()
+  return toPost(row)
 }
 
 function toPost(row: PostRow & { author: UserRow }): Post {
-  return { id: row.id, body: row.body, author: row.author.handle };
+  return { id: row.id, body: row.body, author: row.author.handle }
 }
 ```
 

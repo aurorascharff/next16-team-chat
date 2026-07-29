@@ -1,15 +1,13 @@
-import { notFound } from "next/navigation";
-import { Skeleton } from "@/components/ui/skeleton";
-import { getChannelDetail } from "@/features/message/message-store";
+import { Skeleton } from '@/components/ui/skeleton'
+import { getChannelDetails } from '@/features/channel/channel-queries'
 
 export async function ChannelDetails({ channelId }: { channelId: string }) {
-  const channel = await getChannelDetail(channelId);
-  if (!channel) notFound();
+  const channel = await getChannelDetails(channelId)
 
   return (
     <aside
       aria-label="Channel details"
-      className="border-divider dark:border-divider-dark flex flex-col gap-5 border-l p-5 max-lg:hidden"
+      className="border-divider dark:border-divider-dark flex h-full flex-col gap-5 overflow-y-auto border-l p-5"
     >
       <section className="border-divider dark:border-divider-dark flex flex-col gap-2 border-b pb-5">
         <h2>Channel</h2>
@@ -19,6 +17,11 @@ export async function ChannelDetails({ channelId }: { channelId: string }) {
         <span className="bg-accent-fade text-accent inline-flex w-fit rounded-full px-2.5 py-1 text-[0.6875rem] font-semibold">
           {channel.status}
         </span>
+        <dl className="mt-1 grid grid-cols-3 gap-2 text-center">
+          <SummaryStat label="Members" value={channel.memberCount} />
+          <SummaryStat label="Messages" value={channel.messageCount} />
+          <SummaryStat label="Threads" value={channel.threadCount} />
+        </dl>
       </section>
       <section className="border-divider dark:border-divider-dark flex flex-col gap-2 border-b pb-5">
         <h2>Handoff</h2>
@@ -37,7 +40,7 @@ export async function ChannelDetails({ channelId }: { channelId: string }) {
               >
                 {item}
               </li>
-            );
+            )
           })}
         </ul>
       </section>
@@ -52,19 +55,30 @@ export async function ChannelDetails({ channelId }: { channelId: string }) {
               >
                 {member}
               </span>
-            );
+            )
           })}
         </div>
       </section>
     </aside>
-  );
+  )
+}
+
+function SummaryStat({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="bg-card dark:bg-card-dark flex flex-col rounded-lg py-2">
+      <dt className="text-base font-semibold tabular-nums">{value}</dt>
+      <dd className="text-muted dark:text-muted-dark text-[0.6875rem] font-medium">
+        {label}
+      </dd>
+    </div>
+  )
 }
 
 export function ChannelDetailsSkeleton() {
   return (
     <aside
       aria-label="Loading channel details"
-      className="border-divider dark:border-divider-dark flex flex-col gap-5 border-l p-5 max-lg:hidden"
+      className="border-divider dark:border-divider-dark flex h-full flex-col gap-5 border-l p-5"
     >
       {Array.from({ length: 3 }).map((_, i) => {
         return (
@@ -73,8 +87,8 @@ export function ChannelDetailsSkeleton() {
             <Skeleton className="h-3 w-full rounded-full" />
             <Skeleton className="h-3 w-2/3 rounded-full" />
           </section>
-        );
+        )
       })}
     </aside>
-  );
+  )
 }

@@ -1,20 +1,20 @@
-import { Skeleton } from "@/components/ui/skeleton";
-import { getCurrentUser } from "@/features/user/user-queries";
-import { UserSwitcher } from "./user-switcher";
+import { Skeleton } from '@/components/ui/skeleton'
+import { getCurrentUser } from '@/features/user/user-queries'
+import { UserSwitcher } from './user-switcher'
 
 export async function CurrentUserCard() {
-  const user = await getCurrentUser();
+  const user = await getCurrentUser()
 
   return (
-    <section className="border-divider dark:border-divider-dark bg-card dark:bg-card-dark mt-auto grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2.5 rounded-xl border p-2.5">
+    <section className="border-divider dark:border-divider-dark bg-card dark:bg-card-dark grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2.5 rounded-xl border p-2.5">
       <div
         aria-hidden
         className="bg-accent flex size-9 items-center justify-center rounded-lg text-xs font-bold text-white uppercase"
       >
         {user.name
-          .split(" ")
+          .split(' ')
           .map((part) => part[0])
-          .join("")}
+          .join('')}
       </div>
       <div className="min-w-0">
         <p className="truncate text-sm font-semibold">{user.name}</p>
@@ -24,17 +24,17 @@ export async function CurrentUserCard() {
       </div>
       <UserSwitcher currentUserId={user.id} />
     </section>
-  );
+  )
 }
 
 export function CurrentUserCardSkeleton() {
   return (
-    <section className="border-divider dark:border-divider-dark bg-card dark:bg-card-dark mt-auto grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2.5 rounded-xl border p-2.5">
+    <section className="border-divider dark:border-divider-dark bg-card dark:bg-card-dark grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2.5 rounded-xl border p-2.5">
       <Skeleton className="size-9 rounded-lg" />
       <div className="flex flex-col gap-1.5">
         <Skeleton className="h-3 w-24 rounded-full" />
         <Skeleton className="h-2.5 w-16 rounded-full" />
       </div>
     </section>
-  );
+  )
 }

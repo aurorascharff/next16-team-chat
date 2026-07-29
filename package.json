@@ -20,6 +20,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "format": "prettier --write .",
     "prisma.push": "prisma db push",
     "prisma.seed": "prisma db seed",
     "prisma.studio": "prisma studio",
@@ -52,6 +53,8 @@
     "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "prettier": "^3.9.6",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.22.2",
     "typescript": "^5"

@@ -1,15 +1,13 @@
-"use client";
+'use client'
 
-import { ArrowLeftRight } from "lucide-react";
-import { usePathname } from "next/navigation";
-import { useTransition } from "react";
-import { switchUser } from "@/features/user/user-actions";
-import { cn } from "@/lib/utils";
+import { ArrowLeftRight } from 'lucide-react'
+import { useTransition } from 'react'
+import { switchUser } from '@/features/user/user-actions'
+import { cn } from '@/lib/utils'
 
 export function UserSwitcher({ currentUserId }: { currentUserId: string }) {
-  const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
-  const nextUserId = currentUserId === "ada" ? "grace" : "ada";
+  const [isPending, startTransition] = useTransition()
+  const nextUserId = currentUserId === 'ada' ? 'grace' : 'ada'
 
   return (
     <button
@@ -18,17 +16,17 @@ export function UserSwitcher({ currentUserId }: { currentUserId: string }) {
       disabled={isPending}
       onClick={() => {
         startTransition(async () => {
-          await switchUser(nextUserId, pathname);
-        });
+          await switchUser(nextUserId)
+        })
       }}
       title="Switch user"
       type="button"
     >
       <ArrowLeftRight
         aria-hidden
-        className={cn("size-4", isPending && "animate-pulse")}
+        className={cn('size-4', isPending && 'animate-pulse')}
         strokeWidth={2}
       />
     </button>
-  );
+  )
 }

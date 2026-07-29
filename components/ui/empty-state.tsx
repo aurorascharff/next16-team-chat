@@ -1,10 +1,10 @@
-import { MessageSquareDashed } from "lucide-react";
+import { MessageSquareDashed } from 'lucide-react'
 
 type EmptyStateProps = {
-  title: string;
-  body?: string;
-  children?: React.ReactNode;
-};
+  title: string
+  body?: string
+  children?: React.ReactNode
+}
 
 export function EmptyState({ title, body, children }: EmptyStateProps) {
   return (
@@ -23,5 +23,5 @@ export function EmptyState({ title, body, children }: EmptyStateProps) {
       ) : null}
       {children ? <div className="mt-1">{children}</div> : null}
     </div>
-  );
+  )
 }

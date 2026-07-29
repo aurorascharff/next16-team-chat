@@ -1,9 +1,12 @@
-import { Hash, Search, Users } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { getChannel } from "@/features/channel/channel-queries";
+import { Hash, Users } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
+import { isSlowMode } from '@/features/demo/slow-mode'
+import { SlowModeToggle } from '@/features/demo/components/slow-mode-toggle'
+import { getChannel } from '@/features/channel/channel-queries'
 
 export async function ChannelHeader({ channelId }: { channelId: string }) {
-  const channel = await getChannel(channelId);
+  const slow = await isSlowMode()
+  const channel = await getChannel(channelId)
 
   return (
     <header className="border-divider dark:border-divider-dark bg-surface/80 dark:bg-surface-dark/80 sticky top-0 z-10 flex items-center justify-between gap-3 border-b px-5 py-3 backdrop-blur-lg max-md:flex-col max-md:items-start">
@@ -21,25 +24,14 @@ export async function ChannelHeader({ channelId }: { channelId: string }) {
         </p>
       </div>
       <div className="flex items-center gap-2.5 max-md:w-full max-md:justify-between">
-        <label className="relative max-md:hidden">
-          <span className="sr-only">Search channel</span>
-          <Search
-            aria-hidden
-            className="text-gray pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2"
-            strokeWidth={2}
-          />
-          <input
-            className="border-divider dark:border-divider-dark bg-card dark:bg-card-dark focus:border-accent focus:ring-accent/25 h-8 w-32 rounded-lg border pr-2.5 pl-8 text-[0.8125rem] transition-colors focus:ring-2"
-            placeholder="Search"
-          />
-        </label>
+        <SlowModeToggle enabled={slow} />
         <div className="border-divider dark:border-divider-dark text-muted dark:text-muted-dark flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-xs font-medium">
           <Users aria-hidden className="size-3.5" strokeWidth={2} />
           {channel.memberCount}
         </div>
       </div>
     </header>
-  );
+  )
 }
 
 export function ChannelHeaderSkeleton() {
@@ -54,9 +46,9 @@ export function ChannelHeaderSkeleton() {
         </p>
       </div>
       <div className="flex items-center gap-2.5 max-md:w-full max-md:justify-between">
-        <Skeleton className="h-8 w-32 rounded-lg max-md:hidden" />
+        <Skeleton className="h-8 w-20 rounded-full" />
         <Skeleton className="h-7 w-14 rounded-full" />
       </div>
     </header>
-  );
+  )
 }

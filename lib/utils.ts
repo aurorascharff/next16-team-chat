@@ -1,10 +1,12 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { clsx, type ClassValue } from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return twMerge(clsx(inputs))
 }
 
-export function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+export function delay(ms: number, enabled = true) {
+  return enabled
+    ? new Promise((resolve) => setTimeout(resolve, ms))
+    : Promise.resolve()
 }

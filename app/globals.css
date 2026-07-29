@@ -87,28 +87,15 @@
 }
 
 .skeleton-animation {
-  background: rgba(150, 150, 150, 0.2);
-  background: linear-gradient(
-    to right,
-    rgba(130, 130, 130, 0.2) 8%,
-    rgba(170, 170, 170, 0.3) 18%,
-    rgba(150, 150, 150, 0.2) 33%
-  );
-  background-size: 800px 100px;
-  animation: wave-lines 2s infinite ease-out;
+  background: color-mix(in oklab, var(--color-muted) 18%, transparent);
+}
+
+:where(.dark) .skeleton-animation {
+  background: color-mix(in oklab, var(--color-muted-dark) 22%, transparent);
 }
 
 .skeleton-animation:not([class*='rounded-']) {
   border-radius: var(--radius-sm);
-}
-
-@keyframes wave-lines {
-  0% {
-    background-position: -468px 0;
-  }
-  100% {
-    background-position: 468px 0;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

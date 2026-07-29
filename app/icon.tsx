@@ -1,20 +1,20 @@
-import { ImageResponse } from "next/og";
+import { ImageResponse } from 'next/og'
 
-export const size = { height: 32, width: 32 };
+export const size = { height: 32, width: 32 }
 
-export const contentType = "image/png";
+export const contentType = 'image/png'
 
 export default function Icon() {
   return new ImageResponse(
     <div
       style={{
-        alignItems: "center",
-        background: "linear-gradient(135deg, #2457fa 0%, #1d47cf 100%)",
-        borderRadius: "8px",
-        display: "flex",
-        height: "100%",
-        justifyContent: "center",
-        width: "100%",
+        alignItems: 'center',
+        background: 'linear-gradient(135deg, #2457fa 0%, #1d47cf 100%)',
+        borderRadius: '8px',
+        display: 'flex',
+        height: '100%',
+        justifyContent: 'center',
+        width: '100%',
       }}
     >
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -36,5 +36,5 @@ export default function Icon() {
       </svg>
     </div>,
     size,
-  );
+  )
 }

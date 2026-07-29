@@ -1,28 +1,28 @@
-"use client";
+'use client'
 
-import { MessageSquare } from "lucide-react";
-import type { Message } from "@/features/message/types/message";
-import { cn } from "@/lib/utils";
-import { formatInline, formatTime, initials } from "./format";
-import { useThread } from "./thread-context";
+import { Clock, MessageSquare, TriangleAlert } from 'lucide-react'
+import type { Message } from '@/features/message/types/message'
+import { cn } from '@/lib/utils'
+import { formatInline, formatTime, initials } from './format'
+import { useThread } from './thread-context'
 
 export function MessageRow({
   message,
   showThreadAffordance = false,
 }: {
-  message: Message;
-  showThreadAffordance?: boolean;
+  message: Message
+  showThreadAffordance?: boolean
 }) {
-  const { openThread } = useThread();
-  const sending = message.status === "sending";
-  const failed = message.status === "failed";
-  const replyCount = message.replyCount ?? 0;
+  const { openThread } = useThread()
+  const sending = message.status === 'sending'
+  const failed = message.status === 'failed'
+  const replyCount = message.replyCount ?? 0
 
   return (
     <article
       className={cn(
-        "group hover:bg-card dark:hover:bg-card-dark flex gap-3 px-5 py-2.5 transition-colors",
-        sending && "opacity-60",
+        'group relative flex gap-3 px-5 py-1.5 transition-colors',
+        sending ? 'opacity-70' : 'hover:bg-card dark:hover:bg-card-dark',
       )}
     >
       <div
@@ -36,64 +36,53 @@ export function MessageRow({
           <strong className="text-[0.9375rem] font-semibold">
             {message.userName}
           </strong>
-          <span className="text-muted dark:text-muted-dark text-xs">
-            {formatTime(message.createdAt)}
-          </span>
           {sending ? (
+            <span className="text-muted dark:text-muted-dark inline-flex items-center gap-1 text-xs">
+              <Clock aria-hidden className="size-3" strokeWidth={2} />
+              Sending
+            </span>
+          ) : failed ? (
+            <span className="text-danger inline-flex items-center gap-1 text-xs font-medium">
+              <TriangleAlert aria-hidden className="size-3" strokeWidth={2} />
+              Not sent
+            </span>
+          ) : (
             <span className="text-muted dark:text-muted-dark text-xs">
-              Sending…
+              {formatTime(message.createdAt)}
             </span>
-          ) : null}
-          {failed ? (
-            <span className="text-danger text-xs font-medium">
-              Failed to send
-            </span>
-          ) : null}
+          )}
         </div>
         <p className="max-w-3xl text-[0.9375rem] leading-relaxed break-words text-zinc-800 dark:text-zinc-200">
           {formatInline(message.body)}
         </p>
-        {showThreadAffordance ? (
-          <ThreadAffordance
-            onOpen={() => {
-              return openThread(message.channelId, message.id);
+        {showThreadAffordance && !sending && !failed && replyCount > 0 ? (
+          <button
+            className="border-divider dark:border-divider-dark hover:border-accent hover:text-accent text-accent mt-1 flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-semibold transition-colors"
+            onClick={() => {
+              return openThread(message.channelId, message.id)
             }}
-            replyCount={replyCount}
-          />
+            type="button"
+          >
+            <MessageSquare aria-hidden className="size-3.5" strokeWidth={2} />
+            {replyCount} {replyCount === 1 ? 'reply' : 'replies'}
+          </button>
         ) : null}
       </div>
+      {showThreadAffordance && !sending && !failed ? (
+        <div className="absolute -top-3 right-4 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+          <button
+            aria-label="Reply in thread"
+            className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark text-muted dark:text-muted-dark hover:text-accent flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium shadow-sm transition-colors"
+            onClick={() => {
+              return openThread(message.channelId, message.id)
+            }}
+            type="button"
+          >
+            <MessageSquare aria-hidden className="size-3.5" strokeWidth={2} />
+            Reply
+          </button>
+        </div>
+      ) : null}
     </article>
-  );
-}
-
-function ThreadAffordance({
-  onOpen,
-  replyCount,
-}: {
-  onOpen: () => void;
-  replyCount: number;
-}) {
-  if (replyCount > 0) {
-    return (
-      <button
-        className="text-accent hover:bg-accent-fade mt-1.5 flex items-center gap-1.5 rounded-md py-0.5 pr-2 text-xs font-semibold transition-colors"
-        onClick={onOpen}
-        type="button"
-      >
-        <MessageSquare aria-hidden className="size-3.5" strokeWidth={2} />
-        {replyCount} {replyCount === 1 ? "reply" : "replies"}
-      </button>
-    );
-  }
-
-  return (
-    <button
-      className="text-muted dark:text-muted-dark hover:text-accent mt-1 flex items-center gap-1.5 text-xs font-medium opacity-0 transition group-hover:opacity-100"
-      onClick={onOpen}
-      type="button"
-    >
-      <MessageSquare aria-hidden className="size-3.5" strokeWidth={2} />
-      Reply in thread
-    </button>
-  );
+  )
 }

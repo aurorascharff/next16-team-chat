@@ -1,34 +1,34 @@
-"use client";
+'use client'
 
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { X } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
+import { X } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   messagesQueryOptions,
   repliesQueryOptions,
-} from "@/features/message/message-query-options";
-import { MessageComposer } from "./message-composer";
-import { MessageRow } from "./message-row";
-import { useThread } from "./thread-context";
+} from '@/features/message/message-query-options'
+import { MessageComposer } from './message-composer'
+import { MessageRow } from './message-row'
+import { useThread } from './thread-context'
 
 export function ThreadPanel({
   channelId,
   messageId,
 }: {
-  channelId: string;
-  messageId: string;
+  channelId: string
+  messageId: string
 }) {
-  const { closeThread } = useThread();
-  const { data: messages } = useSuspenseQuery(messagesQueryOptions(channelId));
+  const { closeThread } = useThread()
+  const { data: messages } = useSuspenseQuery(messagesQueryOptions(channelId))
   const parent = messages.find((message) => {
-    return message.id === messageId;
-  });
-  const replies = useQuery(repliesQueryOptions(messageId));
+    return message.id === messageId
+  })
+  const replies = useQuery(repliesQueryOptions(messageId))
 
   return (
     <aside
       aria-label="Thread"
-      className="border-divider dark:border-divider-dark flex min-h-0 flex-col border-l max-lg:hidden"
+      className="border-divider dark:border-divider-dark flex h-full min-h-0 flex-col border-l"
     >
       <header className="border-divider dark:border-divider-dark flex items-center justify-between border-b px-4 py-3">
         <div>
@@ -51,15 +51,15 @@ export function ThreadPanel({
         <div className="border-divider dark:border-divider-dark text-muted dark:text-muted-dark mx-5 my-2 flex items-center gap-3 border-t pt-3 text-xs font-medium">
           {replies.data
             ? `${replies.data.length} ${
-                replies.data.length === 1 ? "reply" : "replies"
+                replies.data.length === 1 ? 'reply' : 'replies'
               }`
-            : "Loading replies…"}
+            : 'Loading replies…'}
         </div>
         {replies.isPending ? (
           <ReplySkeleton />
         ) : (
           replies.data?.map((reply) => {
-            return <MessageRow key={reply.id} message={reply} />;
+            return <MessageRow key={reply.id} message={reply} />
           })
         )}
       </div>
@@ -69,13 +69,13 @@ export function ThreadPanel({
         placeholder="Reply…"
       />
     </aside>
-  );
+  )
 }
 
 function ReplySkeleton() {
   return (
     <div className="flex flex-col gap-1">
-      {["w-2/3", "w-1/2"].map((width, i) => {
+      {['w-2/3', 'w-1/2'].map((width, i) => {
         return (
           <div className="flex gap-3 px-5 py-2.5" key={i}>
             <Skeleton className="size-9 shrink-0 rounded-lg" />
@@ -84,8 +84,8 @@ function ReplySkeleton() {
               <Skeleton className={`h-3.5 rounded-full ${width}`} />
             </div>
           </div>
-        );
+        )
       })}
     </div>
-  );
+  )
 }

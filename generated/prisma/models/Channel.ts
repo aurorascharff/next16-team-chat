@@ -38,6 +38,7 @@ export type ChannelMinAggregateOutputType = {
   id: string | null
   name: string | null
   description: string | null
+  category: string | null
   isPrivate: boolean | null
   unread: number | null
   status: string | null
@@ -49,6 +50,7 @@ export type ChannelMaxAggregateOutputType = {
   id: string | null
   name: string | null
   description: string | null
+  category: string | null
   isPrivate: boolean | null
   unread: number | null
   status: string | null
@@ -60,6 +62,7 @@ export type ChannelCountAggregateOutputType = {
   id: number
   name: number
   description: number
+  category: number
   isPrivate: number
   unread: number
   status: number
@@ -81,6 +84,7 @@ export type ChannelMinAggregateInputType = {
   id?: true
   name?: true
   description?: true
+  category?: true
   isPrivate?: true
   unread?: true
   status?: true
@@ -92,6 +96,7 @@ export type ChannelMaxAggregateInputType = {
   id?: true
   name?: true
   description?: true
+  category?: true
   isPrivate?: true
   unread?: true
   status?: true
@@ -103,6 +108,7 @@ export type ChannelCountAggregateInputType = {
   id?: true
   name?: true
   description?: true
+  category?: true
   isPrivate?: true
   unread?: true
   status?: true
@@ -201,6 +207,7 @@ export type ChannelGroupByOutputType = {
   id: string
   name: string
   description: string
+  category: string
   isPrivate: boolean
   unread: number
   status: string
@@ -235,6 +242,7 @@ export type ChannelWhereInput = {
   id?: Prisma.StringFilter<"Channel"> | string
   name?: Prisma.StringFilter<"Channel"> | string
   description?: Prisma.StringFilter<"Channel"> | string
+  category?: Prisma.StringFilter<"Channel"> | string
   isPrivate?: Prisma.BoolFilter<"Channel"> | boolean
   unread?: Prisma.IntFilter<"Channel"> | number
   status?: Prisma.StringFilter<"Channel"> | string
@@ -249,6 +257,7 @@ export type ChannelOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   isPrivate?: Prisma.SortOrder
   unread?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -266,6 +275,7 @@ export type ChannelWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ChannelWhereInput | Prisma.ChannelWhereInput[]
   name?: Prisma.StringFilter<"Channel"> | string
   description?: Prisma.StringFilter<"Channel"> | string
+  category?: Prisma.StringFilter<"Channel"> | string
   isPrivate?: Prisma.BoolFilter<"Channel"> | boolean
   unread?: Prisma.IntFilter<"Channel"> | number
   status?: Prisma.StringFilter<"Channel"> | string
@@ -280,6 +290,7 @@ export type ChannelOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   isPrivate?: Prisma.SortOrder
   unread?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -299,6 +310,7 @@ export type ChannelScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Channel"> | string
   name?: Prisma.StringWithAggregatesFilter<"Channel"> | string
   description?: Prisma.StringWithAggregatesFilter<"Channel"> | string
+  category?: Prisma.StringWithAggregatesFilter<"Channel"> | string
   isPrivate?: Prisma.BoolWithAggregatesFilter<"Channel"> | boolean
   unread?: Prisma.IntWithAggregatesFilter<"Channel"> | number
   status?: Prisma.StringWithAggregatesFilter<"Channel"> | string
@@ -310,6 +322,7 @@ export type ChannelCreateInput = {
   id: string
   name: string
   description: string
+  category?: string
   isPrivate?: boolean
   unread?: number
   status: string
@@ -324,6 +337,7 @@ export type ChannelUncheckedCreateInput = {
   id: string
   name: string
   description: string
+  category?: string
   isPrivate?: boolean
   unread?: number
   status: string
@@ -338,6 +352,7 @@ export type ChannelUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -352,6 +367,7 @@ export type ChannelUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -366,6 +382,7 @@ export type ChannelCreateManyInput = {
   id: string
   name: string
   description: string
+  category?: string
   isPrivate?: boolean
   unread?: number
   status: string
@@ -377,6 +394,7 @@ export type ChannelUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -388,6 +406,7 @@ export type ChannelUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -399,6 +418,7 @@ export type ChannelCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   isPrivate?: Prisma.SortOrder
   unread?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -414,6 +434,7 @@ export type ChannelMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   isPrivate?: Prisma.SortOrder
   unread?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -425,6 +446,7 @@ export type ChannelMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   isPrivate?: Prisma.SortOrder
   unread?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -499,6 +521,7 @@ export type ChannelCreateWithoutMembersInput = {
   id: string
   name: string
   description: string
+  category?: string
   isPrivate?: boolean
   unread?: number
   status: string
@@ -512,6 +535,7 @@ export type ChannelUncheckedCreateWithoutMembersInput = {
   id: string
   name: string
   description: string
+  category?: string
   isPrivate?: boolean
   unread?: number
   status: string
@@ -541,6 +565,7 @@ export type ChannelUpdateWithoutMembersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -554,6 +579,7 @@ export type ChannelUncheckedUpdateWithoutMembersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -567,6 +593,7 @@ export type ChannelCreateWithoutMessagesInput = {
   id: string
   name: string
   description: string
+  category?: string
   isPrivate?: boolean
   unread?: number
   status: string
@@ -580,6 +607,7 @@ export type ChannelUncheckedCreateWithoutMessagesInput = {
   id: string
   name: string
   description: string
+  category?: string
   isPrivate?: boolean
   unread?: number
   status: string
@@ -609,6 +637,7 @@ export type ChannelUpdateWithoutMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -622,6 +651,7 @@ export type ChannelUncheckedUpdateWithoutMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -635,6 +665,7 @@ export type ChannelCreateWithoutPinnedInput = {
   id: string
   name: string
   description: string
+  category?: string
   isPrivate?: boolean
   unread?: number
   status: string
@@ -648,6 +679,7 @@ export type ChannelUncheckedCreateWithoutPinnedInput = {
   id: string
   name: string
   description: string
+  category?: string
   isPrivate?: boolean
   unread?: number
   status: string
@@ -677,6 +709,7 @@ export type ChannelUpdateWithoutPinnedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -690,6 +723,7 @@ export type ChannelUncheckedUpdateWithoutPinnedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
   isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   unread?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.StringFieldUpdateOperationsInput | string
@@ -752,6 +786,7 @@ export type ChannelSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   id?: boolean
   name?: boolean
   description?: boolean
+  category?: boolean
   isPrivate?: boolean
   unread?: boolean
   status?: boolean
@@ -767,6 +802,7 @@ export type ChannelSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   id?: boolean
   name?: boolean
   description?: boolean
+  category?: boolean
   isPrivate?: boolean
   unread?: boolean
   status?: boolean
@@ -778,6 +814,7 @@ export type ChannelSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   id?: boolean
   name?: boolean
   description?: boolean
+  category?: boolean
   isPrivate?: boolean
   unread?: boolean
   status?: boolean
@@ -789,6 +826,7 @@ export type ChannelSelectScalar = {
   id?: boolean
   name?: boolean
   description?: boolean
+  category?: boolean
   isPrivate?: boolean
   unread?: boolean
   status?: boolean
@@ -796,7 +834,7 @@ export type ChannelSelectScalar = {
   createdAt?: boolean
 }
 
-export type ChannelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "isPrivate" | "unread" | "status" | "handoff" | "createdAt", ExtArgs["result"]["channel"]>
+export type ChannelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "category" | "isPrivate" | "unread" | "status" | "handoff" | "createdAt", ExtArgs["result"]["channel"]>
 export type ChannelInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   messages?: boolean | Prisma.Channel$messagesArgs<ExtArgs>
   members?: boolean | Prisma.Channel$membersArgs<ExtArgs>
@@ -817,6 +855,7 @@ export type $ChannelPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     id: string
     name: string
     description: string
+    category: string
     isPrivate: boolean
     unread: number
     status: string
@@ -1251,6 +1290,7 @@ export interface ChannelFieldRefs {
   readonly id: Prisma.FieldRef<"Channel", 'String'>
   readonly name: Prisma.FieldRef<"Channel", 'String'>
   readonly description: Prisma.FieldRef<"Channel", 'String'>
+  readonly category: Prisma.FieldRef<"Channel", 'String'>
   readonly isPrivate: Prisma.FieldRef<"Channel", 'Boolean'>
   readonly unread: Prisma.FieldRef<"Channel", 'Int'>
   readonly status: Prisma.FieldRef<"Channel", 'String'>

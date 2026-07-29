@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
 
 export default function HomePage() {
-  redirect('/channel/ship-room')
+  redirect('/channel/proj-ship-room')
 }

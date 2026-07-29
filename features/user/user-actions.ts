@@ -1,15 +1,10 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
-import type { Route } from 'next'
+import { revalidatePath } from 'next/cache'
 import { SESSION_COOKIE, USERS } from './user-data'
 
-function safePath(value: string) {
-  return value.startsWith('/') ? value : '/channel/ship-room'
-}
-
-export async function switchUser(userId: string, nextPath: string) {
+export async function switchUser(userId: string) {
   const cookieStore = await cookies()
   const nextUserId = USERS[userId] ? userId : 'ada'
 
@@ -18,5 +13,7 @@ export async function switchUser(userId: string, nextPath: string) {
     sameSite: 'lax',
   })
 
-  redirect(safePath(nextPath) as Route)
+  // Soft-refresh the current tree so the new user's data streams in without a
+  // hard redirect (which re-renders the whole document and the theme script).
+  revalidatePath('/', 'layout')
 }

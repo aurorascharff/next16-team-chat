@@ -22,6 +22,7 @@ model Channel {
   id          String   @id
   name        String
   description String
+  category    String   @default("Channels")
   isPrivate   Boolean  @default(false)
   unread      Int      @default(0)
   status      String

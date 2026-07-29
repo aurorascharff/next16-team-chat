@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { EmptyState } from "@/components/ui/empty-state";
+import Link from 'next/link'
+import { EmptyState } from '@/components/ui/empty-state'
 
 export default function NotFound() {
   return (
@@ -10,11 +10,11 @@ export default function NotFound() {
       >
         <Link
           className="bg-accent hover:bg-accent-hover flex min-h-9 items-center justify-center rounded-lg px-3.5 text-[0.8125rem] font-semibold text-white transition-colors"
-          href="/channel/ship-room"
+          href="/channel/proj-ship-room"
         >
           Back to ship-room
         </Link>
       </EmptyState>
     </main>
-  );
+  )
 }

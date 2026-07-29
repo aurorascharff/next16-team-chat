@@ -7,6 +7,7 @@ export type ChannelSummary = {
   id: string
   name: string
   description: string
+  category: string
   isPrivate: boolean
   memberCount: number
   unread?: number
@@ -17,12 +18,15 @@ export type ChannelDetail = ChannelSummary & {
   members: string[]
   pinned: string[]
   status: string
+  messageCount: number
+  threadCount: number
 }
 
 type ChannelRow = {
   id: string
   name: string
   description: string
+  category: string
   isPrivate: boolean
   unread: number
   members?: unknown[]
@@ -30,6 +34,7 @@ type ChannelRow = {
 
 function toChannelSummary(channel: ChannelRow): ChannelSummary {
   return {
+    category: channel.category,
     description: channel.description,
     id: channel.id,
     isPrivate: channel.isPrivate,
@@ -48,6 +53,19 @@ export async function listChannels() {
   return channels.map(toChannelSummary)
 }
 
+export async function listUnreadChannels() {
+  const channels = await prisma.channel.findMany({
+    select: { id: true, unread: true },
+    where: { unread: { gt: 0 } },
+  })
+
+  return Object.fromEntries(
+    channels.map((channel) => {
+      return [channel.id, channel.unread]
+    }),
+  ) as Record<string, number>
+}
+
 export async function findChannel(channelId: string) {
   const channel = await prisma.channel.findUnique({
     include: { members: true },
@@ -55,6 +73,13 @@ export async function findChannel(channelId: string) {
   })
 
   return channel ? toChannelSummary(channel) : null
+}
+
+export async function markChannelRead(channelId: string) {
+  await prisma.channel.updateMany({
+    data: { unread: 0 },
+    where: { id: channelId, unread: { gt: 0 } },
+  })
 }
 
 export async function getChannelDetail(channelId: string) {
@@ -72,12 +97,19 @@ export async function getChannelDetail(channelId: string) {
 
   if (!channel) return null
 
+  const [messageCount, threadCount] = await Promise.all([
+    prisma.message.count({ where: { channelId, parentId: null } }),
+    prisma.message.count({ where: { channelId, replies: { some: {} } } }),
+  ])
+
   return {
     ...toChannelSummary(channel),
     handoff: channel.handoff,
     members: channel.members.map((member) => member.user.name),
+    messageCount,
     pinned: channel.pinned.map((item) => item.label),
     status: channel.status,
+    threadCount,
   } satisfies ChannelDetail
 }
 
