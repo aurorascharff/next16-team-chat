@@ -8,7 +8,7 @@ import {
   ChannelDetails,
   ChannelDetailsSkeleton,
 } from '@/features/channel/components/channel-details'
-import { ChannelSidebar } from '@/features/message/components/channel-sidebar'
+import { ChannelDetailPanel } from '@/features/message/components/channel-detail-panel'
 import { MarkChannelRead } from '@/features/channel/components/mark-channel-read'
 import {
   MessageComposer,
@@ -75,7 +75,7 @@ export default function ChannelPage({
               })}
             </Suspense>
           </div>
-          <ChannelSidebar
+          <ChannelDetailPanel
             details={
               <Suspense fallback={<ChannelDetailsSkeleton />}>
                 <Crossfade>

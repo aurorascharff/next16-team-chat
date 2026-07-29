@@ -5,7 +5,7 @@ import { ResizablePanel } from '@/components/ui/resizable-panel'
 import { useThread } from './thread-context'
 import { ThreadPanel } from './thread-panel'
 
-export function ChannelSidebar({ details }: { details: ReactNode }) {
+export function ChannelDetailPanel({ details }: { details: ReactNode }) {
   const { activeThread } = useThread()
 
   return (

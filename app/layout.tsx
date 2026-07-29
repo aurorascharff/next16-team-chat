@@ -20,7 +20,10 @@ import { SearchButton } from '@/features/workspace/components/search-button'
 import { UserSwitchProvider } from '@/features/user/components/user-switch-context'
 import { CommandPalette } from '@/features/channel/components/command-palette'
 import { BotDriver } from '@/features/demo/components/bot-driver'
-import { MobileTabBar, MobileTabBarSkeleton } from '@/components/mobile-tab-bar'
+import {
+  MobileTabBar,
+  MobileTabBarSkeleton,
+} from '@/features/workspace/components/mobile-tab-bar'
 import { Providers } from './providers'
 import './globals.css'
 

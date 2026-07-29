@@ -12,13 +12,6 @@ function isValidMention(token: string) {
   return VALID_MENTIONS.has(token.slice(1).toLowerCase())
 }
 
-export function initials(name: string) {
-  return name
-    .split(' ')
-    .map((part) => part[0])
-    .join('')
-}
-
 export function formatTime(value: string) {
   return new Intl.DateTimeFormat('en', {
     hour: 'numeric',

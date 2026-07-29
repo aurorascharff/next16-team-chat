@@ -3,7 +3,7 @@ import Link from 'next/link'
 import type { Route } from 'next'
 import { EmptyState } from '@/components/ui/empty-state'
 import { UserAvatar } from '@/components/ui/user-avatar'
-import type { WorkspaceItem } from '@/features/workspace/workspace-store'
+import type { WorkspaceItem } from '@/features/workspace/workspace-queries'
 
 export function WorkspaceList({
   emptyBody,
