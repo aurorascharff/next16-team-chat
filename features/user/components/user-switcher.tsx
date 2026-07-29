@@ -1,8 +1,10 @@
 "use client";
 
+import { ArrowLeftRight } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useTransition } from "react";
 import { switchUser } from "@/features/user/user-actions";
+import { cn } from "@/lib/utils";
 
 export function UserSwitcher({ currentUserId }: { currentUserId: string }) {
   const pathname = usePathname();
@@ -11,16 +13,22 @@ export function UserSwitcher({ currentUserId }: { currentUserId: string }) {
 
   return (
     <button
-      className="border-divider dark:border-divider-dark hover:bg-card dark:hover:bg-card-dark bg-surface dark:bg-elevated-dark flex min-h-8 items-center justify-center rounded-lg border px-2.5 text-[0.8125rem] font-semibold transition-colors disabled:cursor-progress disabled:opacity-55"
+      aria-label="Switch user"
+      className="text-muted dark:text-muted-dark hover:bg-surface dark:hover:bg-elevated-dark flex size-8 items-center justify-center rounded-lg transition-colors hover:text-black disabled:cursor-progress disabled:opacity-55 dark:hover:text-white"
       disabled={isPending}
       onClick={() => {
         startTransition(async () => {
           await switchUser(nextUserId, pathname);
         });
       }}
+      title="Switch user"
       type="button"
     >
-      {isPending ? "Switching…" : "Switch"}
+      <ArrowLeftRight
+        aria-hidden
+        className={cn("size-4", isPending && "animate-pulse")}
+        strokeWidth={2}
+      />
     </button>
   );
 }

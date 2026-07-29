@@ -1,0 +1,91 @@
+"use client";
+
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { X } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  messagesQueryOptions,
+  repliesQueryOptions,
+} from "@/features/message/message-query-options";
+import { MessageComposer } from "./message-composer";
+import { MessageRow } from "./message-row";
+import { useThread } from "./thread-context";
+
+export function ThreadPanel({
+  channelId,
+  messageId,
+}: {
+  channelId: string;
+  messageId: string;
+}) {
+  const { closeThread } = useThread();
+  const { data: messages } = useSuspenseQuery(messagesQueryOptions(channelId));
+  const parent = messages.find((message) => {
+    return message.id === messageId;
+  });
+  const replies = useQuery(repliesQueryOptions(messageId));
+
+  return (
+    <aside
+      aria-label="Thread"
+      className="border-divider dark:border-divider-dark flex min-h-0 flex-col border-l max-lg:hidden"
+    >
+      <header className="border-divider dark:border-divider-dark flex items-center justify-between border-b px-4 py-3">
+        <div>
+          <h2>Thread</h2>
+          <p className="text-muted dark:text-muted-dark text-xs">
+            #{channelId}
+          </p>
+        </div>
+        <button
+          aria-label="Close thread"
+          className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex size-8 items-center justify-center rounded-lg transition-colors hover:text-black dark:hover:text-white"
+          onClick={closeThread}
+          type="button"
+        >
+          <X aria-hidden className="size-4" strokeWidth={2} />
+        </button>
+      </header>
+      <div className="flex-1 overflow-y-auto py-2">
+        {parent ? <MessageRow message={parent} /> : null}
+        <div className="border-divider dark:border-divider-dark text-muted dark:text-muted-dark mx-5 my-2 flex items-center gap-3 border-t pt-3 text-xs font-medium">
+          {replies.data
+            ? `${replies.data.length} ${
+                replies.data.length === 1 ? "reply" : "replies"
+              }`
+            : "Loading replies…"}
+        </div>
+        {replies.isPending ? (
+          <ReplySkeleton />
+        ) : (
+          replies.data?.map((reply) => {
+            return <MessageRow key={reply.id} message={reply} />;
+          })
+        )}
+      </div>
+      <MessageComposer
+        channelId={channelId}
+        parentId={messageId}
+        placeholder="Reply…"
+      />
+    </aside>
+  );
+}
+
+function ReplySkeleton() {
+  return (
+    <div className="flex flex-col gap-1">
+      {["w-2/3", "w-1/2"].map((width, i) => {
+        return (
+          <div className="flex gap-3 px-5 py-2.5" key={i}>
+            <Skeleton className="size-9 shrink-0 rounded-lg" />
+            <div className="flex flex-1 flex-col gap-2 pt-1">
+              <Skeleton className="h-3 w-20 rounded-full" />
+              <Skeleton className={`h-3.5 rounded-full ${width}`} />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}

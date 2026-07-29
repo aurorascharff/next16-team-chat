@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getChannelDetail } from "@/features/message/message-store";
 
 export async function ChannelDetails({ channelId }: { channelId: string }) {
@@ -68,9 +69,9 @@ export function ChannelDetailsSkeleton() {
       {Array.from({ length: 3 }).map((_, i) => {
         return (
           <section className="flex flex-col gap-2" key={i}>
-            <div className="skeleton-animation h-3.5 w-20 rounded-full" />
-            <div className="skeleton-animation h-3 w-full rounded-full" />
-            <div className="skeleton-animation h-3 w-2/3 rounded-full" />
+            <Skeleton className="h-3.5 w-20 rounded-full" />
+            <Skeleton className="h-3 w-full rounded-full" />
+            <Skeleton className="h-3 w-2/3 rounded-full" />
           </section>
         );
       })}

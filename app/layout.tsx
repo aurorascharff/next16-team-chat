@@ -26,6 +26,9 @@ export const metadata: Metadata = {
     apple: "/logo.svg",
     icon: "/logo.svg",
   },
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000",
+  ),
   title: {
     default: "Huddle",
     template: "%s · Huddle",

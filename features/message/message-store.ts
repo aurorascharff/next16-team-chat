@@ -81,50 +81,80 @@ export async function getChannelDetail(channelId: string) {
   } satisfies ChannelDetail
 }
 
-export async function listMessages(channelId: string) {
-  const messages = await prisma.message.findMany({
-    include: { user: true },
-    orderBy: { createdAt: 'asc' },
-    where: { channelId },
-  })
-
-  return messages.map((message) => ({
-    body: message.body,
-    channelId: message.channelId,
-    createdAt: message.createdAt.toISOString(),
-    id: message.id,
-    userId: message.userId,
-    userName: message.user.name,
-  }))
-}
-
-export async function addMessage({
-  body,
-  channelId,
-  userId,
-}: {
+function toMessage(message: {
   body: string
   channelId: string
+  createdAt: Date
+  id: string
+  parentId: string | null
   userId: string
+  user: { name: string }
+  _count?: { replies: number }
 }) {
-  const user = USERS[userId] ?? USERS.ada
-  const message = await prisma.message.create({
-    include: { user: true },
-    data: {
-      body,
-      channelId,
-      createdAt: new Date(),
-      id: `m-${crypto.randomUUID()}`,
-      userId: user.id,
-    },
-  })
-
   return {
     body: message.body,
     channelId: message.channelId,
     createdAt: message.createdAt.toISOString(),
     id: message.id,
+    parentId: message.parentId,
+    replyCount: message._count?.replies ?? 0,
     userId: message.userId,
     userName: message.user.name,
   }
+}
+
+export async function listMessages(channelId: string) {
+  const messages = await prisma.message.findMany({
+    include: { _count: { select: { replies: true } }, user: true },
+    orderBy: { createdAt: 'asc' },
+    where: { channelId, parentId: null },
+  })
+
+  return messages.map(toMessage)
+}
+
+export async function listReplies(parentId: string) {
+  const replies = await prisma.message.findMany({
+    include: { _count: { select: { replies: true } }, user: true },
+    orderBy: { createdAt: 'asc' },
+    where: { parentId },
+  })
+
+  return replies.map(toMessage)
+}
+
+export async function findMessage(messageId: string) {
+  const message = await prisma.message.findUnique({
+    include: { _count: { select: { replies: true } }, user: true },
+    where: { id: messageId },
+  })
+
+  return message ? toMessage(message) : null
+}
+
+export async function addMessage({
+  body,
+  channelId,
+  parentId,
+  userId,
+}: {
+  body: string
+  channelId: string
+  parentId?: string
+  userId: string
+}) {
+  const user = USERS[userId] ?? USERS.ada
+  const message = await prisma.message.create({
+    include: { _count: { select: { replies: true } }, user: true },
+    data: {
+      body,
+      channelId,
+      createdAt: new Date(),
+      id: `m-${crypto.randomUUID()}`,
+      parentId: parentId ?? null,
+      userId: user.id,
+    },
+  })
+
+  return toMessage(message)
 }

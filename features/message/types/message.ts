@@ -1,3 +1,5 @@
+export type MessageStatus = 'sending' | 'sent' | 'failed'
+
 export type Message = {
   id: string
   channelId: string
@@ -5,5 +7,7 @@ export type Message = {
   userName: string
   body: string
   createdAt: string
-  optimistic?: boolean
+  parentId?: string | null
+  replyCount?: number
+  status?: MessageStatus
 }

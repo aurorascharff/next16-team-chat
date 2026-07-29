@@ -1,9 +1,14 @@
 "use client";
 
 import type { Route } from "next";
+import { useQuery } from "@tanstack/react-query";
 import { AtSign, MessagesSquare, PencilLine, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useMarkSectionSeen } from "@/features/notification/notification-mutations";
+import { seenSectionsQueryOptions } from "@/features/notification/notification-query-options";
 import { cn } from "@/lib/utils";
 
 const REPO_URL = "https://github.com/aurorascharff/next16-messaging";
@@ -26,7 +31,7 @@ function BrandMark() {
   return (
     <span
       aria-hidden
-      className="from-accent to-accent-hover flex size-8 items-center justify-center rounded-lg bg-gradient-to-br text-white shadow-sm"
+      className="from-accent to-accent-hover flex size-8 items-center justify-center rounded-lg bg-linear-to-br text-white shadow-sm"
     >
       <Users className="size-4" strokeWidth={2.5} />
     </span>
@@ -35,6 +40,18 @@ function BrandMark() {
 
 export function WorkspaceNav() {
   const pathname = usePathname();
+  const { data: seen = {} } = useQuery(seenSectionsQueryOptions());
+  const markSeen = useMarkSectionSeen();
+
+  useEffect(() => {
+    const isSection = links.some((link) => {
+      return link.href === pathname;
+    });
+
+    if (isSection && !seen[pathname]) {
+      markSeen.mutate(pathname);
+    }
+  }, [pathname, seen, markSeen]);
 
   return (
     <div className="flex flex-col gap-3">
@@ -67,6 +84,7 @@ export function WorkspaceNav() {
       <nav aria-label="Workspace" className="flex flex-col gap-0.5">
         {links.map(({ badge, href, icon: Icon, label }) => {
           const active = pathname === href;
+          const showBadge = badge > 0 && !seen[href];
 
           return (
             <Link
@@ -83,7 +101,7 @@ export function WorkspaceNav() {
             >
               <Icon aria-hidden className="size-4 shrink-0" strokeWidth={2} />
               <span className="flex-1 truncate">{label}</span>
-              {badge ? (
+              {showBadge ? (
                 <span
                   className={cn(
                     "flex h-4.5 min-w-4.5 items-center justify-center rounded-full px-1.5 text-[0.6875rem] font-bold",
@@ -118,8 +136,13 @@ export function WorkspaceNavSkeleton() {
         </span>
       </div>
       <div className="flex flex-col gap-0.5">
-        {Array.from({ length: 3 }).map((_, i) => {
-          return <div className="skeleton-animation h-8 rounded-lg" key={i} />;
+        {["w-16", "w-20", "w-14"].map((width, i) => {
+          return (
+            <div className="flex min-h-8 items-center gap-2.5 px-2.5" key={i}>
+              <Skeleton className="size-4 shrink-0 rounded" />
+              <Skeleton className={cn("h-3 rounded-full", width)} />
+            </div>
+          );
         })}
       </div>
     </div>

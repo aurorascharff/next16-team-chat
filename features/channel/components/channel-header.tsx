@@ -1,4 +1,5 @@
 import { Hash, Search, Users } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getChannel } from "@/features/channel/channel-queries";
 
 export async function ChannelHeader({ channelId }: { channelId: string }) {
@@ -20,22 +21,6 @@ export async function ChannelHeader({ channelId }: { channelId: string }) {
         </p>
       </div>
       <div className="flex items-center gap-2.5 max-md:w-full max-md:justify-between">
-        <div
-          aria-label={`${channel.memberCount} members`}
-          className="flex pl-2"
-        >
-          {["A", "M", "N"].map((initial) => {
-            return (
-              <span
-                aria-hidden
-                className="bg-accent border-surface dark:border-surface-dark -ml-2 flex size-7 items-center justify-center rounded-full border-2 text-[0.625rem] font-bold text-white"
-                key={initial}
-              >
-                {initial}
-              </span>
-            );
-          })}
-        </div>
         <label className="relative max-md:hidden">
           <span className="sr-only">Search channel</span>
           <Search
@@ -48,7 +33,7 @@ export async function ChannelHeader({ channelId }: { channelId: string }) {
             placeholder="Search"
           />
         </label>
-        <div className="border-divider dark:border-divider-dark text-muted dark:text-muted-dark flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-xs font-medium max-md:hidden">
+        <div className="border-divider dark:border-divider-dark text-muted dark:text-muted-dark flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-xs font-medium">
           <Users aria-hidden className="size-3.5" strokeWidth={2} />
           {channel.memberCount}
         </div>
@@ -59,12 +44,19 @@ export async function ChannelHeader({ channelId }: { channelId: string }) {
 
 export function ChannelHeaderSkeleton() {
   return (
-    <header className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark sticky top-0 z-10 flex items-center justify-between gap-3 border-b px-5 py-3">
-      <div className="flex flex-col gap-2">
-        <div className="skeleton-animation h-5 w-48 rounded-full" />
-        <div className="skeleton-animation h-3.5 w-72 rounded-full" />
+    <header className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark sticky top-0 z-10 flex items-center justify-between gap-3 border-b px-5 py-3 max-md:flex-col max-md:items-start">
+      <div className="min-w-0">
+        <h1 className="flex h-7 items-center">
+          <Skeleton className="h-4.5 w-40 rounded-full" />
+        </h1>
+        <p className="mt-0.5 flex h-5 items-center">
+          <Skeleton className="h-3 w-64 rounded-full" />
+        </p>
       </div>
-      <div className="skeleton-animation h-7 w-24 rounded-full" />
+      <div className="flex items-center gap-2.5 max-md:w-full max-md:justify-between">
+        <Skeleton className="h-8 w-32 rounded-lg max-md:hidden" />
+        <Skeleton className="h-7 w-14 rounded-full" />
+      </div>
     </header>
   );
 }

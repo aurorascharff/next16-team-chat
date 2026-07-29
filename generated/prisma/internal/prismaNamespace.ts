@@ -868,7 +868,8 @@ export const MessageScalarFieldEnum = {
   body: 'body',
   createdAt: 'createdAt',
   channelId: 'channelId',
-  userId: 'userId'
+  userId: 'userId',
+  parentId: 'parentId'
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
@@ -897,6 +898,14 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
 

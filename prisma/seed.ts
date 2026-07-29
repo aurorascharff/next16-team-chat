@@ -170,6 +170,31 @@ const messages = [
     "Build is green after the Next preview bump. The only warning left is the local npmrc env placeholder.",
     "2026-07-29T13:09:00.000Z",
   ],
+  // Threaded replies (6th element is the parent message id).
+  [
+    "m-1-r1",
+    "ship-room",
+    "grace",
+    "Good catch. Was it the initialData or the queryFn firing on the server?",
+    "2026-07-29T13:01:30.000Z",
+    "m-1",
+  ],
+  [
+    "m-1-r2",
+    "ship-room",
+    "ada",
+    "The queryFn. Pinning staleTime fixed it.",
+    "2026-07-29T13:02:30.000Z",
+    "m-1",
+  ],
+  [
+    "m-4-r1",
+    "ship-room",
+    "ada",
+    "Fixed. The skeleton now pins the h1 and p line-boxes so it is exactly 75px.",
+    "2026-07-29T13:08:30.000Z",
+    "m-4",
+  ],
 ] as const;
 
 async function main() {
@@ -209,11 +234,12 @@ async function main() {
   }
 
   await prisma.message.createMany({
-    data: messages.map(([id, channelId, userId, body, createdAt]) => ({
+    data: messages.map(([id, channelId, userId, body, createdAt, parentId]) => ({
       body,
       channelId,
       createdAt: new Date(createdAt),
       id,
+      parentId: parentId ?? null,
       userId,
     })),
   });

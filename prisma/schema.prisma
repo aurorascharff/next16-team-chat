@@ -54,7 +54,12 @@ model Message {
   channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
   user      User    @relation(fields: [userId], references: [id])
 
+  parentId String?
+  parent   Message?  @relation("MessageReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  Message[] @relation("MessageReplies")
+
   @@index([channelId, createdAt])
+  @@index([parentId, createdAt])
   @@index([userId])
 }
 

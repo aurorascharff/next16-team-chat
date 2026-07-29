@@ -4,8 +4,10 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import { cacheLife, cacheTag } from "next/cache";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getMessages, messagesTag } from "@/features/message/message-queries";
 import { messageKeys } from "@/features/message/message-query-options";
+import { cn } from "@/lib/utils";
 import { MessageComposer } from "./message-composer";
 import { MessageList } from "./message-list";
 
@@ -38,15 +40,23 @@ export async function MessageThread({ channelId }: { channelId: string }) {
 }
 
 export function MessageThreadSkeleton() {
+  const rows = [
+    { body: "w-3/4", name: "w-24" },
+    { body: "w-1/2", name: "w-20" },
+    { body: "w-5/6", name: "w-28" },
+    { body: "w-2/5", name: "w-16" },
+    { body: "w-2/3", name: "w-24" },
+  ];
+
   return (
     <div className="flex flex-col gap-1 pt-3">
-      {Array.from({ length: 5 }).map((_, i) => {
+      {rows.map((row, i) => {
         return (
           <div className="flex gap-3 px-5 py-2.5" key={i}>
-            <div className="skeleton-animation size-9 rounded-lg" />
-            <div className="flex flex-1 flex-col gap-2">
-              <div className="skeleton-animation h-3.5 w-28 rounded-full" />
-              <div className="skeleton-animation h-3 w-full max-w-md rounded-full" />
+            <Skeleton className="size-9 shrink-0 rounded-lg" />
+            <div className="flex flex-1 flex-col gap-2 pt-1">
+              <Skeleton className={cn("h-3 rounded-full", row.name)} />
+              <Skeleton className={cn("h-3.5 max-w-lg rounded-full", row.body)} />
             </div>
           </div>
         );

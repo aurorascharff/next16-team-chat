@@ -3,7 +3,7 @@
 import { updateTag } from 'next/cache'
 import { getCurrentUser } from '@/features/user/user-queries'
 import { addMessage } from './message-store'
-import { messagesTag } from './message-queries'
+import { messagesTag, repliesTag } from './message-queries'
 
 export type SendMessageResult =
   | { ok: true; message: Awaited<ReturnType<typeof addMessage>> }
@@ -12,9 +12,11 @@ export type SendMessageResult =
 export async function sendMessage({
   body,
   channelId,
+  parentId,
 }: {
   body: string
   channelId: string
+  parentId?: string
 }): Promise<SendMessageResult> {
   const text = body.trim()
 
@@ -27,8 +29,17 @@ export async function sendMessage({
   }
 
   const user = await getCurrentUser()
-  const message = await addMessage({ body: text, channelId, userId: user.id })
+  const message = await addMessage({
+    body: text,
+    channelId,
+    parentId,
+    userId: user.id,
+  })
 
+  if (parentId) {
+    // A reply updates the thread and the parent's reply count in the channel.
+    updateTag(repliesTag(parentId))
+  }
   updateTag(messagesTag(channelId))
 
   return { message, ok: true }
