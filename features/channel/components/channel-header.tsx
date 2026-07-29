@@ -1,4 +1,5 @@
-import { Hash, Users } from 'lucide-react'
+import { ChevronLeft, Hash } from 'lucide-react'
+import Link from 'next/link'
 import { GitHubLink } from '@/components/ui/github-link'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -12,18 +13,27 @@ export async function ChannelHeader({ channelId }: { channelId: string }) {
 
   return (
     <header className="border-divider dark:border-divider-dark bg-surface/80 dark:bg-surface-dark/80 sticky top-0 z-10 flex items-center justify-between gap-3 border-b px-5 py-3 backdrop-blur-lg max-md:flex-col max-md:items-start">
-      <div className="min-w-0">
-        <h1 className="flex items-center gap-1.5">
-          <Hash
-            aria-hidden
-            className="text-gray size-4 shrink-0"
-            strokeWidth={2.5}
-          />
-          {channel.name}
-        </h1>
-        <p className="text-muted dark:text-muted-dark mt-0.5 truncate text-sm max-md:whitespace-normal">
-          {channel.description}
-        </p>
+      <div className="flex min-w-0 items-center gap-2">
+        <Link
+          aria-label="Back to channels"
+          className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark -ml-1.5 flex size-8 shrink-0 items-center justify-center rounded-lg transition-colors hover:text-black md:hidden dark:hover:text-white"
+          href="/channels"
+        >
+          <ChevronLeft aria-hidden className="size-5" strokeWidth={2} />
+        </Link>
+        <div className="min-w-0">
+          <h1 className="flex items-center gap-1.5">
+            <Hash
+              aria-hidden
+              className="text-gray size-4 shrink-0"
+              strokeWidth={2.5}
+            />
+            {channel.name}
+          </h1>
+          <p className="text-muted dark:text-muted-dark mt-0.5 truncate text-sm max-md:whitespace-normal">
+            {channel.description}
+          </p>
+        </div>
       </div>
       <div className="flex items-center gap-2.5 max-md:w-full max-md:justify-between">
         <div className="flex items-center gap-2.5">
@@ -36,10 +46,6 @@ export async function ChannelHeader({ channelId }: { channelId: string }) {
           <span className="max-md:hidden">
             <GitHubLink />
           </span>
-        </div>
-        <div className="border-divider dark:border-divider-dark text-muted dark:text-muted-dark flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-xs font-medium">
-          <Users aria-hidden className="size-3.5" strokeWidth={2} />
-          {channel.memberCount}
         </div>
       </div>
     </header>
@@ -63,7 +69,6 @@ export function ChannelHeaderSkeleton() {
           <Skeleton className="h-7 w-24 rounded-full" />
           <Skeleton className="size-7 rounded-full" />
         </div>
-        <Skeleton className="h-7 w-14 rounded-full" />
       </div>
     </header>
   )

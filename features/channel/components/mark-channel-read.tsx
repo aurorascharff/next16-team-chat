@@ -8,7 +8,6 @@ export function MarkChannelRead({ channelId }: { channelId: string }) {
 
   useEffect(() => {
     markRead.mutate(channelId)
-    // Only fire when the channel changes, not on every mutation identity change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [channelId])
 

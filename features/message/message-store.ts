@@ -19,7 +19,6 @@ export type ChannelDetail = ChannelSummary & {
   pinned: string[]
   status: string
   messageCount: number
-  threadCount: number
 }
 
 const UNGROUPED = 'Channels'
@@ -48,8 +47,6 @@ function toChannelSummary(
   }
 }
 
-// Channels visible to a user, tagged with that user's editable group name and
-// ordered by the user's group positions, then by channel position within a group.
 export async function listChannels(userId: string) {
   const memberships = await prisma.channelMember.findMany({
     include: {
@@ -80,8 +77,6 @@ export async function listChannels(userId: string) {
     })
 }
 
-// A user's full sidebar layout: groups sorted alphabetically (each with its
-// channels sorted by position), plus a trailing group for ungrouped channels.
 export async function listChannelLayout(userId: string) {
   const [groups, channels] = await Promise.all([
     prisma.channelGroup.findMany({
@@ -119,9 +114,6 @@ export async function listUnreadChannels() {
   ) as Record<string, number>
 }
 
-// Persist a user's full sidebar layout: create/rename groups present in the
-// layout, delete groups the user removed, and assign each channel to its group
-// (or leave it ungrouped) with a stable position.
 export async function reorderChannels(
   userId: string,
   layout: { groups: { name: string; channelIds: string[] }[] },
@@ -132,7 +124,6 @@ export async function reorderChannels(
   const groupIdByName = new Map(
     existingGroups.map((group) => [group.name, group.id]),
   )
-  // Channels in the trailing "ungrouped" bucket keep a null group.
   const keptNames = new Set(
     layout.groups
       .map((group) => group.name)
@@ -140,7 +131,6 @@ export async function reorderChannels(
   )
 
   await prisma.$transaction(async (tx) => {
-    // Remove groups the user deleted; membership.groupId resets to null.
     const removed = existingGroups.filter((group) => !keptNames.has(group.name))
     if (removed.length > 0) {
       await tx.channelGroup.deleteMany({
@@ -175,15 +165,6 @@ export async function reorderChannels(
   })
 }
 
-export async function findChannel(channelId: string) {
-  const channel = await prisma.channel.findUnique({
-    include: { members: true },
-    where: { id: channelId },
-  })
-
-  return channel ? toChannelSummary(channel) : null
-}
-
 export async function markChannelRead(channelId: string) {
   await prisma.channel.updateMany({
     data: { unread: 0 },
@@ -206,10 +187,9 @@ export async function getChannelDetail(channelId: string) {
 
   if (!channel) return null
 
-  const [messageCount, threadCount] = await Promise.all([
-    prisma.message.count({ where: { channelId, parentId: null } }),
-    prisma.message.count({ where: { channelId, replies: { some: {} } } }),
-  ])
+  const messageCount = await prisma.message.count({
+    where: { channelId, parentId: null },
+  })
 
   return {
     ...toChannelSummary(channel),
@@ -218,59 +198,101 @@ export async function getChannelDetail(channelId: string) {
     messageCount,
     pinned: channel.pinned.map((item) => item.label),
     status: channel.status,
-    threadCount,
   } satisfies ChannelDetail
 }
 
-function toMessage(message: {
-  body: string
-  channelId: string
-  createdAt: Date
-  id: string
-  parentId: string | null
-  userId: string
-  user: { name: string }
-  _count?: { replies: number }
-}) {
+function toMessage(
+  message: {
+    body: string
+    channelId: string
+    createdAt: Date
+    id: string
+    parentId: string | null
+    userId: string
+    user: { name: string }
+    _count?: { replies: number }
+    reactions?: { emoji: string; userId: string }[]
+  },
+  currentUserId?: string,
+) {
+  const byEmoji = new Map<string, { count: number; reacted: boolean }>()
+  for (const reaction of message.reactions ?? []) {
+    const entry = byEmoji.get(reaction.emoji) ?? { count: 0, reacted: false }
+    entry.count += 1
+    if (reaction.userId === currentUserId) entry.reacted = true
+    byEmoji.set(reaction.emoji, entry)
+  }
+
   return {
     body: message.body,
     channelId: message.channelId,
     createdAt: message.createdAt.toISOString(),
     id: message.id,
     parentId: message.parentId,
+    reactions: [...byEmoji.entries()].map(([emoji, value]) => {
+      return { count: value.count, emoji, reacted: value.reacted }
+    }),
     replyCount: message._count?.replies ?? 0,
     userId: message.userId,
     userName: message.user.name,
   }
 }
 
-export async function listMessages(channelId: string) {
+const messageInclude = {
+  _count: { select: { replies: true } },
+  reactions: true,
+  user: true,
+} as const
+
+export async function listMessages(channelId: string, currentUserId?: string) {
   const messages = await prisma.message.findMany({
-    include: { _count: { select: { replies: true } }, user: true },
+    include: messageInclude,
     orderBy: { createdAt: 'asc' },
     where: { channelId, parentId: null },
   })
 
-  return messages.map(toMessage)
+  return messages.map((message) => toMessage(message, currentUserId))
 }
 
-export async function listReplies(parentId: string) {
+export async function listReplies(parentId: string, currentUserId?: string) {
   const replies = await prisma.message.findMany({
-    include: { _count: { select: { replies: true } }, user: true },
+    include: messageInclude,
     orderBy: { createdAt: 'asc' },
     where: { parentId },
   })
 
-  return replies.map(toMessage)
+  return replies.map((reply) => toMessage(reply, currentUserId))
 }
 
-export async function findMessage(messageId: string) {
+export async function findMessage(messageId: string, currentUserId?: string) {
   const message = await prisma.message.findUnique({
-    include: { _count: { select: { replies: true } }, user: true },
+    include: messageInclude,
     where: { id: messageId },
   })
 
-  return message ? toMessage(message) : null
+  return message ? toMessage(message, currentUserId) : null
+}
+
+export async function toggleReaction({
+  emoji,
+  messageId,
+  userId,
+}: {
+  emoji: string
+  messageId: string
+  userId: string
+}) {
+  const existing = await prisma.reaction.findUnique({
+    where: { messageId_userId_emoji: { emoji, messageId, userId } },
+  })
+
+  if (existing) {
+    await prisma.reaction.delete({
+      where: { messageId_userId_emoji: { emoji, messageId, userId } },
+    })
+  } else {
+    await prisma.reaction.create({ data: { emoji, messageId, userId } })
+  }
 }
 
 export async function addMessage({
@@ -286,7 +308,7 @@ export async function addMessage({
 }) {
   const user = USERS[userId] ?? USERS.ada
   const message = await prisma.message.create({
-    include: { _count: { select: { replies: true } }, user: true },
+    include: messageInclude,
     data: {
       body,
       channelId,

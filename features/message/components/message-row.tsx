@@ -4,7 +4,8 @@ import { Clock, MessageSquare, TriangleAlert } from 'lucide-react'
 import { UserAvatar } from '@/components/ui/user-avatar'
 import type { Message } from '@/features/message/types/message'
 import { cn } from '@/lib/utils'
-import { formatInline, formatTime } from './format'
+import { formatMarkdown, formatTime } from './format'
+import { AddReaction, MessageReactions } from './message-reactions'
 import { useThread } from './thread-context'
 
 export function MessageRow({
@@ -48,35 +49,50 @@ export function MessageRow({
             </span>
           )}
         </div>
-        <p className="max-w-3xl text-[0.9375rem] leading-relaxed break-words text-zinc-800 dark:text-zinc-200">
-          {formatInline(message.body)}
-        </p>
-        {showThreadAffordance && !sending && !failed && replyCount > 0 ? (
-          <button
-            className="border-divider dark:border-divider-dark hover:border-accent hover:text-accent text-accent mt-1 flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-semibold transition-colors"
-            onClick={() => {
-              return openThread(message.channelId, message.id)
-            }}
-            type="button"
-          >
-            <MessageSquare aria-hidden className="size-3.5" strokeWidth={2} />
-            {replyCount} {replyCount === 1 ? 'reply' : 'replies'}
-          </button>
+        <div className="max-w-3xl space-y-2 text-[0.9375rem] leading-relaxed break-words text-zinc-800 dark:text-zinc-200">
+          {formatMarkdown(message.body)}
+        </div>
+        {!sending &&
+        !failed &&
+        (message.reactions?.length ||
+          (showThreadAffordance && replyCount > 0)) ? (
+          <div className="mt-1 flex flex-wrap items-center gap-1">
+            <MessageReactions message={message} />
+            {showThreadAffordance && replyCount > 0 ? (
+              <button
+                className="border-divider dark:border-divider-dark hover:border-accent hover:text-accent text-accent flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-semibold transition-colors"
+                onClick={() => {
+                  return openThread(message.channelId, message.id)
+                }}
+                type="button"
+              >
+                <MessageSquare
+                  aria-hidden
+                  className="size-3.5"
+                  strokeWidth={2}
+                />
+                {replyCount} {replyCount === 1 ? 'reply' : 'replies'}
+              </button>
+            ) : null}
+          </div>
         ) : null}
       </div>
-      {showThreadAffordance && !sending && !failed ? (
-        <div className="absolute top-1 right-4 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
-          <button
-            aria-label="Reply in thread"
-            className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark text-muted dark:text-muted-dark hover:border-accent hover:text-accent flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium shadow-sm transition-colors"
-            onClick={() => {
-              return openThread(message.channelId, message.id)
-            }}
-            type="button"
-          >
-            <MessageSquare aria-hidden className="size-3.5" strokeWidth={2} />
-            Reply
-          </button>
+      {!sending && !failed ? (
+        <div className="absolute top-1 right-4 flex items-center gap-1 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
+          <AddReaction message={message} />
+          {showThreadAffordance && replyCount === 0 ? (
+            <button
+              aria-label="Reply in thread"
+              className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark text-muted dark:text-muted-dark hover:border-accent hover:text-accent flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium shadow-sm transition-colors"
+              onClick={() => {
+                return openThread(message.channelId, message.id)
+              }}
+              type="button"
+            >
+              <MessageSquare aria-hidden className="size-3.5" strokeWidth={2} />
+              Reply
+            </button>
+          ) : null}
         </div>
       ) : null}
     </article>

@@ -67,6 +67,11 @@ export type ChannelMember = Prisma.ChannelMemberModel
  */
 export type Message = Prisma.MessageModel
 /**
+ * Model Reaction
+ * 
+ */
+export type Reaction = Prisma.ReactionModel
+/**
  * Model PinnedItem
  * 
  */

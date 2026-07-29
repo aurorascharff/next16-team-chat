@@ -1,23 +1,40 @@
 'use client'
 
+import { useQuery } from '@tanstack/react-query'
 import type { Route } from 'next'
 import { Search } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { unreadChannelsQueryOptions } from '@/features/channel/channel-query-options'
 import { isNavActive, PRIMARY_NAV } from '@/features/workspace/primary-nav'
 import { cn } from '@/lib/utils'
 
 export function MobileTabBar() {
   const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
+  const { data: unreadMap } = useQuery(unreadChannelsQueryOptions())
+  const hasActivity =
+    mounted && Boolean(unreadMap && Object.keys(unreadMap).length > 0)
 
-  return <MobileTabBarShell pathname={pathname} />
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  return <MobileTabBarShell hasActivity={hasActivity} pathname={pathname} />
 }
 
 export function MobileTabBarSkeleton() {
-  return <MobileTabBarShell pathname={null} />
+  return <MobileTabBarShell hasActivity={false} pathname={null} />
 }
 
-function MobileTabBarShell({ pathname }: { pathname: string | null }) {
+function MobileTabBarShell({
+  hasActivity,
+  pathname,
+}: {
+  hasActivity: boolean
+  pathname: string | null
+}) {
   return (
     <nav
       aria-label="Primary"
@@ -26,6 +43,7 @@ function MobileTabBarShell({ pathname }: { pathname: string | null }) {
       {PRIMARY_NAV.map((item) => {
         const { href, icon: Icon, label } = item
         const active = isNavActive(item, pathname)
+        const showDot = item.showActivityDot && hasActivity && !active
 
         return (
           <Link
@@ -40,11 +58,19 @@ function MobileTabBarShell({ pathname }: { pathname: string | null }) {
             key={href}
             prefetch={true}
           >
-            <Icon
-              aria-hidden
-              className="size-5"
-              strokeWidth={active ? 2.5 : 2}
-            />
+            <span className="relative">
+              <Icon
+                aria-hidden
+                className="size-5"
+                strokeWidth={active ? 2.5 : 2}
+              />
+              {showDot ? (
+                <span
+                  aria-label="New activity"
+                  className="bg-accent ring-surface dark:ring-surface-dark absolute -top-0.5 -right-1 size-2 rounded-full ring-2"
+                />
+              ) : null}
+            </span>
             {label}
           </Link>
         )

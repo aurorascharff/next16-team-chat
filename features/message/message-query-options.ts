@@ -1,4 +1,5 @@
 import { queryOptions } from '@tanstack/react-query'
+import { apiUrl } from '@/lib/utils'
 import type { Message } from './types/message'
 
 export const messageKeys = {
@@ -9,7 +10,7 @@ export const messageKeys = {
 export function messagesQueryOptions(channelId: string) {
   return queryOptions({
     queryFn: async (): Promise<Message[]> => {
-      const res = await fetch(`/api/channels/${channelId}/messages`)
+      const res = await fetch(apiUrl(`/api/channels/${channelId}/messages`))
 
       if (!res.ok) {
         throw new Error('Failed to fetch messages')
@@ -18,16 +19,15 @@ export function messagesQueryOptions(channelId: string) {
       return res.json()
     },
     queryKey: messageKeys.channel(channelId),
-    // Poll so background activity (e.g. the bot) shows up without a reload.
     refetchInterval: 10_000,
-    staleTime: 5_000,
+    staleTime: Infinity,
   })
 }
 
 export function repliesQueryOptions(messageId: string) {
   return queryOptions({
     queryFn: async (): Promise<Message[]> => {
-      const res = await fetch(`/api/messages/${messageId}/replies`)
+      const res = await fetch(apiUrl(`/api/messages/${messageId}/replies`))
 
       if (!res.ok) {
         throw new Error('Failed to fetch replies')

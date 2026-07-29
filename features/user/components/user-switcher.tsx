@@ -1,12 +1,14 @@
 'use client'
 
 import { ArrowLeftRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { switchUser } from '@/features/user/user-actions'
 import { cn } from '@/lib/utils'
 import { useUserSwitch } from './user-switch-context'
 
 export function UserSwitcher({ currentUserId }: { currentUserId: string }) {
   const { isSwitching, switchTo } = useUserSwitch()
+  const router = useRouter()
   const nextUserId = currentUserId === 'ada' ? 'grace' : 'ada'
 
   return (
@@ -17,6 +19,7 @@ export function UserSwitcher({ currentUserId }: { currentUserId: string }) {
       onClick={() => {
         switchTo(async () => {
           await switchUser(nextUserId)
+          router.refresh()
         })
       }}
       title="Switch user"

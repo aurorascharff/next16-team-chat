@@ -11,26 +11,30 @@ import {
   messagesTag,
 } from '@/features/message/message-queries'
 import { messageKeys } from '@/features/message/message-query-options'
+import { getCurrentUser } from '@/features/user/user-queries'
 import { cn } from '@/lib/utils'
 import { MessageList } from './message-list'
 
-async function getMessagesState(channelId: string, slow: boolean) {
+async function getMessagesState(
+  channelId: string,
+  userId: string,
+  slow: boolean,
+) {
   'use cache'
   cacheTag(messagesTag(channelId))
   cacheLife({ stale: 30 })
 
   const queryClient = new QueryClient()
-  const messages = await getMessagesCached(channelId, slow)
+  const messages = await getMessagesCached(channelId, userId, slow)
 
-  queryClient.setQueryData(messageKeys.channel(channelId), messages, {
-    updatedAt: 0,
-  })
+  queryClient.setQueryData(messageKeys.channel(channelId), messages)
 
   return dehydrate(queryClient)
 }
 
 export async function MessageThread({ channelId }: { channelId: string }) {
-  const state = await getMessagesState(channelId, await isSlowMode())
+  const user = await getCurrentUser()
+  const state = await getMessagesState(channelId, user.id, await isSlowMode())
 
   return (
     <HydrationBoundary state={state}>

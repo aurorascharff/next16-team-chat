@@ -6,7 +6,6 @@ import { isSlowMode } from '@/features/demo/slow-mode'
 import { getCurrentUser } from '@/features/user/user-queries'
 import { delay } from '@/lib/utils'
 import {
-  findChannel,
   getChannelDetail as loadChannelDetail,
   listChannelLayout,
   listChannels,
@@ -55,15 +54,13 @@ async function getChannelLayoutCached(userId: string, slow: boolean) {
 }
 
 export async function getChannel(channelId: string) {
-  return getChannelCached(channelId, await isSlowMode())
+  const user = await getCurrentUser()
+  return getChannelForUser(channelId, user.id)
 }
 
-async function getChannelCached(channelId: string, slow: boolean) {
-  'use cache'
-  cacheTag('channels', channelTag(channelId))
-  cacheLife('hours')
-  await delay(700, slow)
-  const channel = await findChannel(channelId)
+async function getChannelForUser(channelId: string, userId: string) {
+  const channels = await listChannelsForUser(userId)
+  const channel = channels.find((entry) => entry.id === channelId)
   if (!channel) notFound()
   return channel
 }

@@ -5,10 +5,9 @@ export type PrimaryNavItem = {
   icon: LucideIcon
   label: string
   match: string[]
+  showActivityDot?: boolean
 }
 
-// Slack-style primary destinations, tailored to this app. Shared by the desktop
-// icon rail and the mobile bottom nav so both stay in sync.
 export const PRIMARY_NAV: PrimaryNavItem[] = [
   {
     href: '/',
@@ -16,7 +15,13 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
     label: 'Home',
     match: ['/', '/channel', '/channels'],
   },
-  { href: '/inbox', icon: AtSign, label: 'Activity', match: ['/inbox'] },
+  {
+    href: '/inbox',
+    icon: AtSign,
+    label: 'Activity',
+    match: ['/inbox'],
+    showActivityDot: true,
+  },
 ]
 
 export function isNavActive(item: PrimaryNavItem, pathname: string | null) {

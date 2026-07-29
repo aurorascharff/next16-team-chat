@@ -1,8 +1,8 @@
 'use server'
 
 import { updateTag } from 'next/cache'
-import { getCurrentUser } from '@/features/user/user-queries'
-import { addMessage } from './message-store'
+import { verifyAuth } from '@/features/user/user-queries'
+import { addMessage, toggleReaction } from './message-store'
 import { messagesTag, repliesTag } from './message-queries'
 
 export type SendMessageResult =
@@ -28,7 +28,7 @@ export async function sendMessage({
     return { error: 'Keep messages under 280 characters.', ok: false }
   }
 
-  const user = await getCurrentUser()
+  const user = await verifyAuth()
   const message = await addMessage({
     body: text,
     channelId,
@@ -37,10 +37,29 @@ export async function sendMessage({
   })
 
   if (parentId) {
-    // A reply updates the thread and the parent's reply count in the channel.
     updateTag(repliesTag(parentId))
   }
   updateTag(messagesTag(channelId))
 
   return { message, ok: true }
+}
+
+export async function reactToMessage({
+  channelId,
+  emoji,
+  messageId,
+  parentId,
+}: {
+  channelId: string
+  emoji: string
+  messageId: string
+  parentId?: string
+}) {
+  const user = await verifyAuth()
+  await toggleReaction({ emoji, messageId, userId: user.id })
+
+  if (parentId) {
+    updateTag(repliesTag(parentId))
+  }
+  updateTag(messagesTag(channelId))
 }

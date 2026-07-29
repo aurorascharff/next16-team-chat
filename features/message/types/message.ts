@@ -1,5 +1,11 @@
 export type MessageStatus = 'sending' | 'sent' | 'failed'
 
+export type Reaction = {
+  emoji: string
+  count: number
+  reacted: boolean
+}
+
 export type Message = {
   id: string
   channelId: string
@@ -9,5 +15,6 @@ export type Message = {
   createdAt: string
   parentId?: string | null
   replyCount?: number
+  reactions?: Reaction[]
   status?: MessageStatus
 }

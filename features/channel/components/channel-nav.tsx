@@ -1,6 +1,6 @@
 'use client'
 
-import { Plus, X } from 'lucide-react'
+import { Pencil, Plus, X } from 'lucide-react'
 import { useEffect, useRef, useState, useTransition } from 'react'
 import { saveChannelLayout } from '@/features/channel/channel-layout-actions'
 import { cn } from '@/lib/utils'
@@ -24,7 +24,6 @@ type Props = {
   groups: Group[]
 }
 
-// Groups display alphabetically, with the ungrouped bucket always last.
 function sortGroups(groups: Group[]) {
   return [...groups].sort((a, b) => {
     if (a.name === UNGROUPED) return 1
@@ -35,18 +34,20 @@ function sortGroups(groups: Group[]) {
 
 export function ChannelNav({ groups: initialGroups }: Props) {
   const [groups, setGroups] = useState(initialGroups)
-  const [, startTransition] = useTransition()
+  const [isSaving, startTransition] = useTransition()
   const dragging = useRef<{ groupIndex: number; channelIndex: number } | null>(
     null,
   )
   const [overGroup, setOverGroup] = useState<number | null>(null)
+  const [dropTarget, setDropTarget] = useState<{
+    groupIndex: number
+    channelIndex: number
+  } | null>(null)
   const [editingName, setEditingName] = useState<string | null>(null)
 
-  // Keep local state in sync when the server sends fresh data (e.g. after a
-  // switch user or cache revalidation).
   useEffect(() => {
-    setGroups(initialGroups)
-  }, [initialGroups])
+    if (!isSaving) setGroups(initialGroups)
+  }, [initialGroups, isSaving])
 
   function persist(next: Group[]) {
     const sorted = sortGroups(next)
@@ -96,7 +97,6 @@ export function ChannelNav({ groups: initialGroups }: Props) {
     const target = groups.find((group) => group.name === name)
     if (!target) return
     const next = groups.filter((group) => group.name !== name)
-    // Move the group's channels into the ungrouped bucket.
     let ungrouped = next.find((group) => group.name === UNGROUPED)
     if (!ungrouped) {
       ungrouped = { channels: [], name: UNGROUPED }
@@ -135,12 +135,23 @@ export function ChannelNav({ groups: initialGroups }: Props) {
 
         return (
           <div
-            className="flex flex-col gap-0.5"
+            className={cn(
+              'flex flex-col gap-0.5 rounded-lg transition-colors',
+              overGroup === groupIndex && 'bg-accent-fade',
+            )}
             key={group.name}
             onDragOver={(event) => {
               if (!dragging.current) return
               event.preventDefault()
               setOverGroup(groupIndex)
+            }}
+            onDragLeave={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget as Node)) {
+                setOverGroup((current) =>
+                  current === groupIndex ? null : current,
+                )
+                setDropTarget(null)
+              }
             }}
             onDrop={(event) => {
               const state = dragging.current
@@ -154,15 +165,19 @@ export function ChannelNav({ groups: initialGroups }: Props) {
               )
               dragging.current = null
               setOverGroup(null)
+              setDropTarget(null)
             }}
           >
             {editingName === group.name ? (
               <input
                 autoFocus
-                className="text-muted dark:text-muted-dark bg-card dark:bg-card-dark focus:ring-accent/40 min-h-6 rounded px-2.5 py-1 text-xs font-semibold tracking-wide uppercase focus:ring-2 focus:outline-none"
+                className="bg-surface dark:bg-elevated-dark ring-divider dark:ring-divider-dark focus:ring-muted min-h-6 w-full rounded px-2.5 py-1 text-xs font-semibold tracking-wide uppercase ring-1 outline-none"
                 defaultValue={group.name}
                 onBlur={(event) => {
                   return renameGroup(group.name, event.target.value)
+                }}
+                onFocus={(event) => {
+                  return event.currentTarget.select()
                 }}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter') event.currentTarget.blur()
@@ -176,13 +191,14 @@ export function ChannelNav({ groups: initialGroups }: Props) {
               <div
                 className={cn(
                   'group/label flex min-h-6 items-center justify-between rounded px-2.5 py-1 transition-colors',
-                  overGroup === groupIndex && 'text-accent',
                 )}
               >
                 <p
                   className={cn(
-                    'text-muted dark:text-muted-dark text-xs font-semibold tracking-wide uppercase select-none',
-                    overGroup === groupIndex && 'text-accent',
+                    'text-xs font-semibold tracking-wide uppercase select-none',
+                    overGroup === groupIndex
+                      ? 'text-accent'
+                      : 'text-muted dark:text-muted-dark',
                     removable && 'cursor-text',
                   )}
                   onDoubleClick={() => {
@@ -193,16 +209,28 @@ export function ChannelNav({ groups: initialGroups }: Props) {
                   {group.name}
                 </p>
                 {removable && (
-                  <button
-                    aria-label={`Delete ${group.name} group`}
-                    className="text-muted dark:text-muted-dark opacity-0 transition-opacity group-hover/label:opacity-100 hover:text-black dark:hover:text-white"
-                    onClick={() => {
-                      return deleteGroup(group.name)
-                    }}
-                    type="button"
-                  >
-                    <X aria-hidden className="size-3.5" strokeWidth={2} />
-                  </button>
+                  <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover/label:opacity-100">
+                    <button
+                      aria-label={`Rename ${group.name} group`}
+                      className="text-muted dark:text-muted-dark hover:text-accent p-0.5 transition-colors"
+                      onClick={() => {
+                        return setEditingName(group.name)
+                      }}
+                      type="button"
+                    >
+                      <Pencil aria-hidden className="size-3" strokeWidth={2} />
+                    </button>
+                    <button
+                      aria-label={`Delete ${group.name} group`}
+                      className="text-muted dark:text-muted-dark p-0.5 transition-colors hover:text-black dark:hover:text-white"
+                      onClick={() => {
+                        return deleteGroup(group.name)
+                      }}
+                      type="button"
+                    >
+                      <X aria-hidden className="size-3.5" strokeWidth={2} />
+                    </button>
+                  </div>
                 )}
               </div>
             )}

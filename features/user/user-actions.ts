@@ -1,7 +1,7 @@
 'use server'
 
+import { updateTag } from 'next/cache'
 import { cookies } from 'next/headers'
-import { revalidatePath } from 'next/cache'
 import { SESSION_COOKIE, USERS } from './user-data'
 
 export async function switchUser(userId: string) {
@@ -13,7 +13,5 @@ export async function switchUser(userId: string) {
     sameSite: 'lax',
   })
 
-  // Soft-refresh the current tree so the new user's data streams in without a
-  // hard redirect (which re-renders the whole document and the theme script).
-  revalidatePath('/', 'layout')
+  updateTag('current-user')
 }

@@ -17,6 +17,7 @@ model User {
   messages    Message[]
   memberships ChannelMember[]
   groups      ChannelGroup[]
+  reactions   Reaction[]
 }
 
 model Channel {
@@ -74,13 +75,26 @@ model Message {
   channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
   user      User    @relation(fields: [userId], references: [id])
 
-  parentId String?
-  parent   Message?  @relation("MessageReplies", fields: [parentId], references: [id], onDelete: Cascade)
-  replies  Message[] @relation("MessageReplies")
+  parentId  String?
+  parent    Message?   @relation("MessageReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Message[]  @relation("MessageReplies")
+  reactions Reaction[]
 
   @@index([channelId, createdAt])
   @@index([parentId, createdAt])
   @@index([userId])
+}
+
+model Reaction {
+  emoji     String
+  messageId String
+  userId    String
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([messageId, userId, emoji])
+  @@index([messageId])
 }
 
 model PinnedItem {

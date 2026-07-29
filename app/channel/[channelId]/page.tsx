@@ -42,7 +42,7 @@ export default function ChannelPage({
 }: PageProps<'/channel/[channelId]'>) {
   return (
     <ThreadProvider>
-      <div className="grid h-dvh grid-rows-[auto_minmax(0,1fr)] max-md:h-[calc(100dvh-3.5rem)] md:h-dvh">
+      <div className="grid h-dvh grid-rows-[auto_minmax(0,1fr)] max-md:h-[calc(100dvh-3.5rem)]">
         <Suspense fallback={null}>
           {params.then(({ channelId }) => {
             return (

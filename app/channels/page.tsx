@@ -13,8 +13,6 @@ export const metadata: Metadata = {
   title: 'Channels',
 }
 
-// Mobile-only workspace home. On desktop the same content lives in the sidebar,
-// so this route redirects visual weight to the persistent chrome instead.
 export default function ChannelsPage() {
   return (
     <div className="flex min-h-0 flex-col gap-4 p-3 md:hidden">

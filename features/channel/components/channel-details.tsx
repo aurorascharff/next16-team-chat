@@ -17,10 +17,9 @@ export async function ChannelDetails({ channelId }: { channelId: string }) {
         <span className="bg-accent-fade text-accent inline-flex w-fit rounded-full px-2.5 py-1 text-[0.6875rem] font-semibold">
           {channel.status}
         </span>
-        <dl className="mt-1 grid grid-cols-3 gap-2 text-center">
+        <dl className="mt-1 grid grid-cols-2 gap-2 text-center">
           <SummaryStat label="Members" value={channel.memberCount} />
           <SummaryStat label="Messages" value={channel.messageCount} />
-          <SummaryStat label="Threads" value={channel.threadCount} />
         </dl>
       </section>
       <section className="border-divider dark:border-divider-dark flex flex-col gap-2 border-b pb-5">

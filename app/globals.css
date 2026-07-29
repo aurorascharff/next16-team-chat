@@ -13,12 +13,12 @@
   --color-elevated-dark: #111112;
   --color-elevated: #ffffff;
 
-  --color-primary: #2457fa;
-  --color-primary-dark: #1d47cf;
+  --color-primary: #1b50ff;
+  --color-primary-dark: #1340d1;
   --color-primary-darker: #142f8b;
-  --color-accent: #2457fa;
-  --color-accent-hover: #1d47cf;
-  --color-accent-fade: #2457fa1a;
+  --color-accent: #1b50ff;
+  --color-accent-hover: #1340d1;
+  --color-accent-fade: #214fff22;
 
   --color-success: #0fa958;
   --color-danger: #e54848;

@@ -3,8 +3,6 @@
 import { usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'
 
-// Slack-style: the Activity (Inbox) view replaces the channel sidebar, so hide
-// the channel sidebar there and let the main panel span the full width.
 export function ChannelSidebar({ children }: { children: ReactNode }) {
   const pathname = usePathname()
 

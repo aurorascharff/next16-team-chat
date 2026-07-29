@@ -1,8 +1,10 @@
 'use client'
 
+import { Eye, PenLine } from 'lucide-react'
 import {
-  FormEvent,
   KeyboardEvent,
+  Suspense,
+  SyntheticEvent,
   useId,
   useRef,
   useState,
@@ -11,7 +13,13 @@ import {
 import { useQueryClient } from '@tanstack/react-query'
 import { sendMessage } from '@/features/message/message-actions'
 import { messageKeys } from '@/features/message/message-query-options'
+import { renderMessagePreview } from '@/features/message/message-preview-action'
 import type { Message } from '@/features/message/types/message'
+import {
+  MessagePreview,
+  PreviewSkeleton,
+  type Preview,
+} from './message-preview'
 
 const MAX_LENGTH = 280
 
@@ -29,12 +37,23 @@ export function MessageComposer({
   const optimisticIdRef = useRef(0)
   const queryClient = useQueryClient()
   const [error, setError] = useState('')
+  const [mode, setMode] = useState<'write' | 'preview'>('write')
+  const [preview, setPreview] = useState<Preview | null>(null)
+  const [writeHeight, setWriteHeight] = useState(0)
   const [isPending, startTransition] = useTransition()
   const fieldId = useId()
 
-  // Wrap the current selection in markdown markers using execCommand so native
-  // undo and the caret keep working. Rendering happens in the message list, so
-  // the input only ever holds plain markdown text.
+  function showPreview() {
+    setWriteHeight(textareaRef.current?.offsetHeight ?? 0)
+    const body = textareaRef.current?.value.trim() ?? ''
+    if (!body) {
+      setPreview(null)
+    } else if (preview?.body !== body) {
+      setPreview({ body, node: renderMessagePreview(body) })
+    }
+    setMode('preview')
+  }
+
   function wrapSelection(marker: string) {
     const el = textareaRef.current
     if (!el) return
@@ -47,13 +66,13 @@ export function MessageComposer({
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault()
-      formRef.current?.requestSubmit()
+    if (!(event.metaKey || event.ctrlKey)) {
       return
     }
 
-    if (!(event.metaKey || event.ctrlKey)) {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      formRef.current?.requestSubmit()
       return
     }
 
@@ -71,7 +90,7 @@ export function MessageComposer({
     }
   }
 
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
+  function onSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     const form = new FormData(event.currentTarget)
     const body = String(form.get('body') ?? '').trim()
@@ -102,6 +121,8 @@ export function MessageComposer({
 
     setError('')
     formRef.current?.reset()
+    setMode('write')
+    setPreview(null)
     queryClient.setQueryData<Message[]>(key, (current = []) => [
       ...current,
       optimistic,
@@ -130,7 +151,6 @@ export function MessageComposer({
         ),
       )
 
-      // Reflect the new reply in the parent message's reply count.
       if (parentId) {
         queryClient.setQueryData<Message[]>(
           messageKeys.channel(channelId),
@@ -198,12 +218,39 @@ export function MessageComposer({
           >
             <code className="font-mono text-xs">{'<>'}</code>
           </button>
+          <div className="ml-auto">
+            {mode === 'write' ? (
+              <button
+                className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex h-7 items-center gap-1.5 rounded-md px-2 text-xs font-medium transition-colors hover:text-black dark:hover:text-white"
+                onClick={showPreview}
+                type="button"
+              >
+                <Eye aria-hidden className="size-3.5" strokeWidth={2} />
+                Preview
+              </button>
+            ) : (
+              <button
+                className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex h-7 items-center gap-1.5 rounded-md px-2 text-xs font-medium transition-colors hover:text-black dark:hover:text-white"
+                onClick={() => {
+                  return setMode('write')
+                }}
+                type="button"
+              >
+                <PenLine aria-hidden className="size-3.5" strokeWidth={2} />
+                Edit
+              </button>
+            )}
+          </div>
         </div>
         <label className="sr-only" htmlFor={fieldId}>
           Message
         </label>
         <textarea
-          className="min-h-20 w-full resize-none bg-transparent px-3.5 py-3 text-sm leading-relaxed outline-none"
+          className={
+            mode === 'preview'
+              ? 'hidden'
+              : 'min-h-20 w-full resize-none bg-transparent px-3.5 py-3 text-sm leading-relaxed outline-none'
+          }
           id={fieldId}
           maxLength={MAX_LENGTH}
           name="body"
@@ -212,6 +259,16 @@ export function MessageComposer({
           ref={textareaRef}
           rows={3}
         />
+        {mode === 'preview' ? (
+          <div
+            className="px-3.5 py-3"
+            style={{ minHeight: writeHeight || undefined }}
+          >
+            <Suspense fallback={<PreviewSkeleton />} key={preview?.body}>
+              <MessagePreview preview={preview} />
+            </Suspense>
+          </div>
+        ) : null}
         <div className="border-divider dark:border-divider-dark flex items-center justify-end border-t p-1.5">
           <button
             className="bg-accent hover:bg-accent-hover flex min-h-8 items-center justify-center rounded-lg px-3.5 text-[0.8125rem] font-semibold text-white transition-colors disabled:cursor-progress disabled:opacity-55"

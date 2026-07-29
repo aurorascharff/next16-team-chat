@@ -33,9 +33,6 @@ async function toItems(
   })
 }
 
-// Inbox = threads you're part of that have activity from someone else: either a
-// message you posted that someone replied to, or a thread you replied in where
-// someone else has also replied.
 export async function listInbox(userId: string) {
   const messages = await prisma.message.findMany({
     include: {
@@ -47,9 +44,7 @@ export async function listInbox(userId: string) {
     where: {
       parentId: null,
       OR: [
-        // You started it and someone else replied.
         { replies: { some: { NOT: { userId } } }, userId },
-        // Someone else started it, you replied, and others are active too.
         {
           replies: { some: { userId } },
           NOT: { userId },

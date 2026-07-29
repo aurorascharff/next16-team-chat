@@ -235,14 +235,14 @@ const messages = [
     'm-15',
     'random-rubber-ducks',
     'nico',
-    'Explained my hydration bug to the duck. Turns out it was a Date.now in render. The duck knew all along.',
+    'Explained my hydration bug out loud and immediately spotted the Date.now in render. Rubber-ducking works.',
     '2026-07-29T13:14:00.000Z',
   ],
   [
     'm-16',
     'random-hot-takes',
     'grace',
-    'Hot take: the best loading state is one you never see because the navigation was instant.',
+    'The best loading state is the one you never see because the navigation was instant.',
     '2026-07-29T13:15:00.000Z',
   ],
   // Threaded replies (6th element is the parent message id).
@@ -274,7 +274,7 @@ const messages = [
     'm-14-r1',
     'random-dad-jokes',
     'ada',
-    'I groaned so loud the CI pipeline failed in sympathy.',
+    'Ha. Adding that one to the rotation.',
     '2026-07-29T13:13:30.000Z',
     'm-14',
   ],
@@ -360,6 +360,18 @@ async function main() {
         userId,
       }),
     ),
+  })
+
+  await prisma.reaction.createMany({
+    data: [
+      { emoji: '👍', messageId: 'm-2', userId: 'ada' },
+      { emoji: '✅', messageId: 'm-4', userId: 'ada' },
+      { emoji: '🎉', messageId: 'm-13', userId: 'grace' },
+      { emoji: '🎉', messageId: 'm-13', userId: 'nico' },
+      { emoji: '😂', messageId: 'm-14', userId: 'ada' },
+      { emoji: '😂', messageId: 'm-14', userId: 'grace' },
+      { emoji: '🔥', messageId: 'm-16', userId: 'nico' },
+    ],
   })
 
   console.log('Seeded Huddle workspace')
