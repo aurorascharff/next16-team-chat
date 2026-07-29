@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model User {
@@ -59,7 +59,7 @@ model Message {
 }
 
 model PinnedItem {
-  id        String @id
+  id        String  @id
   label     String
   channelId String
   channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)

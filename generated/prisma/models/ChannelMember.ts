@@ -359,6 +359,7 @@ export type ChannelMemberCreateOrConnectWithoutUserInput = {
 
 export type ChannelMemberCreateManyUserInputEnvelope = {
   data: Prisma.ChannelMemberCreateManyUserInput | Prisma.ChannelMemberCreateManyUserInput[]
+  skipDuplicates?: boolean
 }
 
 export type ChannelMemberUpsertWithWhereUniqueWithoutUserInput = {
@@ -400,6 +401,7 @@ export type ChannelMemberCreateOrConnectWithoutChannelInput = {
 
 export type ChannelMemberCreateManyChannelInputEnvelope = {
   data: Prisma.ChannelMemberCreateManyChannelInput | Prisma.ChannelMemberCreateManyChannelInput[]
+  skipDuplicates?: boolean
 }
 
 export type ChannelMemberUpsertWithWhereUniqueWithoutChannelInput = {
@@ -1162,6 +1164,7 @@ export type ChannelMemberCreateManyArgs<ExtArgs extends runtime.Types.Extensions
    * The data used to create many ChannelMembers.
    */
   data: Prisma.ChannelMemberCreateManyInput | Prisma.ChannelMemberCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1180,6 +1183,7 @@ export type ChannelMemberCreateManyAndReturnArgs<ExtArgs extends runtime.Types.E
    * The data used to create many ChannelMembers.
    */
   data: Prisma.ChannelMemberCreateManyInput | Prisma.ChannelMemberCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

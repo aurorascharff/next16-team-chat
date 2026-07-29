@@ -10,12 +10,16 @@ import {
   CurrentUserCard,
   CurrentUserCardSkeleton,
 } from "@/features/user/components/current-user-card";
-import { WorkspaceNav } from "@/features/workspace/components/workspace-nav";
+import {
+  WorkspaceNav,
+  WorkspaceNavSkeleton,
+} from "@/features/workspace/components/workspace-nav";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Providers } from "./providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  applicationName: "Patch",
+  applicationName: "Huddle",
   description:
     "A Next.js 16 messaging app with Cache Components, Partial Prefetching, and React Query.",
   icons: {
@@ -23,8 +27,8 @@ export const metadata: Metadata = {
     icon: "/logo.svg",
   },
   title: {
-    default: "Patch",
-    template: "%s · Patch",
+    default: "Huddle",
+    template: "%s · Huddle",
   },
 };
 
@@ -43,7 +47,9 @@ export default function RootLayout({
         <Providers>
           <div className="grid min-h-dvh w-full grid-cols-1 md:grid-cols-[16rem_minmax(0,1fr)]">
             <aside className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark sticky top-0 z-20 flex h-dvh flex-col gap-4 border-b p-3 max-md:h-auto md:border-r md:border-b-0">
-              <WorkspaceNav />
+              <Suspense fallback={<WorkspaceNavSkeleton />}>
+                <WorkspaceNav />
+              </Suspense>
               <Suspense fallback={<ChannelListSkeleton />}>
                 <ChannelList />
               </Suspense>
@@ -52,6 +58,9 @@ export default function RootLayout({
               </Suspense>
             </aside>
             <main className="min-w-0">{children}</main>
+          </div>
+          <div className="fixed top-3 right-3 z-50 max-md:hidden">
+            <ThemeToggle />
           </div>
         </Providers>
       </body>

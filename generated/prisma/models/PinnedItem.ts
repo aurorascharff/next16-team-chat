@@ -332,6 +332,7 @@ export type PinnedItemCreateOrConnectWithoutChannelInput = {
 
 export type PinnedItemCreateManyChannelInputEnvelope = {
   data: Prisma.PinnedItemCreateManyChannelInput | Prisma.PinnedItemCreateManyChannelInput[]
+  skipDuplicates?: boolean
 }
 
 export type PinnedItemUpsertWithWhereUniqueWithoutChannelInput = {
@@ -1089,6 +1090,7 @@ export type PinnedItemCreateManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * The data used to create many PinnedItems.
    */
   data: Prisma.PinnedItemCreateManyInput | Prisma.PinnedItemCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1107,6 +1109,7 @@ export type PinnedItemCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Exte
    * The data used to create many PinnedItems.
    */
   data: Prisma.PinnedItemCreateManyInput | Prisma.PinnedItemCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

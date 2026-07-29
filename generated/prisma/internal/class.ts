@@ -19,8 +19,8 @@ const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
   "clientVersion": "7.9.1",
   "engineVersion": "e922089b7d7502aff4249d5da3420f6fa55fc6ad",
-  "activeProvider": "sqlite",
-  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n}\n\nmodel User {\n  id        String   @id\n  handle    String   @unique\n  name      String\n  role      String\n  createdAt DateTime @default(now())\n\n  messages    Message[]\n  memberships ChannelMember[]\n}\n\nmodel Channel {\n  id          String   @id\n  name        String\n  description String\n  isPrivate   Boolean  @default(false)\n  unread      Int      @default(0)\n  status      String\n  handoff     String\n  createdAt   DateTime @default(now())\n\n  messages Message[]\n  members  ChannelMember[]\n  pinned   PinnedItem[]\n}\n\nmodel ChannelMember {\n  channelId String\n  userId    String\n\n  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)\n  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@id([channelId, userId])\n  @@index([userId])\n}\n\nmodel Message {\n  id        String   @id\n  body      String\n  createdAt DateTime\n\n  channelId String\n  userId    String\n  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)\n  user      User    @relation(fields: [userId], references: [id])\n\n  @@index([channelId, createdAt])\n  @@index([userId])\n}\n\nmodel PinnedItem {\n  id        String  @id\n  label     String\n  channelId String\n  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)\n\n  @@index([channelId])\n}\n",
+  "activeProvider": "postgresql",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel User {\n  id        String   @id\n  handle    String   @unique\n  name      String\n  role      String\n  createdAt DateTime @default(now())\n\n  messages    Message[]\n  memberships ChannelMember[]\n}\n\nmodel Channel {\n  id          String   @id\n  name        String\n  description String\n  isPrivate   Boolean  @default(false)\n  unread      Int      @default(0)\n  status      String\n  handoff     String\n  createdAt   DateTime @default(now())\n\n  messages Message[]\n  members  ChannelMember[]\n  pinned   PinnedItem[]\n}\n\nmodel ChannelMember {\n  channelId String\n  userId    String\n\n  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)\n  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  @@id([channelId, userId])\n  @@index([userId])\n}\n\nmodel Message {\n  id        String   @id\n  body      String\n  createdAt DateTime\n\n  channelId String\n  userId    String\n  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)\n  user      User    @relation(fields: [userId], references: [id])\n\n  @@index([channelId, createdAt])\n  @@index([userId])\n}\n\nmodel PinnedItem {\n  id        String  @id\n  label     String\n  channelId String\n  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)\n\n  @@index([channelId])\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -45,10 +45,10 @@ async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Modul
 }
 
 config.compilerWasm = {
-  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_fast_bg.sqlite.mjs"),
+  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_fast_bg.postgresql.mjs"),
 
   getQueryCompilerWasmModule: async () => {
-    const { wasm } = await import("@prisma/client/runtime/query_compiler_fast_bg.sqlite.wasm-base64.mjs")
+    const { wasm } = await import("@prisma/client/runtime/query_compiler_fast_bg.postgresql.wasm-base64.mjs")
     return await decodeBase64AsWasm(wasm)
   },
 

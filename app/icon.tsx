@@ -1,46 +1,40 @@
-import { ImageResponse } from 'next/og'
+import { ImageResponse } from "next/og";
 
-export const size = { height: 32, width: 32 }
+export const size = { height: 32, width: 32 };
 
-export const contentType = 'image/png'
+export const contentType = "image/png";
 
 export default function Icon() {
   return new ImageResponse(
     <div
       style={{
-        alignItems: 'center',
-        background: '#0f0f0f',
-        borderRadius: '8px',
-        display: 'flex',
-        height: '100%',
-        justifyContent: 'center',
-        width: '100%',
+        alignItems: "center",
+        background: "linear-gradient(135deg, #2457fa 0%, #1d47cf 100%)",
+        borderRadius: "8px",
+        display: "flex",
+        height: "100%",
+        justifyContent: "center",
+        width: "100%",
       }}
     >
-      <div
-        style={{
-          alignItems: 'center',
-          background: '#ffffff',
-          borderRadius: '6px',
-          color: '#ffffff',
-          display: 'flex',
-          fontFamily: 'Inter, Arial, sans-serif',
-          fontSize: 20,
-          fontWeight: 800,
-          height: 24,
-          justifyContent: 'center',
-          lineHeight: 1,
-          width: 24,
-        }}
-      >
-        <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
-          <path d="M6.5 3L5.35 14" stroke="#0f0f0f" strokeWidth="2" strokeLinecap="round" />
-          <path d="M11.65 3L10.5 14" stroke="#0f0f0f" strokeWidth="2" strokeLinecap="round" />
-          <path d="M3 6.75H14" stroke="#0f0f0f" strokeWidth="2" strokeLinecap="round" />
-          <path d="M2.5 10.75H13.5" stroke="#0f0f0f" strokeWidth="2" strokeLinecap="round" />
-        </svg>
-      </div>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+          stroke="#ffffff"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="9" cy="7" r="4" stroke="#ffffff" strokeWidth="2" />
+        <path
+          d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
+          stroke="#ffffff"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
     </div>,
     size,
-  )
+  );
 }
