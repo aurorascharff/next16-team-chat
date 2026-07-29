@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String   @id
+  handle    String   @unique
+  name      String
+  role      String
+  createdAt DateTime @default(now())
+
+  messages    Message[]
+  memberships ChannelMember[]
+}
+
+model Channel {
+  id          String   @id
+  name        String
+  description String
+  isPrivate   Boolean  @default(false)
+  unread      Int      @default(0)
+  status      String
+  handoff     String
+  createdAt   DateTime @default(now())
+
+  messages Message[]
+  members  ChannelMember[]
+  pinned   PinnedItem[]
+}
+
+model ChannelMember {
+  channelId String
+  userId    String
+
+  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([channelId, userId])
+  @@index([userId])
+}
+
+model Message {
+  id        String   @id
+  body      String
+  createdAt DateTime
+
+  channelId String
+  userId    String
+  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@index([channelId, createdAt])
+  @@index([userId])
+}
+
+model PinnedItem {
+  id        String @id
+  label     String
+  channelId String
+  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@index([channelId])
+}

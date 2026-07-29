@@ -11,7 +11,7 @@ export function UserSwitcher({ currentUserId }: { currentUserId: string }) {
 
   return (
     <button
-      className="switch-user"
+      className="border-divider dark:border-divider-dark hover:bg-card dark:hover:bg-card-dark bg-surface dark:bg-elevated-dark flex min-h-8 items-center justify-center rounded-lg border px-2.5 text-[0.8125rem] font-semibold transition-colors disabled:cursor-progress disabled:opacity-55"
       disabled={isPending}
       onClick={() => {
         startTransition(async () => {

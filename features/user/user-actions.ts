@@ -6,7 +6,7 @@ import type { Route } from 'next'
 import { SESSION_COOKIE, USERS } from './user-data'
 
 function safePath(value: string) {
-  return value.startsWith('/') ? value : '/channel/general'
+  return value.startsWith('/') ? value : '/channel/ship-room'
 }
 
 export async function switchUser(userId: string, nextPath: string) {

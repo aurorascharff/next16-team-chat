@@ -1,101 +1,104 @@
 import 'server-only'
 
+import { prisma } from '@/lib/db'
 import { USERS } from '@/features/user/user-data'
-import type { Message } from './message-types'
 
-type DemoChannel = {
+export type ChannelSummary = {
   id: string
   name: string
   description: string
-  isPrivate?: boolean
+  isPrivate: boolean
   memberCount: number
+  unread?: number
 }
 
-const CHANNELS: DemoChannel[] = [
-  {
-    description: 'Planning, launch notes, and daily coordination.',
-    id: 'general',
-    memberCount: 42,
-    name: 'general',
-  },
-  {
-    description: 'Design reviews, interface notes, and product polish.',
-    id: 'design',
-    isPrivate: true,
-    memberCount: 16,
-    name: 'design',
-  },
-  {
-    description: 'Support watch, incident notes, and handoff context.',
-    id: 'ops',
-    memberCount: 9,
-    name: 'ops',
-  },
-]
-
-const initialMessages: Message[] = [
-  {
-    body: 'Final copy pass is in. The onboarding modal reads calmer now.',
-    channelId: 'general',
-    createdAt: '2026-07-29T13:00:00.000Z',
-    id: 'm-1',
-    userId: 'ada',
-    userName: USERS.ada.name,
-  },
-  {
-    body: 'Nice. I’ll run through the mobile states before we call it ready.',
-    channelId: 'general',
-    createdAt: '2026-07-29T13:02:00.000Z',
-    id: 'm-2',
-    userId: 'grace',
-    userName: USERS.grace.name,
-  },
-  {
-    body: 'The composer should stay pinned, but the room header can breathe a little.',
-    channelId: 'design',
-    createdAt: '2026-07-29T13:05:00.000Z',
-    id: 'm-3',
-    userId: 'grace',
-    userName: USERS.grace.name,
-  },
-  {
-    body: 'Queue depth is back to normal. Keeping an eye on the next deploy.',
-    channelId: 'ops',
-    createdAt: '2026-07-29T13:08:00.000Z',
-    id: 'm-4',
-    userId: 'ada',
-    userName: USERS.ada.name,
-  },
-]
-
-declare global {
-  // eslint-disable-next-line no-var
-  var __nextMessageDemoMessages: Message[] | undefined
+export type ChannelDetail = ChannelSummary & {
+  handoff: string
+  members: string[]
+  pinned: string[]
+  status: string
 }
 
-function messages() {
-  globalThis.__nextMessageDemoMessages ??= [...initialMessages]
-  return globalThis.__nextMessageDemoMessages
+type ChannelRow = {
+  id: string
+  name: string
+  description: string
+  isPrivate: boolean
+  unread: number
+  members?: unknown[]
 }
 
-export function listChannels() {
-  return CHANNELS
+function toChannelSummary(channel: ChannelRow): ChannelSummary {
+  return {
+    description: channel.description,
+    id: channel.id,
+    isPrivate: channel.isPrivate,
+    memberCount: channel.members?.length ?? 0,
+    name: channel.name,
+    unread: channel.unread || undefined,
+  }
 }
 
-export function findChannel(channelId: string) {
-  return CHANNELS.find((channel) => channel.id === channelId) ?? null
+export async function listChannels() {
+  const channels = await prisma.channel.findMany({
+    include: { members: true },
+    orderBy: { createdAt: 'asc' },
+  })
+
+  return channels.map(toChannelSummary)
 }
 
-export function listMessages(channelId: string) {
-  return messages()
-    .filter((message) => message.channelId === channelId)
-    .sort(
-      (a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-    )
+export async function findChannel(channelId: string) {
+  const channel = await prisma.channel.findUnique({
+    include: { members: true },
+    where: { id: channelId },
+  })
+
+  return channel ? toChannelSummary(channel) : null
 }
 
-export function addMessage({
+export async function getChannelDetail(channelId: string) {
+  const channel = await prisma.channel.findUnique({
+    include: {
+      members: {
+        include: { user: true },
+      },
+      pinned: {
+        orderBy: { id: 'asc' },
+      },
+    },
+    where: { id: channelId },
+  })
+
+  if (!channel) return null
+
+  return {
+    ...toChannelSummary(channel),
+    handoff: channel.handoff,
+    members: channel.members.map((member) => member.user.name),
+    pinned: channel.pinned.map((item) => item.label),
+    status: channel.status,
+  } satisfies ChannelDetail
+}
+
+export async function listMessages(channelId: string) {
+  const messages = await prisma.message.findMany({
+    include: { user: true },
+    orderBy: { createdAt: 'asc' },
+    where: { channelId },
+  })
+
+  return messages.map((message) => ({
+    body: message.body,
+    channelId: message.channelId,
+    createdAt: message.createdAt.toISOString(),
+    id: message.id,
+    userId: message.userId,
+    userName: message.user.name,
+  }))
+}
+
+export async function addMessage({
   body,
   channelId,
   userId,
@@ -105,15 +108,23 @@ export function addMessage({
   userId: string
 }) {
   const user = USERS[userId] ?? USERS.ada
-  const message: Message = {
-    body,
-    channelId,
-    createdAt: new Date().toISOString(),
-    id: `m-${Date.now()}`,
-    userId: user.id,
-    userName: user.name,
-  }
+  const message = await prisma.message.create({
+    include: { user: true },
+    data: {
+      body,
+      channelId,
+      createdAt: new Date(),
+      id: `m-${crypto.randomUUID()}`,
+      userId: user.id,
+    },
+  })
 
-  messages().push(message)
-  return message
+  return {
+    body: message.body,
+    channelId: message.channelId,
+    createdAt: message.createdAt.toISOString(),
+    id: message.id,
+    userId: message.userId,
+    userName: message.user.name,
+  }
 }

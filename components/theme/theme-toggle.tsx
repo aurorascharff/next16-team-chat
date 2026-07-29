@@ -1,0 +1,49 @@
+'use client'
+
+import { Monitor, Moon, Sun } from 'lucide-react'
+import { useTheme } from 'next-themes'
+import { useEffect, useState } from 'react'
+import { cn } from '@/lib/utils'
+
+const options = [
+  { icon: Sun, label: 'Light', value: 'light' },
+  { icon: Moon, label: 'Dark', value: 'dark' },
+  { icon: Monitor, label: 'System', value: 'system' },
+] as const
+
+export function ThemeToggle() {
+  const { setTheme, theme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  return (
+    <div className="border-divider dark:border-divider-dark inline-flex items-center gap-0.5 rounded-full border p-0.5">
+      {options.map(({ icon: Icon, label, value }) => {
+        const active = mounted && theme === value
+
+        return (
+          <button
+            aria-label={`${label} theme`}
+            aria-pressed={active}
+            className={cn(
+              'flex size-7 items-center justify-center rounded-full transition-colors',
+              active
+                ? 'bg-accent-fade text-accent'
+                : 'text-muted hover:text-black dark:hover:text-white',
+            )}
+            key={value}
+            onClick={() => {
+              return setTheme(value)
+            }}
+            type="button"
+          >
+            <Icon aria-hidden className="size-3.5" strokeWidth={2.25} />
+          </button>
+        )
+      })}
+    </div>
+  )
+}

@@ -27,7 +27,7 @@ export async function sendMessage({
   }
 
   const user = await getCurrentUser()
-  const message = addMessage({ body: text, channelId, userId: user.id })
+  const message = await addMessage({ body: text, channelId, userId: user.id })
 
   updateTag(messagesTag(channelId))
 

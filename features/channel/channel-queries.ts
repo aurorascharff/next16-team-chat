@@ -22,7 +22,7 @@ export async function getChannel(channelId: string) {
   cacheTag('channels', channelTag(channelId))
   cacheLife('hours')
   await delay(700)
-  const channel = findChannel(channelId)
+  const channel = await findChannel(channelId)
   if (!channel) notFound()
   return channel
 }

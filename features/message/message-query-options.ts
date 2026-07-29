@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query'
-import type { Message } from './message-types'
+import type { Message } from './types/message'
 
 export const messageKeys = {
   channel: (channelId: string) => ['messages', channelId] as const,
@@ -17,6 +17,6 @@ export function messagesQueryOptions(channelId: string) {
       return res.json()
     },
     queryKey: messageKeys.channel(channelId),
-    staleTime: 15_000,
+    staleTime: Number.POSITIVE_INFINITY,
   })
 }

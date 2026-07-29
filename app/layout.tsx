@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
+import { GeistMono } from 'geist/font/mono'
+import { GeistSans } from 'geist/font/sans'
 import { Suspense } from 'react'
 import {
   ChannelList,
@@ -9,12 +10,22 @@ import {
   CurrentUserCard,
   CurrentUserCardSkeleton,
 } from '@/features/user/components/current-user-card'
+import { WorkspaceNav } from '@/features/workspace/components/workspace-nav'
 import { Providers } from './providers'
 import './globals.css'
 
 export const metadata: Metadata = {
-  description: 'A focused room-based messaging app.',
-  title: 'Relay',
+  applicationName: 'Patch',
+  description:
+    'A Next.js 16 messaging app with Cache Components, Partial Prefetching, and React Query.',
+  icons: {
+    apple: '/logo.svg',
+    icon: '/logo.svg',
+  },
+  title: {
+    default: 'Patch',
+    template: '%s · Patch',
+  },
 }
 
 export default function RootLayout({
@@ -23,15 +34,16 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html
+      className={`${GeistSans.variable} ${GeistMono.variable}`}
+      lang="en"
+      suppressHydrationWarning
+    >
       <body>
         <Providers>
-          <div className="app-shell">
-            <aside className="sidebar">
-              <Link className="brand" href="/channel/general">
-                <span aria-hidden>◆</span>
-                <strong>relay</strong>
-              </Link>
+          <div className="grid min-h-dvh w-full grid-cols-1 md:grid-cols-[16rem_minmax(0,1fr)]">
+            <aside className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark sticky top-0 z-20 flex h-dvh flex-col gap-4 border-b p-3 max-md:h-auto md:border-r md:border-b-0">
+              <WorkspaceNav />
               <Suspense fallback={<ChannelListSkeleton />}>
                 <ChannelList />
               </Suspense>
@@ -39,7 +51,7 @@ export default function RootLayout({
                 <CurrentUserCard />
               </Suspense>
             </aside>
-            <main className="main-panel">{children}</main>
+            <main className="min-w-0">{children}</main>
           </div>
         </Providers>
       </body>

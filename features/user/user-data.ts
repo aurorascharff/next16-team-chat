@@ -11,14 +11,14 @@ export const USERS: Record<string, DemoUser> = {
   ada: {
     handle: 'ada',
     id: 'ada',
-    name: 'Ada Lovelace',
-    role: 'Product engineering',
+    name: 'Aurora',
+    role: 'DX engineering',
   },
   grace: {
-    handle: 'grace',
+    handle: 'mira',
     id: 'grace',
-    name: 'Grace Hopper',
-    role: 'Developer experience',
+    name: 'Mira',
+    role: 'AI tools',
   },
 }
 
