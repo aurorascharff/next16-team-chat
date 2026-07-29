@@ -14,7 +14,7 @@ export async function ChannelList() {
           href={`/channel/${channel.id}` as Route}
           key={channel.id}
         >
-          <span className="room-hash">{channel.isPrivate ? 'lock' : '#'}</span>
+          <span className="room-hash">{channel.isPrivate ? '◦' : '#'}</span>
           <span>{channel.name}</span>
         </Link>
       ))}

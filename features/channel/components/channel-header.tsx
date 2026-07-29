@@ -8,7 +8,7 @@ export async function ChannelHeader({ channelId }: { channelId: string }) {
       <div>
         <p className="section-label">Current room</p>
         <h1>
-          <span aria-hidden>{channel.isPrivate ? 'lock' : '#'}</span>
+          <span aria-hidden>{channel.isPrivate ? '◦' : '#'}</span>
           {channel.name}
         </h1>
         <p>{channel.description}</p>

@@ -9,9 +9,9 @@ import {
 import type { Message } from '@/features/message/message-types'
 
 const incomingBodies = [
-  'Runtime data arrived. The static room chrome stayed put.',
-  'React Query has the warm seed, so this soft navigation feels calm.',
-  'The server owns the first value. The client owns the live layer.',
+  'I added the screenshot to the thread.',
+  'The preview looks good on mobile now.',
+  'One more pass on empty states and we can ship.',
 ]
 
 function initials(name: string) {
@@ -39,8 +39,8 @@ function LiveMessageTicker({ channelId }: { channelId: string }) {
         channelId,
         createdAt: new Date().toISOString(),
         id: `local-${channelId}-${Date.now()}`,
-        userId: 'relay',
-        userName: 'Relay Bot',
+        userId: 'nova',
+        userName: 'Nova',
       }
 
       queryClient.setQueryData<Message[]>(
@@ -65,7 +65,7 @@ export function MessageList({ channelId }: { channelId: string }) {
     <section className="message-list" aria-label="Messages">
       <LiveMessageTicker channelId={channelId} />
       <div className="sync-pill" data-active={isFetching}>
-        {isFetching ? 'Refreshing…' : 'Seeded from RSC'}
+        {isFetching ? 'Syncing' : 'Live'}
       </div>
       {messages.map((message) => (
         <article className="message-row" key={message.id}>

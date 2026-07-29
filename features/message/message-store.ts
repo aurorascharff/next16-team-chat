@@ -19,23 +19,23 @@ const CHANNELS: DemoChannel[] = [
     name: 'general',
   },
   {
-    description: 'Architecture notes for Cache Components and RSC.',
-    id: 'rsc-architecture',
+    description: 'Design reviews, interface notes, and product polish.',
+    id: 'design',
     isPrivate: true,
-    memberCount: 12,
-    name: 'rsc-architecture',
+    memberCount: 16,
+    name: 'design',
   },
   {
-    description: 'Product questions, copy passes, and launch feedback.',
-    id: 'docs',
-    memberCount: 18,
-    name: 'docs',
+    description: 'Support watch, incident notes, and handoff context.',
+    id: 'ops',
+    memberCount: 9,
+    name: 'ops',
   },
 ]
 
 const initialMessages: Message[] = [
   {
-    body: 'Can we keep the channel shell instant while messages hydrate into React Query?',
+    body: 'Final copy pass is in. The onboarding modal reads calmer now.',
     channelId: 'general',
     createdAt: '2026-07-29T13:00:00.000Z',
     id: 'm-1',
@@ -43,7 +43,7 @@ const initialMessages: Message[] = [
     userName: USERS.ada.name,
   },
   {
-    body: 'Yes. The page owns Suspense, the feature seeds the query, and the client keeps live updates local.',
+    body: 'Nice. I’ll run through the mobile states before we call it ready.',
     channelId: 'general',
     createdAt: '2026-07-29T13:02:00.000Z',
     id: 'm-2',
@@ -51,16 +51,16 @@ const initialMessages: Message[] = [
     userName: USERS.grace.name,
   },
   {
-    body: 'The static shell should not wait for params. Pass the channel ID into the feature component.',
-    channelId: 'rsc-architecture',
+    body: 'The composer should stay pinned, but the room header can breathe a little.',
+    channelId: 'design',
     createdAt: '2026-07-29T13:05:00.000Z',
     id: 'm-3',
     userId: 'grace',
     userName: USERS.grace.name,
   },
   {
-    body: 'Centralize query keys so the server seed, client hook, and mutations cannot drift.',
-    channelId: 'docs',
+    body: 'Queue depth is back to normal. Keeping an eye on the next deploy.',
+    channelId: 'ops',
     createdAt: '2026-07-29T13:08:00.000Z',
     id: 'm-4',
     userId: 'ada',

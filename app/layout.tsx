@@ -13,9 +13,8 @@ import { Providers } from './providers'
 import './globals.css'
 
 export const metadata: Metadata = {
-  description:
-    'A Next.js 16 messaging demo with Cache Components and React Query.',
-  title: 'next16-messaging',
+  description: 'A focused room-based messaging app.',
+  title: 'Relay',
 }
 
 export default function RootLayout({
@@ -30,8 +29,8 @@ export default function RootLayout({
           <div className="app-shell">
             <aside className="sidebar">
               <Link className="brand" href="/channel/general">
-                <span>Relay</span>
-                <small>Next.js messages</small>
+                <span aria-hidden>◆</span>
+                <strong>relay</strong>
               </Link>
               <Suspense fallback={<ChannelListSkeleton />}>
                 <ChannelList />
