@@ -1,7 +1,0 @@
-{
-  "/_global-error/page": "app/_global-error/page.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/api/channels/[channelId]/messages/route": "app/api/channels/[channelId]/messages/route.js",
-  "/channel/[channelId]/page": "app/channel/[channelId]/page.js",
-  "/page": "app/page.js"
-}
