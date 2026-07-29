@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 3, "column": 0}, "map": {"version":3,"sources":["file:///Users/aurorascharff/Documents/Development/next16-messaging/node_modules/.pnpm/next@16.3.0-preview.9_@types+node@20.19.43_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/navigation.js"],"sourcesContent":["module.exports = require('./dist/client/components/navigation')\n"],"names":["module","exports"],"mappings":"AAAAA,OAAOC,OAAO","ignoreList":[0]}}]
+}

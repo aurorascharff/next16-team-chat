@@ -1,0 +1,49 @@
+{
+  "node": {
+    "80b908a49f7a3c6b1b777f5cd98bcc2625946d1914": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/features/user/user-queries.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/features/channel/channel-queries.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/features/user/user-actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "features/user/user-queries.ts"
+    },
+    "80dce666caafd7648fe832f081891a2653a8cdc479": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/features/user/user-queries.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/features/channel/channel-queries.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/features/user/user-actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_0",
+      "filename": "features/channel/channel-queries.ts"
+    },
+    "c02bcf377125da0892f0ec87972ad68d83f6b82113": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/features/user/user-queries.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/features/channel/channel-queries.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/features/user/user-actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "$$RSC_SERVER_CACHE_1",
+      "filename": "features/channel/channel-queries.ts"
+    },
+    "604b4e633ef1e74da935da3a7b3e4d4a51ddac9797": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/features/user/user-queries.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/features/channel/channel-queries.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/features/user/user-actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "switchUser",
+      "filename": "features/user/user-actions.ts"
+    }
+  },
+  "edge": {}
+}

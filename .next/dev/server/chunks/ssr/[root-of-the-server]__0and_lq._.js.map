@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 16, "column": 0}, "map": {"version":3,"sources":["file:///Users/aurorascharff/Documents/Development/next16-messaging/app/page.tsx"],"sourcesContent":["import { redirect } from 'next/navigation'\n\nexport default function HomePage() {\n  redirect('/channel/general')\n}\n"],"names":["HomePage"],"mappings":";;;;AAAA;AAAA;;AAEe,SAASA;IACtB,IAAA,oXAAQ,EAAC;AACX"}}]
+}

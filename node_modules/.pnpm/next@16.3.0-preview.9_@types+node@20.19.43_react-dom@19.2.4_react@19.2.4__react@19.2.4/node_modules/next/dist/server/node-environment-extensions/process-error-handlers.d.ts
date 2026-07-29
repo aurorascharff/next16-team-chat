@@ -1,0 +1,1 @@
+export declare function installProcessErrorHandlers(shouldRemoveUncaughtErrorAndRejectionListeners: boolean): void;

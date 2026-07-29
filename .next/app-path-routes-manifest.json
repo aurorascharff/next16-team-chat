@@ -1,0 +1,7 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/api/channels/[channelId]/messages/route": "/api/channels/[channelId]/messages",
+  "/channel/[channelId]/page": "/channel/[channelId]",
+  "/page": "/"
+}
