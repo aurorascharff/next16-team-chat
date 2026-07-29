@@ -19,6 +19,18 @@ export function formatTime(value: string) {
   }).format(new Date(value))
 }
 
+export function stripMarkdown(body: string): string {
+  return body
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/^\s*[-*]\s+/gm, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 export function formatInline(body: string): ReactNode {
   const parts = body.split(
     /(`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*|\[[^\]]+\]\((?:https?:\/\/|\/)[^)]+\)|@[A-Za-z][\w-]*)/g,

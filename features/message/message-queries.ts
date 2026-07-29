@@ -50,50 +50,15 @@ function toMessage(
   }
 }
 
-async function listMessages(
-  channelId: string,
-  currentUserId?: string,
-  options?: { cursor?: string; limit?: number },
-) {
-  const limit = options?.limit ?? 40
-  const cursorMessage = options?.cursor
-    ? await prisma.message.findUnique({
-        select: { createdAt: true, id: true },
-        where: { id: options.cursor },
-      })
-    : null
-
-  const page = await prisma.message.findMany({
+async function listMessages(channelId: string, currentUserId?: string) {
+  const recent = await prisma.message.findMany({
     include: messageInclude,
     orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
-    take: limit + 1,
-    where: {
-      channelId,
-      parentId: null,
-      ...(cursorMessage
-        ? {
-            OR: [
-              { createdAt: { lt: cursorMessage.createdAt } },
-              {
-                createdAt: cursorMessage.createdAt,
-                id: { lt: cursorMessage.id },
-              },
-            ],
-          }
-        : {}),
-    },
+    take: 100,
+    where: { channelId, parentId: null },
   })
 
-  const hasMore = page.length > limit
-  const slice = hasMore ? page.slice(0, limit) : page
-  const nextCursor = hasMore ? slice[slice.length - 1].id : null
-
-  return {
-    messages: slice
-      .map((message) => toMessage(message, currentUserId))
-      .reverse(),
-    nextCursor,
-  }
+  return recent.map((message) => toMessage(message, currentUserId)).reverse()
 }
 
 async function listReplies(parentId: string, currentUserId?: string) {
@@ -233,27 +198,21 @@ export function repliesTag(messageId: string) {
   return `replies:${messageId}`
 }
 
-export async function getMessages(channelId: string, cursor?: string) {
+export async function getMessages(channelId: string) {
   const user = await getCurrentUser()
-  return getMessagesCached(
-    channelId,
-    user.id,
-    cursor ?? null,
-    await isSlowMode(),
-  )
+  return getMessagesCached(channelId, user.id, await isSlowMode())
 }
 
 export async function getMessagesCached(
   channelId: string,
   userId: string,
-  cursor: string | null,
   slow: boolean,
 ) {
   'use cache'
   cacheTag('messages', messagesTag(channelId))
   cacheLife({ stale: 30 })
   await delay(1000, slow)
-  return listMessages(channelId, userId, { cursor: cursor ?? undefined })
+  return listMessages(channelId, userId)
 }
 
 export async function getReplies(messageId: string) {

@@ -4,6 +4,7 @@ import type { Route } from 'next'
 import { EmptyState } from '@/components/ui/empty-state'
 import { UserAvatar } from '@/components/ui/user-avatar'
 import { getMentions } from '@/features/message/mention-queries'
+import { stripMarkdown } from './format'
 
 export async function MentionsList() {
   const mentions = await getMentions()
@@ -41,7 +42,7 @@ export async function MentionsList() {
                 </span>
               </div>
               <p className="text-muted dark:text-muted-dark mt-0.5 truncate text-[0.8125rem]">
-                {mention.preview}
+                {stripMarkdown(mention.preview)}
               </p>
             </div>
             {!mention.read ? (

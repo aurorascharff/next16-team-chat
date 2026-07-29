@@ -1,18 +1,10 @@
 'use client'
 
-import {
-  type InfiniteData,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { SmilePlus } from 'lucide-react'
 import { useState } from 'react'
 import { reactToMessage } from '@/features/message/message-actions'
-import {
-  mapInfiniteMessages,
-  type MessagePage,
-  messageKeys,
-} from '@/features/message/message-query-options'
+import { messageKeys } from '@/features/message/message-query-options'
 import type { Message, Reaction } from '@/features/message/types/message'
 import { cn } from '@/lib/utils'
 
@@ -34,9 +26,8 @@ function applyToggle(reactions: Reaction[] = [], emoji: string): Reaction[] {
 
 function useReactionToggle(message: Message) {
   const queryClient = useQueryClient()
-  const isReply = Boolean(message.parentId)
-  const key = isReply
-    ? messageKeys.replies(message.parentId as string)
+  const key = message.parentId
+    ? messageKeys.replies(message.parentId)
     : messageKeys.channel(message.channelId)
 
   const { mutate } = useMutation({
@@ -55,22 +46,13 @@ function useReactionToggle(message: Message) {
     },
     onMutate: async (emoji: string) => {
       await queryClient.cancelQueries({ queryKey: key })
-      const toggle = (item: Message) =>
-        item.id === message.id
-          ? { ...item, reactions: applyToggle(item.reactions, emoji) }
-          : item
-
-      if (isReply) {
-        const previous = queryClient.getQueryData<Message[]>(key)
-        queryClient.setQueryData<Message[]>(key, (current = []) =>
-          current.map(toggle),
-        )
-        return { previous }
-      }
-
-      const previous = queryClient.getQueryData<InfiniteData<MessagePage>>(key)
-      queryClient.setQueryData<InfiniteData<MessagePage>>(key, (current) =>
-        mapInfiniteMessages(current, toggle),
+      const previous = queryClient.getQueryData<Message[]>(key)
+      queryClient.setQueryData<Message[]>(key, (current = []) =>
+        current.map((item) =>
+          item.id === message.id
+            ? { ...item, reactions: applyToggle(item.reactions, emoji) }
+            : item,
+        ),
       )
       return { previous }
     },

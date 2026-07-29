@@ -1,15 +1,12 @@
 'use client'
 
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { Hash, Lock, MessageSquare, Search } from 'lucide-react'
 import { useRouter, usePathname } from 'next/navigation'
 import type { Route } from 'next'
 import { useEffect, useRef, useState } from 'react'
 import { channelSearchQueryOptions } from '@/features/channel/channel-query-options'
-import {
-  flattenMessages,
-  messagesInfiniteQueryOptions,
-} from '@/features/message/message-query-options'
+import { messagesQueryOptions } from '@/features/message/message-query-options'
 import { cn } from '@/lib/utils'
 
 type Result =
@@ -42,11 +39,10 @@ export function CommandPalette() {
     ...channelSearchQueryOptions(),
     enabled: open,
   })
-  const { data: messageData } = useInfiniteQuery({
-    ...messagesInfiniteQueryOptions(channelId ?? ''),
+  const { data: messages = [] } = useQuery({
+    ...messagesQueryOptions(channelId ?? ''),
     enabled: open && Boolean(channelId),
   })
-  const messages = flattenMessages(messageData)
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {

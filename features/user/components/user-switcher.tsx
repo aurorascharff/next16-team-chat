@@ -19,6 +19,7 @@ export function UserSwitcher({ currentUserId }: { currentUserId: string }) {
       onClick={() => {
         switchTo(async () => {
           await switchUser(nextUserId)
+          router.push('/')
           router.refresh()
         })
       }}

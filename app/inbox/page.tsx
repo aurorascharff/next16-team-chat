@@ -32,12 +32,12 @@ export default function InboxPage() {
         <Crossfade>
           <MentionsList />
         </Crossfade>
-      </Suspense>
-      <WorkspacePanelHeader view="inbox" />
-      <Suspense fallback={<WorkspaceListSkeleton />}>
-        <Crossfade>
-          <InboxList />
-        </Crossfade>
+        <WorkspacePanelHeader view="inbox" />
+        <Suspense fallback={<WorkspaceListSkeleton />}>
+          <Crossfade>
+            <InboxList />
+          </Crossfade>
+        </Suspense>
       </Suspense>
     </section>
   )

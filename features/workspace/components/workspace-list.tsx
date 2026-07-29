@@ -3,6 +3,7 @@ import Link from 'next/link'
 import type { Route } from 'next'
 import { EmptyState } from '@/components/ui/empty-state'
 import { UserAvatar } from '@/components/ui/user-avatar'
+import { stripMarkdown } from '@/features/message/components/format'
 import type { WorkspaceItem } from '@/features/workspace/workspace-queries'
 
 export function WorkspaceList({
@@ -48,7 +49,7 @@ export function WorkspaceList({
                 </span>
               </div>
               <p className="text-muted dark:text-muted-dark mt-0.5 truncate text-[0.8125rem]">
-                {item.preview}
+                {stripMarkdown(item.preview)}
               </p>
             </div>
             {withThreads && item.replyCount > 0 ? (

@@ -11,17 +11,15 @@ import {
 } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { sendMessage } from '@/features/message/message-actions'
-import {
-  appendInfiniteMessage,
-  mapInfiniteMessages,
-  type MessagePage,
-  messageKeys,
-} from '@/features/message/message-query-options'
+import { messageKeys } from '@/features/message/message-query-options'
 import type { Message } from '@/features/message/types/message'
+import { USERS } from '@/features/user/user-data'
+import { UserAvatar } from '@/components/ui/user-avatar'
 import { MessagePreview } from './message-preview'
-import type { InfiniteData } from '@tanstack/react-query'
 
 const MAX_LENGTH = 280
+
+const MENTIONABLE = Object.values(USERS)
 
 export function MessageComposer({
   channelId,
@@ -42,6 +40,44 @@ export function MessageComposer({
   const [writeHeight, setWriteHeight] = useState(0)
   const [isPending, startTransition] = useTransition()
   const fieldId = useId()
+  const [mention, setMention] = useState<{
+    query: string
+    start: number
+  } | null>(null)
+  const [mentionIndex, setMentionIndex] = useState(0)
+
+  const mentionMatches = mention
+    ? MENTIONABLE.filter((user) => {
+        const q = mention.query.toLowerCase()
+        return (
+          user.handle.toLowerCase().includes(q) ||
+          user.name.toLowerCase().includes(q)
+        )
+      }).slice(0, 6)
+    : []
+
+  function syncMention() {
+    const el = textareaRef.current
+    if (!el) return setMention(null)
+    const caret = el.selectionStart
+    const before = el.value.slice(0, caret)
+    const match = /(?:^|\s)@([A-Za-z][\w-]*)?$/.exec(before)
+    if (!match) return setMention(null)
+    setMention({
+      query: match[1] ?? '',
+      start: caret - (match[1]?.length ?? 0),
+    })
+    setMentionIndex(0)
+  }
+
+  function insertMention(handle: string) {
+    const el = textareaRef.current
+    if (!el || !mention) return
+    el.focus()
+    el.setSelectionRange(mention.start, el.selectionStart)
+    document.execCommand('insertText', false, `${handle} `)
+    setMention(null)
+  }
 
   function showPreview() {
     setWriteHeight(textareaRef.current?.offsetHeight ?? 0)
@@ -61,6 +97,31 @@ export function MessageComposer({
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
+    if (mention && mentionMatches.length > 0) {
+      if (event.key === 'ArrowDown') {
+        event.preventDefault()
+        setMentionIndex((i) => (i + 1) % mentionMatches.length)
+        return
+      }
+      if (event.key === 'ArrowUp') {
+        event.preventDefault()
+        setMentionIndex(
+          (i) => (i - 1 + mentionMatches.length) % mentionMatches.length,
+        )
+        return
+      }
+      if (event.key === 'Enter' || event.key === 'Tab') {
+        event.preventDefault()
+        insertMention(`@${mentionMatches[mentionIndex].handle}`)
+        return
+      }
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        setMention(null)
+        return
+      }
+    }
+
     if (!(event.metaKey || event.ctrlKey)) {
       return
     }
@@ -115,68 +176,40 @@ export function MessageComposer({
     setMode('write')
     setPreview('')
 
-    const channelKey = messageKeys.channel(channelId)
+    const key = parentId
+      ? messageKeys.replies(parentId)
+      : messageKeys.channel(channelId)
 
-    if (parentId) {
-      const key = messageKeys.replies(parentId)
-      queryClient.setQueryData<Message[]>(key, (current = []) => [
-        ...current,
-        optimistic,
-      ])
+    queryClient.setQueryData<Message[]>(key, (current = []) => [
+      ...current,
+      optimistic,
+    ])
 
-      startTransition(async () => {
-        const result = await sendMessage({ body, channelId, parentId })
+    startTransition(async () => {
+      const result = await sendMessage({ body, channelId, parentId })
 
-        if (!result.ok) {
-          setError(result.error)
-          queryClient.setQueryData<Message[]>(key, (current = []) =>
-            current.map((message) =>
-              message.id === optimistic.id
-                ? { ...message, status: 'failed' }
-                : message,
-            ),
-          )
-          return
-        }
-
-        queryClient.setQueryData<Message[]>(key, (current = []) =>
-          current.map((message) =>
-            message.id === optimistic.id
+      queryClient.setQueryData<Message[]>(key, (current = []) =>
+        current.map((message) =>
+          message.id === optimistic.id
+            ? result.ok
               ? { ...result.message, status: 'sent' }
-              : message,
-          ),
-        )
-        queryClient.setQueryData<InfiniteData<MessagePage>>(
-          channelKey,
-          (current) =>
-            mapInfiniteMessages(current, (message) =>
+              : { ...message, status: 'failed' }
+            : message,
+        ),
+      )
+
+      if (result.ok && parentId) {
+        queryClient.setQueryData<Message[]>(
+          messageKeys.channel(channelId),
+          (current = []) =>
+            current.map((message) =>
               message.id === parentId
                 ? { ...message, replyCount: (message.replyCount ?? 0) + 1 }
                 : message,
             ),
         )
-      })
-      return
-    }
+      }
 
-    queryClient.setQueryData<InfiniteData<MessagePage>>(channelKey, (current) =>
-      appendInfiniteMessage(current, optimistic),
-    )
-
-    startTransition(async () => {
-      const result = await sendMessage({ body, channelId })
-
-      queryClient.setQueryData<InfiniteData<MessagePage>>(
-        channelKey,
-        (current) =>
-          mapInfiniteMessages(current, (message) =>
-            message.id === optimistic.id
-              ? result.ok
-                ? { ...result.message, status: 'sent' }
-                : { ...message, status: 'failed' }
-              : message,
-          ),
-      )
       if (!result.ok) setError(result.error)
     })
   }
@@ -261,20 +294,65 @@ export function MessageComposer({
         <label className="sr-only" htmlFor={fieldId}>
           Message
         </label>
-        <textarea
-          className={
-            mode === 'preview'
-              ? 'hidden'
-              : 'min-h-20 w-full resize-none bg-transparent px-3.5 py-3 text-sm leading-relaxed outline-none'
-          }
-          id={fieldId}
-          maxLength={MAX_LENGTH}
-          name="body"
-          onKeyDown={onKeyDown}
-          placeholder={placeholder ?? `Message #${channelId}`}
-          ref={textareaRef}
-          rows={3}
-        />
+        <div className="relative">
+          <textarea
+            className={
+              mode === 'preview'
+                ? 'hidden'
+                : 'min-h-20 w-full resize-none bg-transparent px-3.5 py-3 text-sm leading-relaxed outline-none'
+            }
+            id={fieldId}
+            maxLength={MAX_LENGTH}
+            name="body"
+            onBlur={() => {
+              return setTimeout(() => setMention(null), 120)
+            }}
+            onClick={syncMention}
+            onInput={syncMention}
+            onKeyDown={onKeyDown}
+            onKeyUp={syncMention}
+            placeholder={placeholder ?? `Message #${channelId}`}
+            ref={textareaRef}
+            rows={3}
+          />
+          {mention && mentionMatches.length > 0 && mode === 'write' ? (
+            <ul className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark absolute bottom-full left-3 z-20 mb-1 w-56 overflow-hidden rounded-lg border shadow-lg">
+              {mentionMatches.map((user, index) => {
+                return (
+                  <li key={user.id}>
+                    <button
+                      className={
+                        'flex w-full items-center gap-2.5 px-2.5 py-1.5 text-left transition-colors ' +
+                        (index === mentionIndex
+                          ? 'bg-accent-fade'
+                          : 'hover:bg-card dark:hover:bg-card-dark')
+                      }
+                      onMouseDown={(event) => {
+                        event.preventDefault()
+                        insertMention(`@${user.handle}`)
+                      }}
+                      type="button"
+                    >
+                      <UserAvatar
+                        bot={user.id === 'bot'}
+                        name={user.name}
+                        size="sm"
+                      />
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-[0.8125rem] font-medium">
+                          {user.name}
+                        </span>
+                        <span className="text-muted dark:text-muted-dark block truncate text-xs">
+                          @{user.handle}
+                        </span>
+                      </span>
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          ) : null}
+        </div>
         {mode === 'preview' ? (
           <div
             className="px-3.5 py-3"

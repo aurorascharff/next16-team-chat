@@ -1,15 +1,11 @@
 'use client'
 
-import {
-  useSuspenseInfiniteQuery,
-  useSuspenseQuery,
-} from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { X } from 'lucide-react'
 import { Suspense } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
-  flattenMessages,
-  messagesInfiniteQueryOptions,
+  messagesQueryOptions,
   repliesQueryOptions,
 } from '@/features/message/message-query-options'
 import { MessageComposer } from './message-composer'
@@ -24,10 +20,7 @@ export function ThreadPanel({
   messageId: string
 }) {
   const { closeThread } = useThread()
-  const { data: messageData } = useSuspenseInfiniteQuery(
-    messagesInfiniteQueryOptions(channelId),
-  )
-  const messages = flattenMessages(messageData)
+  const { data: messages } = useSuspenseQuery(messagesQueryOptions(channelId))
   const parent = messages.find((message) => {
     return message.id === messageId
   })
