@@ -6,16 +6,15 @@ import { Search } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { unreadChannelsQueryOptions } from '@/features/channel/channel-query-options'
+import { unreadMentionsQueryOptions } from '@/features/message/mention-query-options'
 import { isNavActive, PRIMARY_NAV } from '@/features/workspace/primary-nav'
 import { cn } from '@/lib/utils'
 
 export function MobileTabBar() {
   const pathname = usePathname()
   const [mounted, setMounted] = useState(false)
-  const { data: unreadMap } = useQuery(unreadChannelsQueryOptions())
-  const hasActivity =
-    mounted && Boolean(unreadMap && Object.keys(unreadMap).length > 0)
+  const { data: mentions } = useQuery(unreadMentionsQueryOptions())
+  const hasActivity = mounted && Boolean(mentions && mentions.count > 0)
 
   useEffect(() => {
     setMounted(true)

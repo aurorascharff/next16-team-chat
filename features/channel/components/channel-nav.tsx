@@ -1,128 +1,67 @@
 'use client'
 
 import { Pencil, Plus, X } from 'lucide-react'
-import { useEffect, useRef, useState, useTransition } from 'react'
-import { saveChannelLayout } from '@/features/channel/channel-layout-actions'
+import {
+  startTransition,
+  useActionState,
+  useOptimistic,
+  useRef,
+  useState,
+} from 'react'
+import { channelLayoutReducer } from '@/features/channel/channel-layout-actions'
+import {
+  applyLayoutAction,
+  type LayoutAction,
+  type LayoutGroup,
+  UNGROUPED,
+} from '@/features/channel/channel-layout-reducer'
 import { cn } from '@/lib/utils'
 import { ChannelLink } from './channel-link'
 
-const UNGROUPED = 'Channels'
-
-type Channel = {
-  id: string
-  isPrivate?: boolean
-  name: string
-  unread?: number
-}
-
-type Group = {
-  name: string
-  channels: Channel[]
-}
-
 type Props = {
-  groups: Group[]
-}
-
-function sortGroups(groups: Group[]) {
-  return [...groups].sort((a, b) => {
-    if (a.name === UNGROUPED) return 1
-    if (b.name === UNGROUPED) return -1
-    return a.name.localeCompare(b.name)
-  })
+  groups: LayoutGroup[]
 }
 
 export function ChannelNav({ groups: initialGroups }: Props) {
-  const [groups, setGroups] = useState(initialGroups)
-  const [isSaving, startTransition] = useTransition()
-  const dragging = useRef<{ groupIndex: number; channelIndex: number } | null>(
-    null,
+  const [groups, dispatch, isSaving] = useActionState(
+    channelLayoutReducer,
+    initialGroups,
   )
-  const [overGroup, setOverGroup] = useState<number | null>(null)
-  const [dropTarget, setDropTarget] = useState<{
-    groupIndex: number
-    channelIndex: number
-  } | null>(null)
+  const [optimisticGroups, addOptimistic] = useOptimistic(
+    groups,
+    applyLayoutAction,
+  )
+  const dragging = useRef<{ groupName: string; channelId: string } | null>(null)
+  const [overGroup, setOverGroup] = useState<string | null>(null)
   const [editingName, setEditingName] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (!isSaving) setGroups(initialGroups)
-  }, [initialGroups, isSaving])
-
-  function persist(next: Group[]) {
-    const sorted = sortGroups(next)
-    setGroups(sorted)
-    startTransition(async () => {
-      await saveChannelLayout({
-        groups: sorted.map((group) => {
-          return {
-            channelIds: group.channels.map((channel) => channel.id),
-            name: group.name,
-          }
-        }),
-      })
+  function runAction(action: LayoutAction) {
+    startTransition(() => {
+      addOptimistic(action)
+      dispatch(action)
     })
-  }
-
-  function moveChannel(
-    fromGroup: number,
-    fromChannel: number,
-    toGroup: number,
-    toChannel: number,
-  ) {
-    const next = groups.map((group) => {
-      return { ...group, channels: [...group.channels] }
-    })
-    const [moved] = next[fromGroup].channels.splice(fromChannel, 1)
-    const insertAt =
-      fromGroup === toGroup && fromChannel < toChannel
-        ? toChannel - 1
-        : toChannel
-    next[toGroup].channels.splice(insertAt, 0, moved)
-    persist(next)
   }
 
   function addGroup() {
-    let index = groups.length + 1
+    let index = optimisticGroups.length + 1
     let name = `New group ${index}`
-    while (groups.some((group) => group.name === name)) {
+    while (optimisticGroups.some((group) => group.name === name)) {
       index += 1
       name = `New group ${index}`
     }
-    setGroups(sortGroups([...groups, { channels: [], name }]))
+    runAction({ name, type: 'addGroup' })
     setEditingName(name)
   }
 
   function deleteGroup(name: string) {
-    const target = groups.find((group) => group.name === name)
-    if (!target) return
-    const next = groups.filter((group) => group.name !== name)
-    let ungrouped = next.find((group) => group.name === UNGROUPED)
-    if (!ungrouped) {
-      ungrouped = { channels: [], name: UNGROUPED }
-      next.push(ungrouped)
-    }
-    ungrouped.channels = [...ungrouped.channels, ...target.channels]
-    persist(next)
+    runAction({ name, type: 'deleteGroup' })
   }
 
   function renameGroup(oldName: string, rawName: string) {
     setEditingName(null)
     const name = rawName.trim()
-    if (
-      !name ||
-      name === UNGROUPED ||
-      groups.some((group) => group.name !== oldName && group.name === name)
-    ) {
-      setGroups(sortGroups([...groups]))
-      return
-    }
-    if (name === oldName) return
-    persist(
-      groups.map((group) => {
-        return group.name === oldName ? { ...group, name } : group
-      }),
-    )
+    if (!name || name === oldName) return
+    runAction({ from: oldName, to: name, type: 'renameGroup' })
   }
 
   return (
@@ -130,42 +69,40 @@ export function ChannelNav({ groups: initialGroups }: Props) {
       aria-label="Channels"
       className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto"
     >
-      {groups.map((group, groupIndex) => {
+      {optimisticGroups.map((group) => {
         const removable = group.name !== UNGROUPED
 
         return (
           <div
             className={cn(
               'flex flex-col gap-0.5 rounded-lg transition-colors',
-              overGroup === groupIndex && 'bg-accent-fade',
+              overGroup === group.name && 'bg-accent-fade',
             )}
             key={group.name}
             onDragOver={(event) => {
               if (!dragging.current) return
               event.preventDefault()
-              setOverGroup(groupIndex)
+              setOverGroup(group.name)
             }}
             onDragLeave={(event) => {
               if (!event.currentTarget.contains(event.relatedTarget as Node)) {
                 setOverGroup((current) =>
-                  current === groupIndex ? null : current,
+                  current === group.name ? null : current,
                 )
-                setDropTarget(null)
               }
             }}
             onDrop={(event) => {
               const state = dragging.current
               if (!state) return
               event.preventDefault()
-              moveChannel(
-                state.groupIndex,
-                state.channelIndex,
-                groupIndex,
-                groups[groupIndex].channels.length,
-              )
+              runAction({
+                channelId: state.channelId,
+                toGroup: group.name,
+                toIndex: group.channels.length,
+                type: 'move',
+              })
               dragging.current = null
               setOverGroup(null)
-              setDropTarget(null)
             }}
           >
             {editingName === group.name ? (
@@ -196,7 +133,7 @@ export function ChannelNav({ groups: initialGroups }: Props) {
                 <p
                   className={cn(
                     'text-xs font-semibold tracking-wide uppercase select-none',
-                    overGroup === groupIndex
+                    overGroup === group.name
                       ? 'text-accent'
                       : 'text-muted dark:text-muted-dark',
                     removable && 'cursor-text',
@@ -248,24 +185,39 @@ export function ChannelNav({ groups: initialGroups }: Props) {
                     onDragOver={(event) => {
                       if (dragging.current) {
                         event.preventDefault()
-                        setOverGroup(groupIndex)
+                        setOverGroup(group.name)
                       }
                     }}
                     onDragStart={(event) => {
                       event.stopPropagation()
-                      dragging.current = { channelIndex, groupIndex }
+                      dragging.current = {
+                        channelId: channel.id,
+                        groupName: group.name,
+                      }
                     }}
                     onDrop={(event) => {
                       const state = dragging.current
                       if (!state) return
                       event.preventDefault()
                       event.stopPropagation()
-                      moveChannel(
-                        state.groupIndex,
-                        state.channelIndex,
-                        groupIndex,
-                        channelIndex,
-                      )
+                      const sameGroup = state.groupName === group.name
+                      const fromIndex = sameGroup
+                        ? group.channels.findIndex(
+                            (c) => c.id === state.channelId,
+                          )
+                        : -1
+                      const toIndex =
+                        sameGroup &&
+                        fromIndex !== -1 &&
+                        fromIndex < channelIndex
+                          ? channelIndex - 1
+                          : channelIndex
+                      runAction({
+                        channelId: state.channelId,
+                        toGroup: group.name,
+                        toIndex,
+                        type: 'move',
+                      })
                       dragging.current = null
                       setOverGroup(null)
                     }}
@@ -284,7 +236,7 @@ export function ChannelNav({ groups: initialGroups }: Props) {
         type="button"
       >
         <Plus aria-hidden className="size-4 shrink-0" strokeWidth={2} />
-        New group
+        {isSaving ? 'Saving…' : 'New group'}
       </button>
     </nav>
   )

@@ -56,6 +56,7 @@ export const ModelName = {
   ChannelGroup: 'ChannelGroup',
   ChannelMember: 'ChannelMember',
   Message: 'Message',
+  Mention: 'Mention',
   Reaction: 'Reaction',
   PinnedItem: 'PinnedItem'
 } as const
@@ -132,6 +133,18 @@ export const MessageScalarFieldEnum = {
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+
+
+export const MentionScalarFieldEnum = {
+  id: 'id',
+  messageId: 'messageId',
+  userId: 'userId',
+  channelId: 'channelId',
+  read: 'read',
+  createdAt: 'createdAt'
+} as const
+
+export type MentionScalarFieldEnum = (typeof MentionScalarFieldEnum)[keyof typeof MentionScalarFieldEnum]
 
 
 export const ReactionScalarFieldEnum = {

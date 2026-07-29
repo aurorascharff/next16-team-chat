@@ -1,4 +1,16 @@
 import type { ReactNode } from 'react'
+import { USERS } from '@/features/user/user-data'
+
+const VALID_MENTIONS = new Set(
+  Object.values(USERS).flatMap((user) => [
+    user.name.toLowerCase(),
+    user.handle.toLowerCase(),
+  ]),
+)
+
+function isValidMention(token: string) {
+  return VALID_MENTIONS.has(token.slice(1).toLowerCase())
+}
 
 export function initials(name: string) {
   return name
@@ -48,6 +60,9 @@ export function formatInline(body: string): ReactNode {
     }
 
     if (/^@[A-Za-z][\w-]*$/.test(part)) {
+      if (!isValidMention(part)) {
+        return part
+      }
       return (
         <span
           className="bg-accent-fade text-accent rounded px-1 font-medium"

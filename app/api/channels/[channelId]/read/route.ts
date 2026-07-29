@@ -1,5 +1,5 @@
 import { revalidateTag } from 'next/cache'
-import { markChannelRead } from '@/features/message/message-store'
+import { markChannelRead } from '@/features/channel/channel-queries'
 import { verifyAuth } from '@/features/user/user-queries'
 
 export async function POST(

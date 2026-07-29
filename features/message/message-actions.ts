@@ -2,8 +2,13 @@
 
 import { updateTag } from 'next/cache'
 import { verifyAuth } from '@/features/user/user-queries'
-import { addMessage, toggleReaction } from './message-store'
-import { messagesTag, repliesTag } from './message-queries'
+import {
+  addMessage,
+  messagesTag,
+  replyAsBotIfMentioned,
+  repliesTag,
+  toggleReaction,
+} from './message-queries'
 
 export type SendMessageResult =
   | { ok: true; message: Awaited<ReturnType<typeof addMessage>> }
@@ -36,10 +41,22 @@ export async function sendMessage({
     userId: user.id,
   })
 
+  const botThread = await replyAsBotIfMentioned({
+    authorId: user.id,
+    body: text,
+    channelId,
+    messageId: message.id,
+    parentId,
+  })
+
   if (parentId) {
     updateTag(repliesTag(parentId))
   }
+  if (botThread) {
+    updateTag(repliesTag(botThread))
+  }
   updateTag(messagesTag(channelId))
+  updateTag('mentions')
 
   return { message, ok: true }
 }

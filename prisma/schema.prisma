@@ -18,6 +18,7 @@ model User {
   memberships ChannelMember[]
   groups      ChannelGroup[]
   reactions   Reaction[]
+  mentions    Mention[]
 }
 
 model Channel {
@@ -79,10 +80,26 @@ model Message {
   parent    Message?   @relation("MessageReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies   Message[]  @relation("MessageReplies")
   reactions Reaction[]
+  mentions  Mention[]
 
   @@index([channelId, createdAt])
   @@index([parentId, createdAt])
   @@index([userId])
+}
+
+model Mention {
+  id        String   @id
+  messageId String
+  userId    String
+  channelId String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId])
+  @@index([userId, read])
 }
 
 model Reaction {

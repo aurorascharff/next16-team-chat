@@ -402,6 +402,7 @@ export const ModelName = {
   ChannelGroup: 'ChannelGroup',
   ChannelMember: 'ChannelMember',
   Message: 'Message',
+  Mention: 'Mention',
   Reaction: 'Reaction',
   PinnedItem: 'PinnedItem'
 } as const
@@ -419,7 +420,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "channel" | "channelGroup" | "channelMember" | "message" | "reaction" | "pinnedItem"
+    modelProps: "user" | "channel" | "channelGroup" | "channelMember" | "message" | "mention" | "reaction" | "pinnedItem"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -793,6 +794,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Mention: {
+      payload: Prisma.$MentionPayload<ExtArgs>
+      fields: Prisma.MentionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MentionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MentionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MentionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MentionPayload>
+        }
+        findFirst: {
+          args: Prisma.MentionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MentionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MentionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MentionPayload>
+        }
+        findMany: {
+          args: Prisma.MentionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MentionPayload>[]
+        }
+        create: {
+          args: Prisma.MentionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MentionPayload>
+        }
+        createMany: {
+          args: Prisma.MentionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MentionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MentionPayload>[]
+        }
+        delete: {
+          args: Prisma.MentionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MentionPayload>
+        }
+        update: {
+          args: Prisma.MentionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MentionPayload>
+        }
+        deleteMany: {
+          args: Prisma.MentionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MentionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MentionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MentionPayload>[]
+        }
+        upsert: {
+          args: Prisma.MentionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MentionPayload>
+        }
+        aggregate: {
+          args: Prisma.MentionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMention>
+        }
+        groupBy: {
+          args: Prisma.MentionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MentionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MentionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MentionCountAggregateOutputType> | number
+        }
+      }
+    }
     Reaction: {
       payload: Prisma.$ReactionPayload<ExtArgs>
       fields: Prisma.ReactionFieldRefs
@@ -1036,6 +1111,18 @@ export const MessageScalarFieldEnum = {
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+
+
+export const MentionScalarFieldEnum = {
+  id: 'id',
+  messageId: 'messageId',
+  userId: 'userId',
+  channelId: 'channelId',
+  read: 'read',
+  createdAt: 'createdAt'
+} as const
+
+export type MentionScalarFieldEnum = (typeof MentionScalarFieldEnum)[keyof typeof MentionScalarFieldEnum]
 
 
 export const ReactionScalarFieldEnum = {
@@ -1304,6 +1391,7 @@ export type GlobalOmitConfig = {
   channelGroup?: Prisma.ChannelGroupOmit
   channelMember?: Prisma.ChannelMemberOmit
   message?: Prisma.MessageOmit
+  mention?: Prisma.MentionOmit
   reaction?: Prisma.ReactionOmit
   pinnedItem?: Prisma.PinnedItemOmit
 }

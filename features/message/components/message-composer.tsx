@@ -3,7 +3,6 @@
 import { Eye, PenLine } from 'lucide-react'
 import {
   KeyboardEvent,
-  Suspense,
   SyntheticEvent,
   useId,
   useRef,
@@ -12,14 +11,15 @@ import {
 } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { sendMessage } from '@/features/message/message-actions'
-import { messageKeys } from '@/features/message/message-query-options'
-import { renderMessagePreview } from '@/features/message/message-preview-action'
-import type { Message } from '@/features/message/types/message'
 import {
-  MessagePreview,
-  PreviewSkeleton,
-  type Preview,
-} from './message-preview'
+  appendInfiniteMessage,
+  mapInfiniteMessages,
+  type MessagePage,
+  messageKeys,
+} from '@/features/message/message-query-options'
+import type { Message } from '@/features/message/types/message'
+import { MessagePreview } from './message-preview'
+import type { InfiniteData } from '@tanstack/react-query'
 
 const MAX_LENGTH = 280
 
@@ -38,19 +38,14 @@ export function MessageComposer({
   const queryClient = useQueryClient()
   const [error, setError] = useState('')
   const [mode, setMode] = useState<'write' | 'preview'>('write')
-  const [preview, setPreview] = useState<Preview | null>(null)
+  const [preview, setPreview] = useState('')
   const [writeHeight, setWriteHeight] = useState(0)
   const [isPending, startTransition] = useTransition()
   const fieldId = useId()
 
   function showPreview() {
     setWriteHeight(textareaRef.current?.offsetHeight ?? 0)
-    const body = textareaRef.current?.value.trim() ?? ''
-    if (!body) {
-      setPreview(null)
-    } else if (preview?.body !== body) {
-      setPreview({ body, node: renderMessagePreview(body) })
-    }
+    setPreview(textareaRef.current?.value.trim() ?? '')
     setMode('preview')
   }
 
@@ -115,53 +110,74 @@ export function MessageComposer({
       userId: 'current',
       userName: 'You',
     }
-    const key = parentId
-      ? messageKeys.replies(parentId)
-      : messageKeys.channel(channelId)
-
     setError('')
     formRef.current?.reset()
     setMode('write')
-    setPreview(null)
-    queryClient.setQueryData<Message[]>(key, (current = []) => [
-      ...current,
-      optimistic,
-    ])
+    setPreview('')
 
-    startTransition(async () => {
-      const result = await sendMessage({ body, channelId, parentId })
+    const channelKey = messageKeys.channel(channelId)
 
-      if (!result.ok) {
-        setError(result.error)
+    if (parentId) {
+      const key = messageKeys.replies(parentId)
+      queryClient.setQueryData<Message[]>(key, (current = []) => [
+        ...current,
+        optimistic,
+      ])
+
+      startTransition(async () => {
+        const result = await sendMessage({ body, channelId, parentId })
+
+        if (!result.ok) {
+          setError(result.error)
+          queryClient.setQueryData<Message[]>(key, (current = []) =>
+            current.map((message) =>
+              message.id === optimistic.id
+                ? { ...message, status: 'failed' }
+                : message,
+            ),
+          )
+          return
+        }
+
         queryClient.setQueryData<Message[]>(key, (current = []) =>
           current.map((message) =>
             message.id === optimistic.id
-              ? { ...message, status: 'failed' }
+              ? { ...result.message, status: 'sent' }
               : message,
           ),
         )
-        return
-      }
-
-      queryClient.setQueryData<Message[]>(key, (current = []) =>
-        current.map((message) =>
-          message.id === optimistic.id
-            ? { ...result.message, status: 'sent' }
-            : message,
-        ),
-      )
-
-      if (parentId) {
-        queryClient.setQueryData<Message[]>(
-          messageKeys.channel(channelId),
-          (current = []) =>
-            current.map((message) =>
+        queryClient.setQueryData<InfiniteData<MessagePage>>(
+          channelKey,
+          (current) =>
+            mapInfiniteMessages(current, (message) =>
               message.id === parentId
                 ? { ...message, replyCount: (message.replyCount ?? 0) + 1 }
                 : message,
             ),
         )
-      }
+      })
+      return
+    }
+
+    queryClient.setQueryData<InfiniteData<MessagePage>>(channelKey, (current) =>
+      appendInfiniteMessage(current, optimistic),
+    )
+
+    startTransition(async () => {
+      const result = await sendMessage({ body, channelId })
+
+      queryClient.setQueryData<InfiniteData<MessagePage>>(
+        channelKey,
+        (current) =>
+          mapInfiniteMessages(current, (message) =>
+            message.id === optimistic.id
+              ? result.ok
+                ? { ...result.message, status: 'sent' }
+                : { ...message, status: 'failed' }
+              : message,
+          ),
+      )
+      if (!result.ok) setError(result.error)
     })
   }
 
@@ -264,9 +280,7 @@ export function MessageComposer({
             className="px-3.5 py-3"
             style={{ minHeight: writeHeight || undefined }}
           >
-            <Suspense fallback={<PreviewSkeleton />} key={preview?.body}>
-              <MessagePreview preview={preview} />
-            </Suspense>
+            <MessagePreview body={preview} />
           </div>
         ) : null}
         <div className="border-divider dark:border-divider-dark flex items-center justify-end border-t p-1.5">

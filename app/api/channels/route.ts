@@ -1,9 +1,9 @@
 import { getCurrentUser } from '@/features/user/user-queries'
-import { listChannels } from '@/features/message/message-store'
+import { searchChannels } from '@/features/channel/channel-queries'
 
 export async function GET() {
   const user = await getCurrentUser()
-  const channels = await listChannels(user.id)
+  const channels = await searchChannels(user.id)
   return Response.json(
     channels.map((channel) => {
       return {

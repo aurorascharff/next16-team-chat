@@ -1,15 +1,22 @@
 'use server'
 
 import { updateTag } from 'next/cache'
-import { reorderChannels } from '@/features/message/message-store'
+import {
+  applyLayoutAction,
+  type LayoutAction,
+  type LayoutGroup,
+  toLayoutPayload,
+} from '@/features/channel/channel-layout-reducer'
+import { reorderChannels } from '@/features/channel/channel-queries'
 import { verifyAuth } from '@/features/user/user-queries'
 
-export type ChannelLayout = {
-  groups: { name: string; channelIds: string[] }[]
-}
-
-export async function saveChannelLayout(layout: ChannelLayout) {
+export async function channelLayoutReducer(
+  groups: LayoutGroup[],
+  action: LayoutAction,
+): Promise<LayoutGroup[]> {
   const user = await verifyAuth()
-  await reorderChannels(user.id, layout)
+  const next = applyLayoutAction(groups, action)
+  await reorderChannels(user.id, toLayoutPayload(next))
   updateTag(`channels:${user.id}`)
+  return next
 }

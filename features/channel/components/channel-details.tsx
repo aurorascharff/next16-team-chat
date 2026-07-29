@@ -1,4 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton'
+import { UserAvatar } from '@/components/ui/user-avatar'
 import { getChannelDetails } from '@/features/channel/channel-queries'
 
 export async function ChannelDetails({ channelId }: { channelId: string }) {
@@ -43,20 +44,27 @@ export async function ChannelDetails({ channelId }: { channelId: string }) {
           })}
         </ul>
       </section>
-      <section className="flex flex-col gap-2">
+      <section className="flex min-h-0 flex-col gap-2">
         <h2>Members</h2>
-        <div className="flex flex-wrap gap-1.5">
+        <ul className="-mx-1 flex max-h-64 flex-col gap-0.5 overflow-y-auto px-1">
           {channel.members.map((member) => {
             return (
-              <span
-                className="border-divider dark:border-divider-dark rounded-full border px-2.5 py-1 text-xs font-medium"
+              <li
+                className="hover:bg-card dark:hover:bg-card-dark flex items-center gap-2.5 rounded-lg px-2 py-1.5"
                 key={member}
               >
-                {member}
-              </span>
+                <UserAvatar
+                  bot={member === 'Huddle Bot'}
+                  name={member}
+                  size="sm"
+                />
+                <span className="min-w-0 flex-1 truncate text-[0.8125rem] font-medium">
+                  {member}
+                </span>
+              </li>
             )
           })}
-        </div>
+        </ul>
       </section>
     </aside>
   )

@@ -25,9 +25,12 @@ async function getMessagesState(
   cacheLife({ stale: 30 })
 
   const queryClient = new QueryClient()
-  const messages = await getMessagesCached(channelId, userId, slow)
+  const firstPage = await getMessagesCached(channelId, userId, null, slow)
 
-  queryClient.setQueryData(messageKeys.channel(channelId), messages)
+  queryClient.setQueryData(messageKeys.channel(channelId), {
+    pageParams: [null],
+    pages: [firstPage],
+  })
 
   return dehydrate(queryClient)
 }

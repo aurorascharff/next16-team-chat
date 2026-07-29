@@ -1,9 +1,10 @@
 import { getMessages } from '@/features/message/message-queries'
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ channelId: string }> },
 ) {
   const { channelId } = await params
-  return Response.json(await getMessages(channelId))
+  const cursor = new URL(request.url).searchParams.get('cursor') ?? undefined
+  return Response.json(await getMessages(channelId, cursor))
 }

@@ -43,6 +43,11 @@ export type ChannelMember = Prisma.ChannelMemberModel
  */
 export type Message = Prisma.MessageModel
 /**
+ * Model Mention
+ * 
+ */
+export type Mention = Prisma.MentionModel
+/**
  * Model Reaction
  * 
  */

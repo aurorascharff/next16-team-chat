@@ -186,6 +186,7 @@ export type UserWhereInput = {
   memberships?: Prisma.ChannelMemberListRelationFilter
   groups?: Prisma.ChannelGroupListRelationFilter
   reactions?: Prisma.ReactionListRelationFilter
+  mentions?: Prisma.MentionListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -198,6 +199,7 @@ export type UserOrderByWithRelationInput = {
   memberships?: Prisma.ChannelMemberOrderByRelationAggregateInput
   groups?: Prisma.ChannelGroupOrderByRelationAggregateInput
   reactions?: Prisma.ReactionOrderByRelationAggregateInput
+  mentions?: Prisma.MentionOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -213,6 +215,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   memberships?: Prisma.ChannelMemberListRelationFilter
   groups?: Prisma.ChannelGroupListRelationFilter
   reactions?: Prisma.ReactionListRelationFilter
+  mentions?: Prisma.MentionListRelationFilter
 }, "id" | "handle">
 
 export type UserOrderByWithAggregationInput = {
@@ -247,6 +250,7 @@ export type UserCreateInput = {
   memberships?: Prisma.ChannelMemberCreateNestedManyWithoutUserInput
   groups?: Prisma.ChannelGroupCreateNestedManyWithoutUserInput
   reactions?: Prisma.ReactionCreateNestedManyWithoutUserInput
+  mentions?: Prisma.MentionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -259,6 +263,7 @@ export type UserUncheckedCreateInput = {
   memberships?: Prisma.ChannelMemberUncheckedCreateNestedManyWithoutUserInput
   groups?: Prisma.ChannelGroupUncheckedCreateNestedManyWithoutUserInput
   reactions?: Prisma.ReactionUncheckedCreateNestedManyWithoutUserInput
+  mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -271,6 +276,7 @@ export type UserUpdateInput = {
   memberships?: Prisma.ChannelMemberUpdateManyWithoutUserNestedInput
   groups?: Prisma.ChannelGroupUpdateManyWithoutUserNestedInput
   reactions?: Prisma.ReactionUpdateManyWithoutUserNestedInput
+  mentions?: Prisma.MentionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -283,6 +289,7 @@ export type UserUncheckedUpdateInput = {
   memberships?: Prisma.ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
   groups?: Prisma.ChannelGroupUncheckedUpdateManyWithoutUserNestedInput
   reactions?: Prisma.ReactionUncheckedUpdateManyWithoutUserNestedInput
+  mentions?: Prisma.MentionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -388,6 +395,20 @@ export type UserUpdateOneRequiredWithoutMessagesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMessagesInput, Prisma.UserUpdateWithoutMessagesInput>, Prisma.UserUncheckedUpdateWithoutMessagesInput>
 }
 
+export type UserCreateNestedOneWithoutMentionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutMentionsInput, Prisma.UserUncheckedCreateWithoutMentionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMentionsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutMentionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutMentionsInput, Prisma.UserUncheckedCreateWithoutMentionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMentionsInput
+  upsert?: Prisma.UserUpsertWithoutMentionsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMentionsInput, Prisma.UserUpdateWithoutMentionsInput>, Prisma.UserUncheckedUpdateWithoutMentionsInput>
+}
+
 export type UserCreateNestedOneWithoutReactionsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutReactionsInput, Prisma.UserUncheckedCreateWithoutReactionsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutReactionsInput
@@ -411,6 +432,7 @@ export type UserCreateWithoutGroupsInput = {
   messages?: Prisma.MessageCreateNestedManyWithoutUserInput
   memberships?: Prisma.ChannelMemberCreateNestedManyWithoutUserInput
   reactions?: Prisma.ReactionCreateNestedManyWithoutUserInput
+  mentions?: Prisma.MentionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutGroupsInput = {
@@ -422,6 +444,7 @@ export type UserUncheckedCreateWithoutGroupsInput = {
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutUserInput
   memberships?: Prisma.ChannelMemberUncheckedCreateNestedManyWithoutUserInput
   reactions?: Prisma.ReactionUncheckedCreateNestedManyWithoutUserInput
+  mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutGroupsInput = {
@@ -449,6 +472,7 @@ export type UserUpdateWithoutGroupsInput = {
   messages?: Prisma.MessageUpdateManyWithoutUserNestedInput
   memberships?: Prisma.ChannelMemberUpdateManyWithoutUserNestedInput
   reactions?: Prisma.ReactionUpdateManyWithoutUserNestedInput
+  mentions?: Prisma.MentionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGroupsInput = {
@@ -460,6 +484,7 @@ export type UserUncheckedUpdateWithoutGroupsInput = {
   messages?: Prisma.MessageUncheckedUpdateManyWithoutUserNestedInput
   memberships?: Prisma.ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
   reactions?: Prisma.ReactionUncheckedUpdateManyWithoutUserNestedInput
+  mentions?: Prisma.MentionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutMembershipsInput = {
@@ -471,6 +496,7 @@ export type UserCreateWithoutMembershipsInput = {
   messages?: Prisma.MessageCreateNestedManyWithoutUserInput
   groups?: Prisma.ChannelGroupCreateNestedManyWithoutUserInput
   reactions?: Prisma.ReactionCreateNestedManyWithoutUserInput
+  mentions?: Prisma.MentionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMembershipsInput = {
@@ -482,6 +508,7 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutUserInput
   groups?: Prisma.ChannelGroupUncheckedCreateNestedManyWithoutUserInput
   reactions?: Prisma.ReactionUncheckedCreateNestedManyWithoutUserInput
+  mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMembershipsInput = {
@@ -509,6 +536,7 @@ export type UserUpdateWithoutMembershipsInput = {
   messages?: Prisma.MessageUpdateManyWithoutUserNestedInput
   groups?: Prisma.ChannelGroupUpdateManyWithoutUserNestedInput
   reactions?: Prisma.ReactionUpdateManyWithoutUserNestedInput
+  mentions?: Prisma.MentionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembershipsInput = {
@@ -520,6 +548,7 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   messages?: Prisma.MessageUncheckedUpdateManyWithoutUserNestedInput
   groups?: Prisma.ChannelGroupUncheckedUpdateManyWithoutUserNestedInput
   reactions?: Prisma.ReactionUncheckedUpdateManyWithoutUserNestedInput
+  mentions?: Prisma.MentionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutMessagesInput = {
@@ -531,6 +560,7 @@ export type UserCreateWithoutMessagesInput = {
   memberships?: Prisma.ChannelMemberCreateNestedManyWithoutUserInput
   groups?: Prisma.ChannelGroupCreateNestedManyWithoutUserInput
   reactions?: Prisma.ReactionCreateNestedManyWithoutUserInput
+  mentions?: Prisma.MentionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMessagesInput = {
@@ -542,6 +572,7 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   memberships?: Prisma.ChannelMemberUncheckedCreateNestedManyWithoutUserInput
   groups?: Prisma.ChannelGroupUncheckedCreateNestedManyWithoutUserInput
   reactions?: Prisma.ReactionUncheckedCreateNestedManyWithoutUserInput
+  mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMessagesInput = {
@@ -569,6 +600,7 @@ export type UserUpdateWithoutMessagesInput = {
   memberships?: Prisma.ChannelMemberUpdateManyWithoutUserNestedInput
   groups?: Prisma.ChannelGroupUpdateManyWithoutUserNestedInput
   reactions?: Prisma.ReactionUpdateManyWithoutUserNestedInput
+  mentions?: Prisma.MentionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMessagesInput = {
@@ -577,6 +609,71 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
+  groups?: Prisma.ChannelGroupUncheckedUpdateManyWithoutUserNestedInput
+  reactions?: Prisma.ReactionUncheckedUpdateManyWithoutUserNestedInput
+  mentions?: Prisma.MentionUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutMentionsInput = {
+  id: string
+  handle: string
+  name: string
+  role: string
+  createdAt?: Date | string
+  messages?: Prisma.MessageCreateNestedManyWithoutUserInput
+  memberships?: Prisma.ChannelMemberCreateNestedManyWithoutUserInput
+  groups?: Prisma.ChannelGroupCreateNestedManyWithoutUserInput
+  reactions?: Prisma.ReactionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutMentionsInput = {
+  id: string
+  handle: string
+  name: string
+  role: string
+  createdAt?: Date | string
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutUserInput
+  memberships?: Prisma.ChannelMemberUncheckedCreateNestedManyWithoutUserInput
+  groups?: Prisma.ChannelGroupUncheckedCreateNestedManyWithoutUserInput
+  reactions?: Prisma.ReactionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutMentionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutMentionsInput, Prisma.UserUncheckedCreateWithoutMentionsInput>
+}
+
+export type UserUpsertWithoutMentionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutMentionsInput, Prisma.UserUncheckedUpdateWithoutMentionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutMentionsInput, Prisma.UserUncheckedCreateWithoutMentionsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutMentionsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutMentionsInput, Prisma.UserUncheckedUpdateWithoutMentionsInput>
+}
+
+export type UserUpdateWithoutMentionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  handle?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messages?: Prisma.MessageUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.ChannelMemberUpdateManyWithoutUserNestedInput
+  groups?: Prisma.ChannelGroupUpdateManyWithoutUserNestedInput
+  reactions?: Prisma.ReactionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutMentionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  handle?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutUserNestedInput
   memberships?: Prisma.ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
   groups?: Prisma.ChannelGroupUncheckedUpdateManyWithoutUserNestedInput
   reactions?: Prisma.ReactionUncheckedUpdateManyWithoutUserNestedInput
@@ -591,6 +688,7 @@ export type UserCreateWithoutReactionsInput = {
   messages?: Prisma.MessageCreateNestedManyWithoutUserInput
   memberships?: Prisma.ChannelMemberCreateNestedManyWithoutUserInput
   groups?: Prisma.ChannelGroupCreateNestedManyWithoutUserInput
+  mentions?: Prisma.MentionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReactionsInput = {
@@ -602,6 +700,7 @@ export type UserUncheckedCreateWithoutReactionsInput = {
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutUserInput
   memberships?: Prisma.ChannelMemberUncheckedCreateNestedManyWithoutUserInput
   groups?: Prisma.ChannelGroupUncheckedCreateNestedManyWithoutUserInput
+  mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReactionsInput = {
@@ -629,6 +728,7 @@ export type UserUpdateWithoutReactionsInput = {
   messages?: Prisma.MessageUpdateManyWithoutUserNestedInput
   memberships?: Prisma.ChannelMemberUpdateManyWithoutUserNestedInput
   groups?: Prisma.ChannelGroupUpdateManyWithoutUserNestedInput
+  mentions?: Prisma.MentionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReactionsInput = {
@@ -640,6 +740,7 @@ export type UserUncheckedUpdateWithoutReactionsInput = {
   messages?: Prisma.MessageUncheckedUpdateManyWithoutUserNestedInput
   memberships?: Prisma.ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
   groups?: Prisma.ChannelGroupUncheckedUpdateManyWithoutUserNestedInput
+  mentions?: Prisma.MentionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -652,6 +753,7 @@ export type UserCountOutputType = {
   memberships: number
   groups: number
   reactions: number
+  mentions: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -659,6 +761,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   memberships?: boolean | UserCountOutputTypeCountMembershipsArgs
   groups?: boolean | UserCountOutputTypeCountGroupsArgs
   reactions?: boolean | UserCountOutputTypeCountReactionsArgs
+  mentions?: boolean | UserCountOutputTypeCountMentionsArgs
 }
 
 /**
@@ -699,6 +802,13 @@ export type UserCountOutputTypeCountReactionsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.ReactionWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountMentionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MentionWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -710,6 +820,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   memberships?: boolean | Prisma.User$membershipsArgs<ExtArgs>
   groups?: boolean | Prisma.User$groupsArgs<ExtArgs>
   reactions?: boolean | Prisma.User$reactionsArgs<ExtArgs>
+  mentions?: boolean | Prisma.User$mentionsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -743,6 +854,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   memberships?: boolean | Prisma.User$membershipsArgs<ExtArgs>
   groups?: boolean | Prisma.User$groupsArgs<ExtArgs>
   reactions?: boolean | Prisma.User$reactionsArgs<ExtArgs>
+  mentions?: boolean | Prisma.User$mentionsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -755,6 +867,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     memberships: Prisma.$ChannelMemberPayload<ExtArgs>[]
     groups: Prisma.$ChannelGroupPayload<ExtArgs>[]
     reactions: Prisma.$ReactionPayload<ExtArgs>[]
+    mentions: Prisma.$MentionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1160,6 +1273,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   memberships<T extends Prisma.User$membershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$membershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChannelMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   groups<T extends Prisma.User$groupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$groupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChannelGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reactions<T extends Prisma.User$reactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  mentions<T extends Prisma.User$mentionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$mentionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MentionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1680,6 +1794,30 @@ export type User$reactionsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.ReactionScalarFieldEnum | Prisma.ReactionScalarFieldEnum[]
+}
+
+/**
+ * User.mentions
+ */
+export type User$mentionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Mention
+   */
+  select?: Prisma.MentionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Mention
+   */
+  omit?: Prisma.MentionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MentionInclude<ExtArgs> | null
+  where?: Prisma.MentionWhereInput
+  orderBy?: Prisma.MentionOrderByWithRelationInput | Prisma.MentionOrderByWithRelationInput[]
+  cursor?: Prisma.MentionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MentionScalarFieldEnum | Prisma.MentionScalarFieldEnum[]
 }
 
 /**

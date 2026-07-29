@@ -1,0 +1,7 @@
+import { getCurrentUser } from '@/features/user/user-queries'
+import { getUnreadMentionCount } from '@/features/message/mention-queries'
+
+export async function GET() {
+  const user = await getCurrentUser()
+  return Response.json({ count: await getUnreadMentionCount(user.id) })
+}

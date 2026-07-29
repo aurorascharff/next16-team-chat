@@ -1,8 +1,7 @@
 'use server'
 
 import { updateTag } from 'next/cache'
-import { addMessage } from '@/features/message/message-store'
-import { messagesTag } from '@/features/message/message-queries'
+import { addMessage, messagesTag } from '@/features/message/message-queries'
 import { prisma } from '@/lib/db'
 
 const LINES_BY_CHANNEL: Record<string, string[]> = {

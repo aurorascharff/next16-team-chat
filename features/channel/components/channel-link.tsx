@@ -39,7 +39,7 @@ export function ChannelLink({ channel }: Props) {
       className={cn(
         'flex min-h-8 shrink-0 items-center gap-2 rounded-lg px-2.5 text-sm transition-colors',
         active
-          ? 'bg-accent-fade text-accent font-semibold'
+          ? 'bg-accent-fade text-accent font-medium'
           : hasUnread
             ? 'hover:bg-card dark:hover:bg-card-dark font-semibold text-black dark:text-white'
             : 'text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark font-medium hover:text-black dark:hover:text-white',
