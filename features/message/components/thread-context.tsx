@@ -25,19 +25,17 @@ export function useThread() {
 export function ThreadProvider({ children }: { children: ReactNode }) {
   const [activeThread, setActiveThread] = useState<ActiveThread>(null)
 
+  function closeThread() {
+    setActiveThread(null)
+  }
+
+  function openThread(channelId: string, messageId: string) {
+    setActiveThread({ channelId, messageId })
+  }
+
+  const value = { activeThread, closeThread, openThread }
+
   return (
-    <ThreadContext.Provider
-      value={{
-        activeThread,
-        closeThread: () => {
-          return setActiveThread(null)
-        },
-        openThread: (channelId, messageId) => {
-          return setActiveThread({ channelId, messageId })
-        },
-      }}
-    >
-      {children}
-    </ThreadContext.Provider>
+    <ThreadContext.Provider value={value}>{children}</ThreadContext.Provider>
   )
 }

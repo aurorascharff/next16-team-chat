@@ -4,10 +4,7 @@ import {
   ChannelList,
   ChannelListSkeleton,
 } from '@/features/channel/components/channel-list'
-import {
-  WorkspaceNav,
-  WorkspaceNavSkeleton,
-} from '@/features/workspace/components/workspace-nav'
+import { WorkspaceNav } from '@/features/workspace/components/workspace-nav'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -21,9 +18,7 @@ export const metadata: Metadata = {
 export default function ChannelsPage() {
   return (
     <div className="flex min-h-0 flex-col gap-4 p-3 md:hidden">
-      <Suspense fallback={<WorkspaceNavSkeleton />}>
-        <WorkspaceNav />
-      </Suspense>
+      <WorkspaceNav />
       <Suspense fallback={<ChannelListSkeleton />}>
         <Crossfade>
           <ChannelList />

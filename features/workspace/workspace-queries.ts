@@ -2,7 +2,7 @@ import 'server-only'
 
 import { cacheLife, cacheTag } from 'next/cache'
 import { getCurrentUser } from '@/features/user/user-queries'
-import { listInbox, listThreads } from './workspace-store'
+import { listInbox } from './workspace-store'
 
 export async function getInbox() {
   const user = await getCurrentUser()
@@ -14,11 +14,4 @@ async function getInboxCached(userId: string) {
   cacheTag('messages')
   cacheLife({ stale: 30 })
   return listInbox(userId)
-}
-
-export async function getThreads() {
-  'use cache'
-  cacheTag('messages')
-  cacheLife({ stale: 30 })
-  return listThreads()
 }

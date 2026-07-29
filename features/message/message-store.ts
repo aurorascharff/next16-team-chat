@@ -80,12 +80,12 @@ export async function listChannels(userId: string) {
     })
 }
 
-// A user's full sidebar layout: every group in order (including empty ones) with
-// its channels sorted by position. Ungrouped channels fall into a trailing group.
+// A user's full sidebar layout: groups sorted alphabetically (each with its
+// channels sorted by position), plus a trailing group for ungrouped channels.
 export async function listChannelLayout(userId: string) {
   const [groups, channels] = await Promise.all([
     prisma.channelGroup.findMany({
-      orderBy: { position: 'asc' },
+      orderBy: { name: 'asc' },
       where: { userId },
     }),
     listChannels(userId),
@@ -119,8 +119,9 @@ export async function listUnreadChannels() {
   ) as Record<string, number>
 }
 
-// Persist a user's full sidebar layout: group order plus each channel's group
-// assignment and position within its group.
+// Persist a user's full sidebar layout: create/rename groups present in the
+// layout, delete groups the user removed, and assign each channel to its group
+// (or leave it ungrouped) with a stable position.
 export async function reorderChannels(
   userId: string,
   layout: { groups: { name: string; channelIds: string[] }[] },
@@ -131,21 +132,37 @@ export async function reorderChannels(
   const groupIdByName = new Map(
     existingGroups.map((group) => [group.name, group.id]),
   )
+  // Channels in the trailing "ungrouped" bucket keep a null group.
+  const keptNames = new Set(
+    layout.groups
+      .map((group) => group.name)
+      .filter((name) => name !== UNGROUPED),
+  )
 
   await prisma.$transaction(async (tx) => {
+    // Remove groups the user deleted; membership.groupId resets to null.
+    const removed = existingGroups.filter((group) => !keptNames.has(group.name))
+    if (removed.length > 0) {
+      await tx.channelGroup.deleteMany({
+        where: { id: { in: removed.map((group) => group.id) } },
+      })
+    }
+
     for (const [position, group] of layout.groups.entries()) {
-      let groupId = groupIdByName.get(group.name)
-      if (groupId) {
-        await tx.channelGroup.update({
-          data: { position },
-          where: { id: groupId },
-        })
-      } else {
+      const ungrouped = group.name === UNGROUPED
+      let groupId = ungrouped ? null : (groupIdByName.get(group.name) ?? null)
+
+      if (!ungrouped && !groupId) {
         groupId = `${userId}-group-${crypto.randomUUID()}`
         await tx.channelGroup.create({
           data: { id: groupId, name: group.name, position, userId },
         })
         groupIdByName.set(group.name, groupId)
+      } else if (!ungrouped && groupId) {
+        await tx.channelGroup.update({
+          data: { position },
+          where: { id: groupId },
+        })
       }
 
       for (const [channelPosition, channelId] of group.channelIds.entries()) {

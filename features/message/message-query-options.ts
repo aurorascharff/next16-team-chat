@@ -18,7 +18,9 @@ export function messagesQueryOptions(channelId: string) {
       return res.json()
     },
     queryKey: messageKeys.channel(channelId),
-    staleTime: Number.POSITIVE_INFINITY,
+    // Poll so background activity (e.g. the bot) shows up without a reload.
+    refetchInterval: 10_000,
+    staleTime: 5_000,
   })
 }
 

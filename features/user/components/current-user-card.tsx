@@ -1,3 +1,4 @@
+import { UserAvatar } from '@/components/ui/user-avatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getCurrentUser } from '@/features/user/user-queries'
 import { UserSwitcher } from './user-switcher'
@@ -7,19 +8,15 @@ export async function CurrentUserCard() {
 
   return (
     <section className="border-divider dark:border-divider-dark bg-card dark:bg-card-dark grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2.5 rounded-xl border p-2.5">
-      <div
-        aria-hidden
-        className="bg-accent flex size-9 items-center justify-center rounded-lg text-xs font-bold text-white uppercase"
-      >
-        {user.name
-          .split(' ')
-          .map((part) => part[0])
-          .join('')}
-      </div>
+      <UserAvatar bot={user.id === 'bot'} name={user.name} />
       <div className="min-w-0">
         <p className="truncate text-sm font-semibold">{user.name}</p>
-        <span className="text-muted dark:text-muted-dark block truncate text-xs">
-          {user.role}
+        <span className="text-muted dark:text-muted-dark flex items-center gap-1.5 truncate text-xs">
+          <span
+            aria-hidden
+            className="size-2 shrink-0 rounded-full bg-emerald-500"
+          />
+          Active
         </span>
       </div>
       <UserSwitcher currentUserId={user.id} />

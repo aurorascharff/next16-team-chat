@@ -5,7 +5,6 @@ import { useQuery } from '@tanstack/react-query'
 import { Hash, Lock } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
 import { unreadChannelsQueryOptions } from '@/features/channel/channel-query-options'
 import { cn } from '@/lib/utils'
 
@@ -23,16 +22,10 @@ export function ChannelLink({ channel }: Props) {
   const href = `/channel/${channel.id}` as Route
   const active = pathname === href
   const Icon = channel.isPrivate ? Lock : Hash
-  const [mounted, setMounted] = useState(false)
   const { data: unreadMap } = useQuery(unreadChannelsQueryOptions())
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  // Server and first client render use the server-provided value to avoid a
-  // hydration mismatch; after mount the React Query cache is the source of truth.
-  const unread = mounted && unreadMap ? unreadMap[channel.id] : channel.unread
+  // Seeded from the server in ChannelList, so this matches the server render.
+  const unread = unreadMap ? unreadMap[channel.id] : channel.unread
 
   return (
     <Link

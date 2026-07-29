@@ -11,7 +11,17 @@ const users = [
   { handle: 'aurora', id: 'ada', name: 'Aurora', role: 'DX engineering' },
   { handle: 'mira', id: 'grace', name: 'Mira', role: 'AI tools' },
   { handle: 'nico', id: 'nico', name: 'Nico', role: 'Frontend' },
+  { handle: 'huddlebot', id: 'bot', name: 'Huddle Bot', role: 'Automation' },
 ]
+
+// Aurora sees everything; the others each follow a different slice so switching
+// users produces a visibly different sidebar.
+const membershipsByUser: Record<string, (channelId: string) => boolean> = {
+  ada: () => true,
+  bot: () => true,
+  grace: (id) => id.startsWith('proj-') || id === 'coord-releases',
+  nico: (id) => id.startsWith('random-') || id === 'team-design',
+}
 
 const channels = [
   {
@@ -44,8 +54,8 @@ const channels = [
     category: 'Projects',
     description: 'Screenshots, interaction polish, and mobile pass.',
     handoff: 'Check header CLS, mobile channel strip, and message density.',
-    id: 'proj-design',
-    name: 'proj-design',
+    id: 'team-design',
+    name: 'team-design',
     pinned: ['Mobile pass', 'Sidebar polish', 'Composer states'],
     status: 'Polish pass',
   },
@@ -54,8 +64,8 @@ const channels = [
     category: 'Coordination',
     description: 'Prefetch costs, route shells, and navigation traces.',
     handoff: 'Document the full-prefetch cost without duplicating the guide.',
-    id: 'coord-prefetch',
-    name: 'coord-prefetch',
+    id: 'team-frontend',
+    name: 'team-frontend',
     pinned: ['Runtime guide', 'Partial prefetch audit', 'Instant tests'],
     status: 'Research',
   },
@@ -174,28 +184,28 @@ const messages = [
   ],
   [
     'm-8',
-    'coord-prefetch',
+    'team-frontend',
     'ada',
     'The hover case is separate. The costly path here is full runtime prefetch on every visible link.',
     '2026-07-29T13:03:00.000Z',
   ],
   [
     'm-9',
-    'coord-prefetch',
+    'team-frontend',
     'grace',
     'I linked the runtime prefetching guide and kept the warning short. No need to copy the docs into the skill.',
     '2026-07-29T13:06:00.000Z',
   ],
   [
     'm-10',
-    'proj-design',
+    'team-design',
     'ada',
     'The sidebar is closer, but the header fallback still needs to match the final height so we do not get a tiny jump.',
     '2026-07-29T13:08:00.000Z',
   ],
   [
     'm-11',
-    'proj-design',
+    'team-design',
     'grace',
     'Keep the blue for active states only. The hash itself should just feel like navigation.',
     '2026-07-29T13:12:00.000Z',
@@ -320,6 +330,7 @@ async function main() {
 
   for (const channel of channels) {
     for (const user of users) {
+      if (!membershipsByUser[user.id](channel.id)) continue
       const groupId =
         user.id === MY_USER ? (groupIds.get(channel.cadence) ?? null) : null
       const position =

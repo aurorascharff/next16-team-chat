@@ -33,7 +33,9 @@ async function toItems(
   })
 }
 
-/** Inbox = your messages that others have replied to (awaiting your follow-up). */
+// Inbox = threads you're part of that have activity from someone else: either a
+// message you posted that someone replied to, or a thread you replied in where
+// someone else has also replied.
 export async function listInbox(userId: string) {
   const messages = await prisma.message.findMany({
     include: {
@@ -44,24 +46,16 @@ export async function listInbox(userId: string) {
     orderBy: { createdAt: 'desc' },
     where: {
       parentId: null,
-      replies: { some: { NOT: { userId } } },
-      userId,
+      OR: [
+        // You started it and someone else replied.
+        { replies: { some: { NOT: { userId } } }, userId },
+        // Someone else started it, you replied, and others are active too.
+        {
+          replies: { some: { userId } },
+          NOT: { userId },
+        },
+      ],
     },
-  })
-
-  return toItems(messages)
-}
-
-/** Threads = every top-level message that started a thread, across all channels. */
-export async function listThreads() {
-  const messages = await prisma.message.findMany({
-    include: {
-      _count: { select: { replies: true } },
-      channel: true,
-      user: true,
-    },
-    orderBy: { createdAt: 'desc' },
-    where: { parentId: null, replies: { some: {} } },
   })
 
   return toItems(messages)

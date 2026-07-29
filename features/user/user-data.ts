@@ -20,6 +20,18 @@ export const USERS: Record<string, DemoUser> = {
     name: 'Mira',
     role: 'AI tools',
   },
+  nico: {
+    handle: 'nico',
+    id: 'nico',
+    name: 'Nico',
+    role: 'Frontend',
+  },
+  bot: {
+    handle: 'huddlebot',
+    id: 'bot',
+    name: 'Huddle Bot',
+    role: 'Automation',
+  },
 }
 
 export function getFallbackUser() {

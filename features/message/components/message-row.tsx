@@ -1,9 +1,10 @@
 'use client'
 
 import { Clock, MessageSquare, TriangleAlert } from 'lucide-react'
+import { UserAvatar } from '@/components/ui/user-avatar'
 import type { Message } from '@/features/message/types/message'
 import { cn } from '@/lib/utils'
-import { formatInline, formatTime, initials } from './format'
+import { formatInline, formatTime } from './format'
 import { useThread } from './thread-context'
 
 export function MessageRow({
@@ -25,12 +26,7 @@ export function MessageRow({
         sending ? 'opacity-70' : 'hover:bg-card dark:hover:bg-card-dark',
       )}
     >
-      <div
-        aria-hidden
-        className="bg-accent flex size-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold text-white uppercase"
-      >
-        {initials(message.userName)}
-      </div>
+      <UserAvatar bot={message.userId === 'bot'} name={message.userName} />
       <div className="min-w-0 flex-1">
         <div className="mb-0.5 flex flex-wrap items-baseline gap-2">
           <strong className="text-[0.9375rem] font-semibold">

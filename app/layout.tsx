@@ -14,7 +14,11 @@ import {
   WorkspaceNav,
   WorkspaceNavSkeleton,
 } from '@/features/workspace/components/workspace-nav'
-import { SidebarControls } from '@/features/workspace/components/sidebar-controls'
+import { WorkspaceRail } from '@/features/workspace/components/workspace-rail'
+import { ChannelSidebar } from '@/features/workspace/components/channel-sidebar'
+import { UserSwitchProvider } from '@/features/user/components/user-switch-context'
+import { CommandPalette } from '@/features/channel/components/command-palette'
+import { BotDriver } from '@/features/demo/components/bot-driver'
 import { MobileTabBar, MobileTabBarSkeleton } from '@/components/mobile-tab-bar'
 import { Providers } from './providers'
 import './globals.css'
@@ -49,28 +53,30 @@ export default function RootLayout({
     >
       <body>
         <Providers>
-          <div className="flex min-h-dvh flex-col">
-            <div className="grid w-full flex-1 grid-cols-1 md:grid-cols-[16rem_minmax(0,1fr)]">
-              <aside className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark sticky top-0 z-20 hidden h-dvh flex-col gap-4 border-r p-3 md:flex">
+          <UserSwitchProvider>
+            <div className="flex min-h-dvh flex-col md:flex-row">
+              <WorkspaceRail />
+              <ChannelSidebar>
                 <Suspense fallback={<WorkspaceNavSkeleton />}>
                   <WorkspaceNav />
                 </Suspense>
                 <Suspense fallback={<ChannelListSkeleton />}>
                   <ChannelList />
                 </Suspense>
-                <div className="mt-auto flex flex-col gap-3">
-                  <SidebarControls />
+                <div className="mt-auto">
                   <Suspense fallback={<CurrentUserCardSkeleton />}>
                     <CurrentUserCard />
                   </Suspense>
                 </div>
-              </aside>
-              <main className="min-w-0">{children}</main>
+              </ChannelSidebar>
+              <main className="min-w-0 flex-1">{children}</main>
             </div>
             <Suspense fallback={<MobileTabBarSkeleton />}>
               <MobileTabBar />
             </Suspense>
-          </div>
+            <CommandPalette />
+            <BotDriver />
+          </UserSwitchProvider>
         </Providers>
       </body>
     </html>

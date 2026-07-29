@@ -1,4 +1,6 @@
 import { Hash, Users } from 'lucide-react'
+import { GitHubLink } from '@/components/ui/github-link'
+import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { Skeleton } from '@/components/ui/skeleton'
 import { isSlowMode } from '@/features/demo/slow-mode'
 import { SlowModeToggle } from '@/features/demo/components/slow-mode-toggle'
@@ -24,9 +26,17 @@ export async function ChannelHeader({ channelId }: { channelId: string }) {
         </p>
       </div>
       <div className="flex items-center gap-2.5 max-md:w-full max-md:justify-between">
-        <span className="max-md:hidden">
-          <SlowModeToggle enabled={slow} />
-        </span>
+        <div className="flex items-center gap-2.5">
+          <span className="max-md:hidden">
+            <SlowModeToggle enabled={slow} />
+          </span>
+          <span className="max-md:hidden">
+            <ThemeToggle />
+          </span>
+          <span className="max-md:hidden">
+            <GitHubLink />
+          </span>
+        </div>
         <div className="border-divider dark:border-divider-dark text-muted dark:text-muted-dark flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-xs font-medium">
           <Users aria-hidden className="size-3.5" strokeWidth={2} />
           {channel.memberCount}
@@ -48,7 +58,11 @@ export function ChannelHeaderSkeleton() {
         </p>
       </div>
       <div className="flex items-center gap-2.5 max-md:w-full max-md:justify-between">
-        <Skeleton className="h-8 w-20 rounded-full max-md:hidden" />
+        <div className="flex items-center gap-2.5 max-md:hidden">
+          <Skeleton className="h-8 w-20 rounded-full" />
+          <Skeleton className="h-7 w-24 rounded-full" />
+          <Skeleton className="size-7 rounded-full" />
+        </div>
         <Skeleton className="h-7 w-14 rounded-full" />
       </div>
     </header>

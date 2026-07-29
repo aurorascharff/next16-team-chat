@@ -1,8 +1,8 @@
 {
-  "name": "next16-messaging",
+  "name": "next16-team-chat",
   "version": "0.1.0",
   "private": true,
-  "description": "A Next.js 16.3 messaging app demonstrating Instant Navigations with React Query.",
+  "description": "A Next.js 16 team chat app demonstrating Cache Components, Partial Prefetching, and Instant Navigations with React Query.",
   "license": "MIT",
   "keywords": [
     "nextjs",
@@ -11,11 +11,12 @@
     "partial-prefetching",
     "instant-navigation",
     "react-query",
+    "team-chat",
     "messaging"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/aurorascharff/next16-messaging.git"
+    "url": "https://github.com/aurorascharff/next16-team-chat.git"
   },
   "scripts": {
     "dev": "next dev",
@@ -53,6 +54,7 @@
     "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "babel-plugin-react-compiler": "^1.0.0",
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4.3.3",

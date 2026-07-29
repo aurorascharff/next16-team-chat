@@ -13,6 +13,8 @@ import { sendMessage } from '@/features/message/message-actions'
 import { messageKeys } from '@/features/message/message-query-options'
 import type { Message } from '@/features/message/types/message'
 
+const MAX_LENGTH = 280
+
 export function MessageComposer({
   channelId,
   parentId,
@@ -30,57 +32,21 @@ export function MessageComposer({
   const [isPending, startTransition] = useTransition()
   const fieldId = useId()
 
-  function toggleFormat(prefix: string, suffix = prefix) {
-    const textarea = textareaRef.current
-
-    if (!textarea) {
-      return
-    }
-
-    const { selectionEnd: end, selectionStart: start, value } = textarea
-    const selected = value.slice(start, end)
-
-    // Selection already carries the markers → unwrap them.
-    if (
-      selected.length >= prefix.length + suffix.length &&
-      selected.startsWith(prefix) &&
-      selected.endsWith(suffix)
-    ) {
-      const inner = selected.slice(
-        prefix.length,
-        selected.length - suffix.length,
-      )
-      textarea.setRangeText(inner, start, end, 'select')
-      textarea.focus()
-      return
-    }
-
-    // Markers sit just outside the selection → unwrap them.
-    const before = value.slice(start - prefix.length, start)
-    const after = value.slice(end, end + suffix.length)
-
-    if (before === prefix && after === suffix) {
-      textarea.setRangeText(
-        selected,
-        start - prefix.length,
-        end + suffix.length,
-        'select',
-      )
-      textarea.focus()
-      return
-    }
-
-    // Otherwise wrap the selection and keep the inner text highlighted.
-    textarea.setRangeText(`${prefix}${selected}${suffix}`, start, end, 'select')
-    textarea.focus()
-    textarea.setSelectionRange(
-      start + prefix.length,
-      start + prefix.length + selected.length,
-    )
+  // Wrap the current selection in markdown markers using execCommand so native
+  // undo and the caret keep working. Rendering happens in the message list, so
+  // the input only ever holds plain markdown text.
+  function wrapSelection(marker: string) {
+    const el = textareaRef.current
+    if (!el) return
+    const { selectionEnd: end, selectionStart: start } = el
+    const selected = el.value.slice(start, end)
+    el.focus()
+    document.execCommand('insertText', false, `${marker}${selected}${marker}`)
+    const innerStart = start + marker.length
+    el.setSelectionRange(innerStart, innerStart + selected.length)
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
-    // Enter sends, Shift+Enter inserts a newline (Slack default).
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault()
       formRef.current?.requestSubmit()
@@ -95,13 +61,13 @@ export function MessageComposer({
 
     if (key === 'b') {
       event.preventDefault()
-      toggleFormat('**')
+      wrapSelection('**')
     } else if (key === 'i') {
       event.preventDefault()
-      toggleFormat('*')
+      wrapSelection('*')
     } else if (key === 'c' && event.shiftKey) {
       event.preventDefault()
-      toggleFormat('`')
+      wrapSelection('`')
     }
   }
 
@@ -112,6 +78,11 @@ export function MessageComposer({
 
     if (!body) {
       setError('Write a message first.')
+      return
+    }
+
+    if (body.length > MAX_LENGTH) {
+      setError(`Keep messages under ${MAX_LENGTH} characters.`)
       return
     }
 
@@ -189,7 +160,7 @@ export function MessageComposer({
             aria-label="Bold"
             className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex size-7 items-center justify-center rounded-md transition-colors hover:text-black dark:hover:text-white"
             onClick={() => {
-              return toggleFormat('**')
+              return wrapSelection('**')
             }}
             onMouseDown={(event) => {
               return event.preventDefault()
@@ -203,7 +174,7 @@ export function MessageComposer({
             aria-label="Italic"
             className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex size-7 items-center justify-center rounded-md transition-colors hover:text-black dark:hover:text-white"
             onClick={() => {
-              return toggleFormat('*')
+              return wrapSelection('*')
             }}
             onMouseDown={(event) => {
               return event.preventDefault()
@@ -217,7 +188,7 @@ export function MessageComposer({
             aria-label="Inline code"
             className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex size-7 items-center justify-center rounded-md transition-colors hover:text-black dark:hover:text-white"
             onClick={() => {
-              return toggleFormat('`')
+              return wrapSelection('`')
             }}
             onMouseDown={(event) => {
               return event.preventDefault()
@@ -232,9 +203,9 @@ export function MessageComposer({
           Message
         </label>
         <textarea
-          className="min-h-20 w-full resize-none bg-transparent px-3.5 py-3 text-sm leading-relaxed"
+          className="min-h-20 w-full resize-none bg-transparent px-3.5 py-3 text-sm leading-relaxed outline-none"
           id={fieldId}
-          maxLength={280}
+          maxLength={MAX_LENGTH}
           name="body"
           onKeyDown={onKeyDown}
           placeholder={placeholder ?? `Message #${channelId}`}

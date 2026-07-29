@@ -20,7 +20,7 @@ export function ThemeToggle() {
   }, [])
 
   return (
-    <div className="border-divider dark:border-divider-dark inline-flex items-center gap-0.5 rounded-full border p-0.5">
+    <div className="inline-flex items-center gap-0.5">
       {options.map(({ icon: Icon, label, value }) => {
         const active = mounted && theme === value
 

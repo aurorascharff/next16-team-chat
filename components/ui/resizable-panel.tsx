@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 const MIN_WIDTH = 280
@@ -20,7 +20,7 @@ export function ResizablePanel({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  const onPointerMove = useCallback((event: PointerEvent) => {
+  function onPointerMove(event: PointerEvent) {
     const rect = panelRef.current?.getBoundingClientRect()
     if (!rect) {
       return
@@ -30,22 +30,22 @@ export function ResizablePanel({ children }: { children: ReactNode }) {
       Math.max(MIN_WIDTH, rect.right - event.clientX),
     )
     setWidth(next)
-  }, [])
+  }
 
-  const stopDragging = useCallback(() => {
+  function stopDragging() {
     setDragging(false)
     document.removeEventListener('pointermove', onPointerMove)
     setWidth((current) => {
       localStorage.setItem(STORAGE_KEY, String(current))
       return current
     })
-  }, [onPointerMove])
+  }
 
-  const startDragging = useCallback(() => {
+  function startDragging() {
     setDragging(true)
     document.addEventListener('pointermove', onPointerMove)
     document.addEventListener('pointerup', stopDragging, { once: true })
-  }, [onPointerMove, stopDragging])
+  }
 
   return (
     <div

@@ -2,11 +2,11 @@
 
 <img src="public/logo.svg" alt="Huddle" width="72" height="72" />
 
-# Next 16 Messaging "Huddle"
+# Next 16 Team Chat "Huddle"
 
 A developer workspace chat app that demonstrates [Instant Navigations](https://preview.nextjs.org/docs/app/guides/instant-navigation) in the [Next.js 16.3 preview](https://nextjs.org/blog/next-16-3-instant-navigations).
 
-[Live demo →](https://next16-messaging.vercel.app)
+[Live demo →](https://next16-team-chat.vercel.app)
 
 </div>
 
@@ -18,11 +18,14 @@ The architecture follows the [Next.js App Architecture](https://github.com/auror
 
 - **[Cache Components](https://preview.nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents)** cache room metadata and message reads with `cacheTag` and `cacheLife`. Per-user reads use [`'use cache: private'`](https://preview.nextjs.org/docs/app/api-reference/directives/use-cache-private).
 - **[Partial Prefetching](https://preview.nextjs.org/docs/app/guides/adopting-partial-prefetching)** prefetches the shared room shell as links enter the viewport, so navigation commits instantly and messages stream behind Suspense.
-- **[React Query](https://tanstack.com/query)** receives a server-seeded message cache from `<HydrationBoundary>`, then owns client refetching and optimistic sends with `sending` / `sent` / `failed` states.
+- **[React Query](https://tanstack.com/query)** receives a server-seeded message cache from `<HydrationBoundary>`, then owns client refetching, polling, and optimistic sends with `sending` / `sent` / `failed` states.
 - **[Server Functions](https://nextjs.org/docs/app/getting-started/mutating-data)** send messages and replies on the server and invalidate the affected message and reply tags with [`updateTag`](https://nextjs.org/docs/app/api-reference/functions/updateTag).
+- **Custom channel groups**: drag channels between your own editable groups; the layout persists per user to the database.
 - **Slack-style threads**: reply to any message in a resizable side panel, with reply counts and deep links from the Inbox and Threads views.
+- **Command palette**: press `⌘K` / `Ctrl+K` to jump to any channel.
+- **Live activity**: a background bot posts to random channels and polling reveals it without a reload.
 - **Async React** keeps the UI interactive during server work with `Suspense`, `useTransition`, `useOptimistic`, and optimistic client cache updates.
-- **Slow-mode toggle** in the sidebar simulates a slow network to show the streaming loading states.
+- **Slow-mode toggle** in the top bar simulates a slow network to show the streaming loading states.
 
 ## Getting started
 
@@ -35,7 +38,7 @@ pnpm run prisma.seed
 pnpm run dev
 ```
 
-Open [http://localhost:3000/channel/ship-room](http://localhost:3000/channel/ship-room) in your browser. You can browse the data with `pnpm run prisma.studio`, or wipe and re-seed the database with `pnpm run prisma.reset`.
+Open [http://localhost:3000](http://localhost:3000) in your browser. You can browse the data with `pnpm run prisma.studio`, or wipe and re-seed the database with `pnpm run prisma.reset`.
 
 <details>
 <summary>Run locally without Postgres</summary>

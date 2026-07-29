@@ -2,8 +2,8 @@ import { ArrowUpRight, Hash, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import type { Route } from 'next'
 import { EmptyState } from '@/components/ui/empty-state'
+import { UserAvatar } from '@/components/ui/user-avatar'
 import type { WorkspaceItem } from '@/features/workspace/workspace-store'
-import { initials } from '@/features/message/components/format'
 
 export function WorkspaceList({
   emptyBody,
@@ -36,12 +36,7 @@ export function WorkspaceList({
             key={item.id}
             prefetch={true}
           >
-            <span
-              aria-hidden
-              className="bg-accent flex size-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold text-white uppercase"
-            >
-              {initials(item.author)}
-            </span>
+            <UserAvatar name={item.author} />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
                 <strong className="text-[0.9375rem] font-semibold">

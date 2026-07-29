@@ -1,10 +1,12 @@
 'use client'
 
-import { Plus } from 'lucide-react'
+import { Plus, X } from 'lucide-react'
 import { useEffect, useRef, useState, useTransition } from 'react'
 import { saveChannelLayout } from '@/features/channel/channel-layout-actions'
 import { cn } from '@/lib/utils'
 import { ChannelLink } from './channel-link'
+
+const UNGROUPED = 'Channels'
 
 type Channel = {
   id: string
@@ -22,29 +24,36 @@ type Props = {
   groups: Group[]
 }
 
-type DragState =
-  | { type: 'group'; groupIndex: number }
-  | { type: 'channel'; groupIndex: number; channelIndex: number }
-  | null
+// Groups display alphabetically, with the ungrouped bucket always last.
+function sortGroups(groups: Group[]) {
+  return [...groups].sort((a, b) => {
+    if (a.name === UNGROUPED) return 1
+    if (b.name === UNGROUPED) return -1
+    return a.name.localeCompare(b.name)
+  })
+}
 
 export function ChannelNav({ groups: initialGroups }: Props) {
   const [groups, setGroups] = useState(initialGroups)
   const [, startTransition] = useTransition()
-  const dragging = useRef<DragState>(null)
+  const dragging = useRef<{ groupIndex: number; channelIndex: number } | null>(
+    null,
+  )
   const [overGroup, setOverGroup] = useState<number | null>(null)
-  const [editingIndex, setEditingIndex] = useState<number | null>(null)
+  const [editingName, setEditingName] = useState<string | null>(null)
 
-  // Keep local order in sync when the server sends fresh data (e.g. after a
+  // Keep local state in sync when the server sends fresh data (e.g. after a
   // switch user or cache revalidation).
   useEffect(() => {
     setGroups(initialGroups)
   }, [initialGroups])
 
   function persist(next: Group[]) {
-    setGroups(next)
+    const sorted = sortGroups(next)
+    setGroups(sorted)
     startTransition(async () => {
       await saveChannelLayout({
-        groups: next.map((group) => {
+        groups: sorted.map((group) => {
           return {
             channelIds: group.channels.map((channel) => channel.id),
             name: group.name,
@@ -52,14 +61,6 @@ export function ChannelNav({ groups: initialGroups }: Props) {
         }),
       })
     })
-  }
-
-  function moveGroup(from: number, to: number) {
-    if (from === to) return
-    const next = [...groups]
-    const [moved] = next.splice(from, 1)
-    next.splice(to, 0, moved)
-    persist(next)
   }
 
   function moveChannel(
@@ -81,35 +82,47 @@ export function ChannelNav({ groups: initialGroups }: Props) {
   }
 
   function addGroup() {
-    // Give the new group a unique working name, then let the user rename it.
     let index = groups.length + 1
     let name = `New group ${index}`
     while (groups.some((group) => group.name === name)) {
       index += 1
       name = `New group ${index}`
     }
-    setGroups((current) => [...current, { channels: [], name }])
-    setEditingIndex(groups.length)
+    setGroups(sortGroups([...groups, { channels: [], name }]))
+    setEditingName(name)
   }
 
-  function renameGroup(groupIndex: number, rawName: string) {
-    setEditingIndex(null)
+  function deleteGroup(name: string) {
+    const target = groups.find((group) => group.name === name)
+    if (!target) return
+    const next = groups.filter((group) => group.name !== name)
+    // Move the group's channels into the ungrouped bucket.
+    let ungrouped = next.find((group) => group.name === UNGROUPED)
+    if (!ungrouped) {
+      ungrouped = { channels: [], name: UNGROUPED }
+      next.push(ungrouped)
+    }
+    ungrouped.channels = [...ungrouped.channels, ...target.channels]
+    persist(next)
+  }
+
+  function renameGroup(oldName: string, rawName: string) {
+    setEditingName(null)
     const name = rawName.trim()
-    const current = groups[groupIndex]
-    if (!current) return
-    // Reject empty or duplicate names; keep the previous value instead.
     if (
       !name ||
-      groups.some((group, i) => i !== groupIndex && group.name === name)
+      name === UNGROUPED ||
+      groups.some((group) => group.name !== oldName && group.name === name)
     ) {
-      setGroups([...groups])
+      setGroups(sortGroups([...groups]))
       return
     }
-    if (name === current.name) return
-    const next = groups.map((group, i) => {
-      return i === groupIndex ? { ...group, name } : group
-    })
-    persist(next)
+    if (name === oldName) return
+    persist(
+      groups.map((group) => {
+        return group.name === oldName ? { ...group, name } : group
+      }),
+    )
   }
 
   return (
@@ -118,22 +131,21 @@ export function ChannelNav({ groups: initialGroups }: Props) {
       className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto"
     >
       {groups.map((group, groupIndex) => {
+        const removable = group.name !== UNGROUPED
+
         return (
           <div
             className="flex flex-col gap-0.5"
             key={group.name}
             onDragOver={(event) => {
-              const state = dragging.current
-              if (!state || state.type !== 'channel') return
-              // Allow dropping a channel into an empty area of another group.
+              if (!dragging.current) return
               event.preventDefault()
               setOverGroup(groupIndex)
             }}
             onDrop={(event) => {
               const state = dragging.current
-              if (!state || state.type !== 'channel') return
+              if (!state) return
               event.preventDefault()
-              // Drop at the end of the target group when not over a channel.
               moveChannel(
                 state.groupIndex,
                 state.channelIndex,
@@ -144,13 +156,13 @@ export function ChannelNav({ groups: initialGroups }: Props) {
               setOverGroup(null)
             }}
           >
-            {editingIndex === groupIndex ? (
+            {editingName === group.name ? (
               <input
                 autoFocus
-                className="text-muted dark:text-muted-dark bg-card dark:bg-card-dark focus:ring-accent/40 mx-2.5 mt-1 mb-1 rounded px-1 py-0.5 text-xs font-semibold tracking-wide uppercase focus:ring-2 focus:outline-none"
+                className="text-muted dark:text-muted-dark bg-card dark:bg-card-dark focus:ring-accent/40 min-h-6 rounded px-2.5 py-1 text-xs font-semibold tracking-wide uppercase focus:ring-2 focus:outline-none"
                 defaultValue={group.name}
                 onBlur={(event) => {
-                  return renameGroup(groupIndex, event.target.value)
+                  return renameGroup(group.name, event.target.value)
                 }}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter') event.currentTarget.blur()
@@ -161,42 +173,38 @@ export function ChannelNav({ groups: initialGroups }: Props) {
                 }}
               />
             ) : (
-              <p
+              <div
                 className={cn(
-                  'text-muted dark:text-muted-dark cursor-grab rounded px-2.5 pt-1 pb-1 text-xs font-semibold tracking-wide uppercase transition-colors select-none active:cursor-grabbing',
-                  overGroup === groupIndex &&
-                    dragging.current?.type === 'channel' &&
-                    'text-accent',
+                  'group/label flex min-h-6 items-center justify-between rounded px-2.5 py-1 transition-colors',
+                  overGroup === groupIndex && 'text-accent',
                 )}
-                draggable
-                onDoubleClick={() => {
-                  return setEditingIndex(groupIndex)
-                }}
-                onDragEnd={() => {
-                  dragging.current = null
-                  setOverGroup(null)
-                }}
-                onDragOver={(event) => {
-                  if (dragging.current?.type === 'group') {
-                    event.preventDefault()
-                  }
-                }}
-                onDragStart={(event) => {
-                  event.stopPropagation()
-                  dragging.current = { groupIndex, type: 'group' }
-                }}
-                onDrop={(event) => {
-                  const state = dragging.current
-                  if (!state || state.type !== 'group') return
-                  event.preventDefault()
-                  event.stopPropagation()
-                  moveGroup(state.groupIndex, groupIndex)
-                  dragging.current = null
-                }}
-                title="Drag to reorder, double-click to rename"
               >
-                {group.name}
-              </p>
+                <p
+                  className={cn(
+                    'text-muted dark:text-muted-dark text-xs font-semibold tracking-wide uppercase select-none',
+                    overGroup === groupIndex && 'text-accent',
+                    removable && 'cursor-text',
+                  )}
+                  onDoubleClick={() => {
+                    if (removable) setEditingName(group.name)
+                  }}
+                  title={removable ? 'Double-click to rename' : undefined}
+                >
+                  {group.name}
+                </p>
+                {removable && (
+                  <button
+                    aria-label={`Delete ${group.name} group`}
+                    className="text-muted dark:text-muted-dark opacity-0 transition-opacity group-hover/label:opacity-100 hover:text-black dark:hover:text-white"
+                    onClick={() => {
+                      return deleteGroup(group.name)
+                    }}
+                    type="button"
+                  >
+                    <X aria-hidden className="size-3.5" strokeWidth={2} />
+                  </button>
+                )}
+              </div>
             )}
             <div className="flex flex-col gap-0.5">
               {group.channels.map((channel, channelIndex) => {
@@ -210,22 +218,18 @@ export function ChannelNav({ groups: initialGroups }: Props) {
                       setOverGroup(null)
                     }}
                     onDragOver={(event) => {
-                      if (dragging.current?.type === 'channel') {
+                      if (dragging.current) {
                         event.preventDefault()
                         setOverGroup(groupIndex)
                       }
                     }}
                     onDragStart={(event) => {
                       event.stopPropagation()
-                      dragging.current = {
-                        channelIndex,
-                        groupIndex,
-                        type: 'channel',
-                      }
+                      dragging.current = { channelIndex, groupIndex }
                     }}
                     onDrop={(event) => {
                       const state = dragging.current
-                      if (!state || state.type !== 'channel') return
+                      if (!state) return
                       event.preventDefault()
                       event.stopPropagation()
                       moveChannel(
@@ -242,11 +246,6 @@ export function ChannelNav({ groups: initialGroups }: Props) {
                   </div>
                 )
               })}
-              {group.channels.length === 0 && (
-                <p className="text-muted/60 dark:text-muted-dark/60 px-2.5 py-1 text-xs italic">
-                  Drop a channel here
-                </p>
-              )}
             </div>
           </div>
         )

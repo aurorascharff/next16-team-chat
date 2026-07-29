@@ -1,21 +1,13 @@
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { Skeleton } from '@/components/ui/skeleton'
-import { getInbox, getThreads } from '@/features/workspace/workspace-queries'
+import { getInbox } from '@/features/workspace/workspace-queries'
 import { WorkspaceList } from './workspace-list'
 
 const panels = {
-  drafts: {
-    body: 'Drafts stay local to this workspace until you send them to a channel.',
-    title: 'Drafts',
-  },
   inbox: {
-    body: 'Conversations with replies that may need a follow-up from you.',
+    body: 'Threads you started that got replies, plus threads you joined that others are active in.',
     title: 'Inbox',
-  },
-  threads: {
-    body: 'Every thread across your channels, newest first.',
-    title: 'Threads',
   },
 } as const
 
@@ -33,7 +25,7 @@ export function WorkspacePanelHeader({ view }: { view: WorkspaceView }) {
         </p>
       </div>
       <Link
-        className="bg-accent hover:bg-accent-hover flex min-h-9 shrink-0 items-center gap-1.5 rounded-lg px-3 text-[0.8125rem] font-semibold text-white transition-colors"
+        className="bg-accent hover:bg-accent-hover flex min-h-9 shrink-0 items-center gap-1.5 rounded-lg px-3 text-[0.8125rem] font-semibold text-white transition-colors max-md:hidden"
         href="/"
         prefetch={true}
       >
@@ -51,19 +43,6 @@ export async function InboxList() {
     <WorkspaceList
       emptyBody="When a conversation gets replies, it shows up here."
       emptyTitle="Inbox is clear"
-      items={items}
-      withThreads
-    />
-  )
-}
-
-export async function ThreadsList() {
-  const items = await getThreads()
-
-  return (
-    <WorkspaceList
-      emptyBody="Start a thread from any message to see it here."
-      emptyTitle="No threads yet"
       items={items}
       withThreads
     />
