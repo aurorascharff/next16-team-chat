@@ -1,8 +1,8 @@
-import { Hash, Search, Users } from 'lucide-react'
-import { getChannel } from '@/features/channel/channel-queries'
+import { Hash, Search, Users } from "lucide-react";
+import { getChannel } from "@/features/channel/channel-queries";
 
 export async function ChannelHeader({ channelId }: { channelId: string }) {
-  const channel = await getChannel(channelId)
+  const channel = await getChannel(channelId);
 
   return (
     <header className="border-divider dark:border-divider-dark bg-surface/80 dark:bg-surface-dark/80 sticky top-0 z-10 flex items-center justify-between gap-3 border-b px-5 py-3 backdrop-blur-lg max-md:flex-col max-md:items-start">
@@ -24,7 +24,7 @@ export async function ChannelHeader({ channelId }: { channelId: string }) {
           aria-label={`${channel.memberCount} members`}
           className="flex pl-2"
         >
-          {['A', 'M', 'N'].map((initial) => {
+          {["A", "M", "N"].map((initial) => {
             return (
               <span
                 aria-hidden
@@ -33,7 +33,7 @@ export async function ChannelHeader({ channelId }: { channelId: string }) {
               >
                 {initial}
               </span>
-            )
+            );
           })}
         </div>
         <label className="relative max-md:hidden">
@@ -54,7 +54,7 @@ export async function ChannelHeader({ channelId }: { channelId: string }) {
         </div>
       </div>
     </header>
-  )
+  );
 }
 
 export function ChannelHeaderSkeleton() {
@@ -66,5 +66,5 @@ export function ChannelHeaderSkeleton() {
       </div>
       <div className="skeleton-animation h-7 w-24 rounded-full" />
     </header>
-  )
+  );
 }

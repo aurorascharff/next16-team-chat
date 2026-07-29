@@ -1,37 +1,37 @@
-import type { Metadata } from 'next'
-import { GeistMono } from 'geist/font/mono'
-import { GeistSans } from 'geist/font/sans'
-import { Suspense } from 'react'
+import type { Metadata } from "next";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
+import { Suspense } from "react";
 import {
   ChannelList,
   ChannelListSkeleton,
-} from '@/features/channel/components/channel-list'
+} from "@/features/channel/components/channel-list";
 import {
   CurrentUserCard,
   CurrentUserCardSkeleton,
-} from '@/features/user/components/current-user-card'
-import { WorkspaceNav } from '@/features/workspace/components/workspace-nav'
-import { Providers } from './providers'
-import './globals.css'
+} from "@/features/user/components/current-user-card";
+import { WorkspaceNav } from "@/features/workspace/components/workspace-nav";
+import { Providers } from "./providers";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  applicationName: 'Patch',
+  applicationName: "Patch",
   description:
-    'A Next.js 16 messaging app with Cache Components, Partial Prefetching, and React Query.',
+    "A Next.js 16 messaging app with Cache Components, Partial Prefetching, and React Query.",
   icons: {
-    apple: '/logo.svg',
-    icon: '/logo.svg',
+    apple: "/logo.svg",
+    icon: "/logo.svg",
   },
   title: {
-    default: 'Patch',
-    template: '%s · Patch',
+    default: "Patch",
+    template: "%s · Patch",
   },
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html
@@ -56,5 +56,5 @@ export default function RootLayout({
         </Providers>
       </body>
     </html>
-  )
+  );
 }

@@ -1,33 +1,36 @@
-import { ArrowRight, Hash } from 'lucide-react'
-import Link from 'next/link'
-import { EmptyState } from '@/components/ui/empty-state'
+import { ArrowRight, Hash } from "lucide-react";
+import Link from "next/link";
+import { EmptyState } from "@/components/ui/empty-state";
 
 const panels = {
   drafts: {
-    body: 'Drafted notes stay local to the workspace until they are sent to a channel.',
-    items: ['Tighten the README database setup', 'Add the mobile empty-state pass'],
-    title: 'Drafts',
+    body: "Drafted notes stay local to the workspace until they are sent to a channel.",
+    items: [
+      "Tighten the README database setup",
+      "Add the mobile empty-state pass",
+    ],
+    title: "Drafts",
   },
   inbox: {
-    body: 'Mentions, review requests, and handoffs from active channels.',
+    body: "Mentions, review requests, and handoffs from active channels.",
     items: [
-      'Mira mentioned you in #ship-room',
-      'Runtime prefetch notes need a final docs link',
-      'Design review has a mobile screenshot ready',
+      "Mira mentioned you in #ship-room",
+      "Runtime prefetch notes need a final docs link",
+      "Design review has a mobile screenshot ready",
     ],
-    title: 'Inbox',
+    title: "Inbox",
   },
   threads: {
-    body: 'Follow-ups collected from channel conversations.',
-    items: ['React Query hydration seed', 'Global not-found polish'],
-    title: 'Threads',
+    body: "Follow-ups collected from channel conversations.",
+    items: ["React Query hydration seed", "Global not-found polish"],
+    title: "Threads",
   },
-} as const
+} as const;
 
-type WorkspaceView = keyof typeof panels
+type WorkspaceView = keyof typeof panels;
 
 export function WorkspacePanel({ view }: { view: WorkspaceView }) {
-  const panel = panels[view]
+  const panel = panels[view];
 
   return (
     <section className="min-h-dvh">
@@ -70,7 +73,7 @@ export function WorkspacePanel({ view }: { view: WorkspaceView }) {
                   </p>
                 </div>
               </article>
-            )
+            );
           })}
         </div>
       ) : (
@@ -80,5 +83,5 @@ export function WorkspacePanel({ view }: { view: WorkspaceView }) {
         />
       )}
     </section>
-  )
+  );
 }

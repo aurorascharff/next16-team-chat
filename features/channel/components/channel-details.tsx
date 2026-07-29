@@ -1,9 +1,9 @@
-import { notFound } from 'next/navigation'
-import { getChannelDetail } from '@/features/message/message-store'
+import { notFound } from "next/navigation";
+import { getChannelDetail } from "@/features/message/message-store";
 
 export async function ChannelDetails({ channelId }: { channelId: string }) {
-  const channel = await getChannelDetail(channelId)
-  if (!channel) notFound()
+  const channel = await getChannelDetail(channelId);
+  if (!channel) notFound();
 
   return (
     <aside
@@ -36,7 +36,7 @@ export async function ChannelDetails({ channelId }: { channelId: string }) {
               >
                 {item}
               </li>
-            )
+            );
           })}
         </ul>
       </section>
@@ -51,12 +51,12 @@ export async function ChannelDetails({ channelId }: { channelId: string }) {
               >
                 {member}
               </span>
-            )
+            );
           })}
         </div>
       </section>
     </aside>
-  )
+  );
 }
 
 export function ChannelDetailsSkeleton() {
@@ -72,8 +72,8 @@ export function ChannelDetailsSkeleton() {
             <div className="skeleton-animation h-3 w-full rounded-full" />
             <div className="skeleton-animation h-3 w-2/3 rounded-full" />
           </section>
-        )
+        );
       })}
     </aside>
-  )
+  );
 }

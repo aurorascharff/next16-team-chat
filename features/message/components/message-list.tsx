@@ -1,21 +1,21 @@
-'use client'
+"use client";
 
-import { useSuspenseQuery } from '@tanstack/react-query'
-import { EmptyState } from '@/components/ui/empty-state'
-import { messagesQueryOptions } from '@/features/message/message-query-options'
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { EmptyState } from "@/components/ui/empty-state";
+import { messagesQueryOptions } from "@/features/message/message-query-options";
 
 function initials(name: string) {
   return name
-    .split(' ')
+    .split(" ")
     .map((part) => part[0])
-    .join('')
+    .join("");
 }
 
 function formatInline(body: string) {
-  const parts = body.split(/(`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*)/g)
+  const parts = body.split(/(`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*)/g);
 
   return parts.map((part, index) => {
-    if (part.startsWith('`') && part.endsWith('`')) {
+    if (part.startsWith("`") && part.endsWith("`")) {
       return (
         <code
           className="bg-card dark:bg-card-dark border-divider dark:border-divider-dark rounded border px-1 py-0.5 font-mono text-[0.875em]"
@@ -23,40 +23,40 @@ function formatInline(body: string) {
         >
           {part.slice(1, -1)}
         </code>
-      )
+      );
     }
 
-    if (part.startsWith('**') && part.endsWith('**')) {
+    if (part.startsWith("**") && part.endsWith("**")) {
       return (
         <strong className="font-semibold" key={index}>
           {part.slice(2, -2)}
         </strong>
-      )
+      );
     }
 
-    if (part.startsWith('*') && part.endsWith('*')) {
+    if (part.startsWith("*") && part.endsWith("*")) {
       return (
         <em className="italic" key={index}>
           {part.slice(1, -1)}
         </em>
-      )
+      );
     }
 
-    return part
-  })
+    return part;
+  });
 }
 
 function formatTime(value: string) {
-  return new Intl.DateTimeFormat('en', {
-    hour: 'numeric',
-    minute: '2-digit',
-  }).format(new Date(value))
+  return new Intl.DateTimeFormat("en", {
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(value));
 }
 
 export function MessageList({ channelId }: { channelId: string }) {
   const { data: messages, isFetching } = useSuspenseQuery(
     messagesQueryOptions(channelId),
-  )
+  );
 
   return (
     <section
@@ -109,8 +109,8 @@ export function MessageList({ channelId }: { channelId: string }) {
               </p>
             </div>
           </article>
-        )
+        );
       })}
     </section>
-  )
+  );
 }

@@ -1,9 +1,9 @@
-import { getCurrentUser } from '@/features/user/user-queries'
-import { ThemeToggle } from '@/components/theme/theme-toggle'
-import { UserSwitcher } from './user-switcher'
+import { getCurrentUser } from "@/features/user/user-queries";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { UserSwitcher } from "./user-switcher";
 
 export async function CurrentUserCard() {
-  const user = await getCurrentUser()
+  const user = await getCurrentUser();
 
   return (
     <div className="mt-auto flex flex-col gap-2">
@@ -16,9 +16,9 @@ export async function CurrentUserCard() {
           className="bg-accent flex size-9 items-center justify-center rounded-lg text-xs font-bold text-white uppercase"
         >
           {user.name
-            .split(' ')
+            .split(" ")
             .map((part) => part[0])
-            .join('')}
+            .join("")}
         </div>
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold">{user.name}</p>
@@ -29,7 +29,7 @@ export async function CurrentUserCard() {
         <UserSwitcher currentUserId={user.id} />
       </section>
     </div>
-  )
+  );
 }
 
 export function CurrentUserCardSkeleton() {
@@ -44,5 +44,5 @@ export function CurrentUserCardSkeleton() {
         </div>
       </section>
     </div>
-  )
+  );
 }

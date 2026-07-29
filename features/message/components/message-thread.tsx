@@ -2,33 +2,30 @@ import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
-} from '@tanstack/react-query'
-import { cacheLife, cacheTag } from 'next/cache'
-import {
-  getMessages,
-  messagesTag,
-} from '@/features/message/message-queries'
-import { messageKeys } from '@/features/message/message-query-options'
-import { MessageComposer } from './message-composer'
-import { MessageList } from './message-list'
+} from "@tanstack/react-query";
+import { cacheLife, cacheTag } from "next/cache";
+import { getMessages, messagesTag } from "@/features/message/message-queries";
+import { messageKeys } from "@/features/message/message-query-options";
+import { MessageComposer } from "./message-composer";
+import { MessageList } from "./message-list";
 
 async function getMessagesState(channelId: string) {
-  'use cache'
-  cacheTag(messagesTag(channelId))
-  cacheLife({ stale: 30 })
+  "use cache";
+  cacheTag(messagesTag(channelId));
+  cacheLife({ stale: 30 });
 
-  const queryClient = new QueryClient()
-  const messages = await getMessages(channelId)
+  const queryClient = new QueryClient();
+  const messages = await getMessages(channelId);
 
   queryClient.setQueryData(messageKeys.channel(channelId), messages, {
     updatedAt: 0,
-  })
+  });
 
-  return dehydrate(queryClient)
+  return dehydrate(queryClient);
 }
 
 export async function MessageThread({ channelId }: { channelId: string }) {
-  const state = await getMessagesState(channelId)
+  const state = await getMessagesState(channelId);
 
   return (
     <HydrationBoundary state={state}>
@@ -37,7 +34,7 @@ export async function MessageThread({ channelId }: { channelId: string }) {
         <MessageComposer channelId={channelId} />
       </div>
     </HydrationBoundary>
-  )
+  );
 }
 
 export function MessageThreadSkeleton() {
@@ -52,8 +49,8 @@ export function MessageThreadSkeleton() {
               <div className="skeleton-animation h-3 w-full max-w-md rounded-full" />
             </div>
           </div>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

@@ -1,8 +1,8 @@
-import { getChannels } from '@/features/channel/channel-queries'
-import { ChannelLink } from './channel-link'
+import { getChannels } from "@/features/channel/channel-queries";
+import { ChannelLink } from "./channel-link";
 
 export async function ChannelList() {
-  const channels = await getChannels()
+  const channels = await getChannels();
 
   return (
     <nav aria-label="Channels" className="flex min-h-0 flex-1 flex-col gap-0.5">
@@ -11,11 +11,11 @@ export async function ChannelList() {
       </p>
       <div className="flex flex-col gap-0.5 overflow-y-auto max-md:flex-row max-md:overflow-x-auto max-md:pb-1">
         {channels.map((channel) => {
-          return <ChannelLink channel={channel} key={channel.id} />
+          return <ChannelLink channel={channel} key={channel.id} />;
         })}
       </div>
     </nav>
-  )
+  );
 }
 
 export function ChannelListSkeleton() {
@@ -25,8 +25,8 @@ export function ChannelListSkeleton() {
         Channels
       </p>
       {Array.from({ length: 4 }).map((_, i) => {
-        return <div className="skeleton-animation h-8 rounded-lg" key={i} />
+        return <div className="skeleton-animation h-8 rounded-lg" key={i} />;
       })}
     </div>
-  )
+  );
 }

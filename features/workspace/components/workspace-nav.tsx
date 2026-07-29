@@ -1,19 +1,19 @@
-'use client'
+"use client";
 
-import type { Route } from 'next'
-import { AtSign, MessagesSquare, PencilLine } from 'lucide-react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
+import type { Route } from "next";
+import { AtSign, MessagesSquare, PencilLine } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 const links = [
-  { badge: 4, href: '/inbox', icon: AtSign, label: 'Inbox' },
-  { badge: 0, href: '/threads', icon: MessagesSquare, label: 'Threads' },
-  { badge: 1, href: '/drafts', icon: PencilLine, label: 'Drafts' },
-] as const
+  { badge: 4, href: "/inbox", icon: AtSign, label: "Inbox" },
+  { badge: 0, href: "/threads", icon: MessagesSquare, label: "Threads" },
+  { badge: 1, href: "/drafts", icon: PencilLine, label: "Drafts" },
+] as const;
 
 export function WorkspaceNav() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <div className="flex flex-col gap-3">
@@ -39,16 +39,16 @@ export function WorkspaceNav() {
       </Link>
       <nav aria-label="Workspace" className="flex flex-col gap-0.5">
         {links.map(({ badge, href, icon: Icon, label }) => {
-          const active = pathname === href
+          const active = pathname === href;
 
           return (
             <Link
-              aria-current={active ? 'page' : undefined}
+              aria-current={active ? "page" : undefined}
               className={cn(
-                'flex min-h-8 items-center gap-2.5 rounded-lg px-2.5 text-sm font-medium transition-colors',
+                "flex min-h-8 items-center gap-2.5 rounded-lg px-2.5 text-sm font-medium transition-colors",
                 active
-                  ? 'bg-accent-fade text-accent'
-                  : 'text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark hover:text-black dark:hover:text-white',
+                  ? "bg-accent-fade text-accent"
+                  : "text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark hover:text-black dark:hover:text-white",
               )}
               href={href as Route}
               key={href}
@@ -59,19 +59,19 @@ export function WorkspaceNav() {
               {badge ? (
                 <span
                   className={cn(
-                    'flex h-4.5 min-w-4.5 items-center justify-center rounded-full px-1.5 text-[0.6875rem] font-bold',
+                    "flex h-4.5 min-w-4.5 items-center justify-center rounded-full px-1.5 text-[0.6875rem] font-bold",
                     active
-                      ? 'bg-accent text-white'
-                      : 'bg-accent-fade text-accent',
+                      ? "bg-accent text-white"
+                      : "bg-accent-fade text-accent",
                   )}
                 >
                   {badge}
                 </span>
               ) : null}
             </Link>
-          )
+          );
         })}
       </nav>
     </div>
-  )
+  );
 }
