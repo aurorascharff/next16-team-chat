@@ -1,9 +1,14 @@
 import { Skeleton } from '@/components/ui/skeleton'
 import { UserAvatar } from '@/components/ui/user-avatar'
 import { getChannelDetails } from '@/features/channel/channel-queries'
+import { getCurrentUser } from '@/features/user/user-queries'
 
 export async function ChannelDetails({ channelId }: { channelId: string }) {
-  const channel = await getChannelDetails(channelId)
+  const [channel, currentUser] = await Promise.all([
+    getChannelDetails(channelId),
+    getCurrentUser(),
+  ])
+  const onlineNames = new Set(['Huddle Bot', currentUser.name])
 
   return (
     <aside
@@ -48,16 +53,25 @@ export async function ChannelDetails({ channelId }: { channelId: string }) {
         <h2>Members</h2>
         <ul className="-mx-1 flex max-h-64 flex-col gap-0.5 overflow-y-auto px-1">
           {channel.members.map((member) => {
+            const online = onlineNames.has(member)
             return (
               <li
                 className="hover:bg-card dark:hover:bg-card-dark flex items-center gap-2.5 rounded-lg px-2 py-1.5"
                 key={member}
               >
-                <UserAvatar
-                  bot={member === 'Huddle Bot'}
-                  name={member}
-                  size="sm"
-                />
+                <div className="relative shrink-0">
+                  <UserAvatar
+                    bot={member === 'Huddle Bot'}
+                    name={member}
+                    size="sm"
+                  />
+                  {online ? (
+                    <span
+                      aria-label="Online"
+                      className="border-surface dark:border-surface-dark absolute -right-0.5 -bottom-0.5 size-2.5 rounded-full border-2 bg-green-500"
+                    />
+                  ) : null}
+                </div>
                 <span className="min-w-0 flex-1 truncate text-[0.8125rem] font-medium">
                   {member}
                 </span>
