@@ -10,7 +10,7 @@ export function BotDriver() {
 
   useEffect(() => {
     const id = setInterval(() => {
-      if (running.current) return
+      if (running.current || document.hidden) return
       running.current = true
       void postBotMessage().finally(() => {
         running.current = false
