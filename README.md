@@ -4,7 +4,7 @@
 
 # Next 16 Team Chat "Huddle"
 
-A developer workspace chat app that demonstrates [Instant Navigations](https://preview.nextjs.org/docs/app/guides/instant-navigation) in the [Next.js 16.3 preview](https://nextjs.org/blog/next-16-3-instant-navigations).
+A "Slack"-like team chat demo that pairs [TanStack React Query](https://tanstack.com/query) with [Next.js 16.3 Cache Components](https://preview.nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents) on React 19, Tailwind CSS v4, and Prisma 7.
 
 [Live demo →](https://next16-team-chat.vercel.app)
 
@@ -16,16 +16,14 @@ The architecture follows the [Next.js App Architecture](https://github.com/auror
 
 ## Features
 
-- **[Cache Components](https://preview.nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents)** cache room metadata and message reads with `cacheTag` and `cacheLife`. Per-user reads use [`'use cache: private'`](https://preview.nextjs.org/docs/app/api-reference/directives/use-cache-private).
-- **[Partial Prefetching](https://preview.nextjs.org/docs/app/guides/adopting-partial-prefetching)** prefetches the shared room shell as links enter the viewport, so navigation commits instantly and messages stream behind Suspense.
-- **[React Query](https://tanstack.com/query)** receives a server-seeded message cache from `<HydrationBoundary>`, then owns client refetching, polling, and optimistic sends with `sending` / `sent` / `failed` states.
-- **[Server Functions](https://nextjs.org/docs/app/getting-started/mutating-data)** send messages and replies on the server and invalidate the affected message and reply tags with [`updateTag`](https://nextjs.org/docs/app/api-reference/functions/updateTag).
-- **Custom channel groups**: drag channels between your own editable groups; the layout persists per user to the database.
-- **Slack-style threads**: reply to any message in a resizable side panel, with reply counts and deep links from the Inbox and Threads views.
-- **Command palette**: press `⌘K` / `Ctrl+K` to jump to any channel.
-- **Live activity**: a background bot posts to random channels and polling reveals it without a reload.
-- **Async React** keeps the UI interactive during server work with `Suspense`, `useTransition`, `useOptimistic`, and optimistic client cache updates.
-- **Slow-mode toggle** in the top bar simulates a slow network to show the streaming loading states.
+- **[Cache Components](https://preview.nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents)** cache each query with `'use cache'`, name the data with `cacheTag`, and set its lifetime with `cacheLife`, so repeated reads come from the cache until a tag is invalidated. Per-user reads use [`'use cache: private'`](https://preview.nextjs.org/docs/app/api-reference/directives/use-cache-private).
+- **[TanStack React Query](https://tanstack.com/query)** owns the live client state — messages, replies, and unread counts. The server seeds its cache through `<HydrationBoundary>`, then the client takes over polling and optimistic mutations, so cached RSC data and live client data share one source of truth.
+- **[Partial Prefetching](https://preview.nextjs.org/docs/app/guides/adopting-partial-prefetching)** prefetches the shared channel shell as links enter the viewport, so navigation commits instantly and the message list streams in behind Suspense.
+- **[Server Functions](https://nextjs.org/docs/app/getting-started/mutating-data)** run mutations on the server and invalidate only the tags they change with [`updateTag`](https://nextjs.org/docs/app/api-reference/functions/updateTag); route handlers use stale-while-revalidate [`revalidateTag`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag) for read-tracking that shouldn't block the current view.
+- **[React Compiler](https://react.dev/learn/react-compiler)** memoizes components and hooks automatically, so the code needs no manual `useMemo` or `useCallback`.
+- **[View Transitions](https://nextjs.org/docs/app/guides/view-transitions)** cross-fade content as it streams in from Suspense, with persistent chrome isolated from the transition.
+- **[Ariakit](https://ariakit.org/)** powers the accessible `@`-mention combobox with an async, server-backed user search.
+- **Async React** keeps the UI interactive during server work with `Suspense`, `useOptimistic`, `useTransition`, `useActionState`, and `use`.
 
 ## Getting started
 
@@ -54,10 +52,11 @@ The schema is otherwise identical, so the rest of the app behaves the same as pr
 ## Stack
 
 - **[Next.js 16.3](https://nextjs.org/)**: App Router, Cache Components, Server Functions
-- **[React 19](https://react.dev/)**: Suspense and transitions
+- **[React 19](https://react.dev/)** with React Compiler: Suspense, View Transitions, `useOptimistic`
 - **[TanStack Query](https://tanstack.com/query)** for client-owned message state
 - **[TypeScript](https://www.typescriptlang.org/)** and **[Tailwind CSS v4](https://tailwindcss.com/)**
 - **[Prisma 7](https://www.prisma.io/)** on PostgreSQL (Neon)
+- **[Ariakit](https://ariakit.org/)** for the accessible mention combobox
 
 ## License
 

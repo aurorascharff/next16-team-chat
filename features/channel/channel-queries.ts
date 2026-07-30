@@ -109,11 +109,6 @@ export function channelTag(channelId: string) {
   return `channel:${channelId}`
 }
 
-export async function getChannels() {
-  const user = await getCurrentUser()
-  return getChannelsCached(user.id, await isSlowMode())
-}
-
 export async function getChannelLayout() {
   const user = await getCurrentUser()
   return getChannelLayoutCached(user.id, await isSlowMode())
@@ -137,14 +132,6 @@ export async function getUnreadChannels() {
       return [channel.id, channel.unread]
     }),
   ) as Record<string, number>
-}
-
-async function getChannelsCached(userId: string, slow: boolean) {
-  'use cache'
-  cacheTag('channels', `channels:${userId}`)
-  cacheLife('hours')
-  await delay(400, slow)
-  return listChannels(userId)
 }
 
 async function getChannelLayoutCached(userId: string, slow: boolean) {
