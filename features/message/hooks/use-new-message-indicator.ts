@@ -2,10 +2,9 @@
 
 import { useLayoutEffect, useRef, useState, type UIEvent } from 'react'
 
-export function useNewMessageIndicator(messageIds: string[], resetKey: string) {
+export function useNewMessageIndicator(messageIds: string[]) {
   const viewportRef = useRef<HTMLDivElement | null>(null)
   const previousLastMessageId = useRef<string | null>(null)
-  const previousResetKey = useRef(resetKey)
   const messageIdsRef = useRef(messageIds)
   const [count, setCount] = useState(0)
   const [isAtEnd, setIsAtEnd] = useState(true)
@@ -42,20 +41,6 @@ export function useNewMessageIndicator(messageIds: string[], resetKey: string) {
       dismiss()
     }
   }
-
-  useLayoutEffect(() => {
-    if (previousResetKey.current === resetKey) return
-
-    previousResetKey.current = resetKey
-    previousLastMessageId.current = lastMessageId
-    setCount(0)
-    setIsAtEnd(true)
-
-    const viewport = viewportRef.current
-    if (!viewport) return
-
-    viewport.scrollTo({ behavior: 'auto', top: viewport.scrollHeight })
-  }, [lastMessageId, resetKey])
 
   useLayoutEffect(() => {
     if (!lastMessageId) {

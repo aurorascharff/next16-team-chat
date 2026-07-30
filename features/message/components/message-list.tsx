@@ -19,7 +19,7 @@ export function MessageList({
 }) {
   const { data: messages } = useSuspenseQuery(messagesQueryOptions(channelId))
   const messageIds = messages.map((message) => message.id)
-  const newMessages = useNewMessageIndicator(messageIds, channelId)
+  const newMessages = useNewMessageIndicator(messageIds)
   const unreadMarkerRef = useRef<HTMLDivElement | null>(null)
   const [isUnreadMarkerVisible, setIsUnreadMarkerVisible] = useState(true)
 
