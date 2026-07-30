@@ -9,7 +9,7 @@ export async function POST() {
     revalidateTag(messagesTag(channelId), 'max')
     revalidateTag('messages', 'max')
     revalidateTag(channelTag(channelId), 'max')
-    revalidateTag('channels:unread', 'max')
+    revalidateTag('channels:unread', { expire: 0 })
   }
   return new Response(null, { status: 204 })
 }
