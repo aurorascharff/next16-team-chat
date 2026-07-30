@@ -104,10 +104,8 @@ export async function ActivityList() {
 function ActivityDivider() {
   return (
     <div className="flex items-center gap-2 px-3 py-3">
-      <span className="text-muted dark:text-muted-dark text-xs font-semibold">
-        Earlier
-      </span>
-      <span className="bg-divider dark:bg-divider-dark h-px flex-1" />
+      <span className="text-accent text-xs font-semibold">Earlier</span>
+      <span className="bg-accent/40 h-px flex-1" />
     </div>
   )
 }

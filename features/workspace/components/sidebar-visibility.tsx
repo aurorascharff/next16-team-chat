@@ -3,17 +3,17 @@
 import { usePathname } from 'next/navigation'
 import { Suspense, type ReactNode } from 'react'
 
-function HideOnInbox({ children }: { children: ReactNode }) {
+function HideOnActivity({ children }: { children: ReactNode }) {
   const pathname = usePathname()
-  if (pathname?.startsWith('/inbox')) {
+  if (pathname?.startsWith('/activity')) {
     return null
   }
   return children
 }
 
-function ShowOnInbox({ children }: { children: ReactNode }) {
+function ShowOnActivity({ children }: { children: ReactNode }) {
   const pathname = usePathname()
-  if (pathname?.startsWith('/inbox')) {
+  if (pathname?.startsWith('/activity')) {
     return children
   }
   return null
@@ -22,15 +22,15 @@ function ShowOnInbox({ children }: { children: ReactNode }) {
 export function SidebarVisibility({ children }: { children: ReactNode }) {
   return (
     <Suspense fallback={children}>
-      <HideOnInbox>{children}</HideOnInbox>
+      <HideOnActivity>{children}</HideOnActivity>
     </Suspense>
   )
 }
 
-export function InboxOnly({ children }: { children: ReactNode }) {
+export function ActivityOnly({ children }: { children: ReactNode }) {
   return (
     <Suspense fallback={null}>
-      <ShowOnInbox>{children}</ShowOnInbox>
+      <ShowOnActivity>{children}</ShowOnActivity>
     </Suspense>
   )
 }

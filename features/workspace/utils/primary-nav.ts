@@ -16,10 +16,10 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
     match: ['/', '/channel', '/channels'],
   },
   {
-    href: '/inbox',
+    href: '/activity',
     icon: AtSign,
     label: 'Activity',
-    match: ['/inbox'],
+    match: ['/activity'],
     showActivityDot: true,
   },
 ]

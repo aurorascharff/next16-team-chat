@@ -8,12 +8,12 @@ import {
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  alternates: { canonical: '/inbox' },
+  alternates: { canonical: '/activity' },
   description: 'Mentions and conversations that may need a follow-up.',
   title: 'Activity',
 }
 
-export default function InboxPage() {
+export default function ActivityPage() {
   return (
     <section className="min-h-dvh">
       <MarkMentionsRead />
