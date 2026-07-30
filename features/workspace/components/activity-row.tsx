@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { AtSign, CornerUpLeft, Hash, Reply } from 'lucide-react'
 import Link from 'next/link'
 import type { Route } from 'next'
+import { useEffect, useState } from 'react'
 import { UserAvatar } from '@/components/ui/user-avatar'
 import {
   formatInline,
@@ -70,10 +71,9 @@ export function ActivityRow({ item }: { item: ActivityItem }) {
           <span aria-hidden>·</span>
           <time
             dateTime={item.createdAt}
-            suppressHydrationWarning
             title={formatTime(item.createdAt)}
           >
-            {formatRelativeTime(item.createdAt)}
+            <RelativeTime value={item.createdAt} />
           </time>
         </div>
         <p className="mt-1.5 line-clamp-2 text-sm text-black dark:text-white">
@@ -94,4 +94,20 @@ export function ActivityRow({ item }: { item: ActivityItem }) {
       ) : null}
     </Link>
   )
+}
+
+function RelativeTime({ value }: { value: string }) {
+  const [label, setLabel] = useState(() => formatTime(value))
+
+  useEffect(() => {
+    function update() {
+      setLabel(formatRelativeTime(value))
+    }
+
+    update()
+    const interval = window.setInterval(update, 30_000)
+    return () => window.clearInterval(interval)
+  }, [value])
+
+  return label
 }

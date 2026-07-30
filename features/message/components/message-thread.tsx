@@ -1,52 +1,29 @@
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from '@tanstack/react-query'
-import { cacheLife, cacheTag } from 'next/cache'
+import { HydrationBoundary } from '@tanstack/react-query'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getLastReadAt } from '@/features/channel/channel-queries'
-import { isSlowMode } from '@/features/demo/slow-mode'
-import {
-  getMessagesCached,
-  messagesTag,
-} from '@/features/message/message-queries'
+import { getMessagesForUser } from '@/features/message/message-queries'
 import { messageKeys } from '@/features/message/message-query-options'
 import { getCurrentUser, getUsers } from '@/features/user/user-queries'
 import { userKeys } from '@/features/user/user-query-options'
+import { dehydrate } from '@/lib/react-query-hydration'
 import { cn } from '@/lib/utils'
 import { MessageList } from './message-list'
 
-async function getMessagesState(
-  channelId: string,
-  userId: string,
-  slow: boolean,
-) {
-  'use cache'
-  cacheTag(messagesTag(channelId))
-  cacheLife({ stale: 30 })
-
-  const queryClient = new QueryClient()
-  const [messages, users] = await Promise.all([
-    getMessagesCached(channelId, userId, slow),
-    getUsers(),
-  ])
-
-  queryClient.setQueryData(messageKeys.channel(channelId), messages)
-  queryClient.setQueryData(userKeys.all, users)
-
-  return dehydrate(queryClient)
-}
-
 export async function MessageThread({ channelId }: { channelId: string }) {
   const user = await getCurrentUser()
-  const [state, lastReadAt] = await Promise.all([
-    getMessagesState(channelId, user.id, await isSlowMode()),
+  const [messages, users, lastReadAt] = await Promise.all([
+    getMessagesForUser(channelId, user.id),
+    getUsers(),
     getLastReadAt(channelId, user.id),
   ])
 
   return (
-    <HydrationBoundary state={state}>
+    <HydrationBoundary
+      state={await dehydrate([
+        { queryKey: messageKeys.channel(channelId), data: messages },
+        { queryKey: userKeys.all, data: users },
+      ])}
+    >
       <MessageList
         channelId={channelId}
         currentUserId={user.id}

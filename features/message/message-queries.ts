@@ -222,10 +222,14 @@ export function repliesTag(messageId: string) {
 
 export async function getMessages(channelId: string) {
   const user = await getCurrentUser()
-  return getMessagesCached(channelId, user.id, await isSlowMode())
+  return getMessagesForUser(channelId, user.id)
 }
 
-export async function getMessagesCached(
+export async function getMessagesForUser(channelId: string, userId: string) {
+  return getMessagesCached(channelId, userId, await isSlowMode())
+}
+
+async function getMessagesCached(
   channelId: string,
   userId: string,
   slow: boolean,

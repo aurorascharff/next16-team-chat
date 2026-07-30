@@ -3,12 +3,10 @@ import Link from 'next/link'
 import { GitHubLink } from '@/components/ui/github-link'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { Skeleton } from '@/components/ui/skeleton'
-import { isSlowMode } from '@/features/demo/slow-mode'
-import { SlowModeToggle } from '@/features/demo/components/slow-mode-toggle'
+import { SlowModeControl } from '@/features/demo/components/slow-mode-control'
 import { getChannel } from '@/features/channel/channel-queries'
 
 export async function ChannelHeader({ channelId }: { channelId: string }) {
-  const slow = await isSlowMode()
   const channel = await getChannel(channelId)
 
   return (
@@ -38,7 +36,7 @@ export async function ChannelHeader({ channelId }: { channelId: string }) {
       <div className="flex items-center gap-2.5 max-md:w-full max-md:justify-between">
         <div className="flex items-center gap-2.5">
           <span className="max-md:hidden">
-            <SlowModeToggle enabled={slow} />
+            <SlowModeControl />
           </span>
           <span className="max-md:hidden">
             <ThemeToggle />

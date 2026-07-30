@@ -1,8 +1,4 @@
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from '@tanstack/react-query'
+import { HydrationBoundary } from '@tanstack/react-query'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   getChannelLayout,
@@ -10,6 +6,7 @@ import {
 } from '@/features/channel/channel-queries'
 import { channelKeys } from '@/features/channel/channel-query-options'
 import { getCurrentUser } from '@/features/user/user-queries'
+import { dehydrate } from '@/lib/react-query-hydration'
 import { cn } from '@/lib/utils'
 import { ChannelNav } from './channel-nav'
 
@@ -20,11 +17,13 @@ export async function ChannelList() {
     getUnreadChannels(),
   ])
 
-  const queryClient = new QueryClient()
-  queryClient.setQueryData(channelKeys.unread, unread)
-
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
+    <HydrationBoundary
+      state={await dehydrate(
+        [{ queryKey: channelKeys.unread, data: unread }],
+        { stale: 15 },
+      )}
+    >
       <ChannelNav groups={groups} key={user.id} />
     </HydrationBoundary>
   )
