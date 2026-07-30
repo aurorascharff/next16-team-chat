@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useMarkChannelRead } from '@/features/channel/channel-mutations'
+import { useMarkChannelRead } from '@/features/channel/hooks/channel-mutations'
 
 export function MarkChannelRead({ channelId }: { channelId: string }) {
   const markRead = useMarkChannelRead()

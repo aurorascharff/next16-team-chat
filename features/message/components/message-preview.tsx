@@ -1,6 +1,6 @@
 'use client'
 
-import { useValidMentions } from '@/features/user/use-valid-mentions'
+import { useValidMentions } from '@/features/user/hooks/use-valid-mentions'
 import { formatMarkdown } from '@/features/message/utils/format'
 
 export function MessagePreview({ body }: { body: string }) {

@@ -14,7 +14,7 @@ import {
   type LayoutAction,
   type LayoutGroup,
   UNGROUPED,
-} from '@/features/channel/channel-layout-reducer'
+} from '@/features/channel/utils/channel-layout-reducer'
 import { cn } from '@/lib/utils'
 import { ChannelLink } from './channel-link'
 

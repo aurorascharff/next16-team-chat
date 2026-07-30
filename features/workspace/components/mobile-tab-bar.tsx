@@ -7,7 +7,10 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { unreadMentionsQueryOptions } from '@/features/message/hooks/message-query-options'
-import { isNavActive, PRIMARY_NAV } from '@/features/workspace/primary-nav'
+import {
+  isNavActive,
+  PRIMARY_NAV,
+} from '@/features/workspace/utils/primary-nav'
 import { cn } from '@/lib/utils'
 
 export function MobileTabBar() {

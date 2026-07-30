@@ -6,7 +6,7 @@ import {
   type LayoutAction,
   type LayoutGroup,
   toLayoutPayload,
-} from '@/features/channel/channel-layout-reducer'
+} from '@/features/channel/utils/channel-layout-reducer'
 import { reorderChannels } from '@/features/channel/channel-queries'
 import { verifyAuth } from '@/features/user/user-queries'
 
