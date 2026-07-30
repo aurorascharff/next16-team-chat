@@ -9,7 +9,6 @@ import {
   useRef,
   useState,
 } from 'react'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useSendMessage } from '@/features/message/hooks/message-mutations'
 import type { Message } from '@/features/message/types/message'
 import { MentionCombobox } from './mention-combobox'
@@ -223,27 +222,5 @@ export function MessageComposer({
       </div>
       {error ? <p className="text-danger text-[0.8125rem]">{error}</p> : null}
     </form>
-  )
-}
-
-export function MessageComposerFallback() {
-  return (
-    <div className="border-divider dark:border-divider-dark bg-surface/90 dark:bg-surface-dark/90 sticky bottom-0 flex flex-col gap-2 border-t px-5 py-3 backdrop-blur-lg">
-      <div className="border-divider dark:border-divider-dark bg-elevated dark:bg-elevated-dark flex flex-col overflow-hidden rounded-xl border shadow-sm">
-        <div className="border-divider dark:border-divider-dark flex items-center gap-1.5 border-b p-1.5">
-          <Skeleton className="size-7 rounded-md" />
-          <Skeleton className="size-7 rounded-md" />
-          <Skeleton className="size-7 rounded-md" />
-          <Skeleton className="ml-auto h-7 w-16 rounded-md" />
-        </div>
-        <div className="flex h-[5.75rem] flex-col gap-2 px-3.5 py-3">
-          <Skeleton className="h-3.5 w-1/2 rounded-full" />
-          <Skeleton className="h-3.5 w-1/3 rounded-full" />
-        </div>
-        <div className="border-divider dark:border-divider-dark flex items-center justify-end border-t p-1.5">
-          <Skeleton className="h-8 w-16 rounded-lg" />
-        </div>
-      </div>
-    </div>
   )
 }
