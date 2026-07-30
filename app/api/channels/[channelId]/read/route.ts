@@ -1,5 +1,8 @@
 import { revalidateTag } from 'next/cache'
-import { lastReadTag, markChannelRead } from '@/features/channel/channel-queries'
+import {
+  lastReadTag,
+  markChannelRead,
+} from '@/features/channel/channel-queries'
 import { verifyAuth } from '@/features/user/user-queries'
 
 export async function POST(
@@ -8,8 +11,10 @@ export async function POST(
 ) {
   const user = await verifyAuth()
   const { channelId } = await params
-  await markChannelRead(channelId, user.id)
-  revalidateTag('channels', 'max')
-  revalidateTag(lastReadTag(channelId, user.id), 'max')
+  const changed = await markChannelRead(channelId, user.id)
+  if (changed) {
+    revalidateTag('channels', 'max')
+    revalidateTag(lastReadTag(channelId, user.id), 'max')
+  }
   return new Response(null, { status: 204 })
 }
