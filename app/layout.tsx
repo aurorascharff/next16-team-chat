@@ -57,13 +57,6 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "(()=>{const d=document.documentElement;if(location.pathname.startsWith('/activity'))d.dataset.route='activity';else delete d.dataset.route})()",
-          }}
-          suppressHydrationWarning
-        />
         <Providers>
           <div className="flex min-h-[calc(100dvh-3.5rem)] flex-col md:min-h-dvh md:flex-row">
             <div className="sticky top-0 z-30 hidden h-dvh shrink-0 flex-col md:flex">

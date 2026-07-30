@@ -1,6 +1,10 @@
 @import 'tailwindcss';
 
-html[data-route='activity'] [data-hide-on-activity] {
+body:has([data-activity-page]) [data-hide-on-activity] {
+  display: none !important;
+}
+
+body:not(:has([data-activity-page])) [data-show-on-activity] {
   display: none !important;
 }
 

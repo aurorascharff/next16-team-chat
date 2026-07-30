@@ -1,10 +1,7 @@
 import { UserAvatar } from '@/components/ui/user-avatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getCurrentUser } from '@/features/user/user-queries'
-import {
-  ActivityOnly,
-  SidebarVisibility,
-} from '@/features/workspace/components/sidebar-visibility'
+import { SidebarVisibility } from '@/features/workspace/components/sidebar-visibility'
 import { UserSwitcher } from './user-switcher'
 
 export async function CurrentUserCard() {
@@ -14,9 +11,10 @@ export async function CurrentUserCard() {
     <section className="border-divider dark:border-divider-dark bg-elevated dark:bg-elevated-dark flex h-16 shrink-0 items-center border-t">
       <div className="relative flex h-full w-18 shrink-0 items-center justify-center">
         <UserAvatar bot={user.id === 'bot'} name={user.name} />
-        <ActivityOnly>
-          <span className="border-divider dark:border-divider-dark absolute inset-y-0 right-0 border-r" />
-        </ActivityOnly>
+        <span
+          className="border-divider dark:border-divider-dark absolute inset-y-0 right-0 border-r"
+          data-show-on-activity
+        />
       </div>
       <SidebarVisibility>
         <div
@@ -46,9 +44,10 @@ export function CurrentUserCardSkeleton() {
     <section className="border-divider dark:border-divider-dark bg-elevated dark:bg-elevated-dark flex h-16 shrink-0 items-center border-t">
       <div className="relative flex h-full w-18 shrink-0 items-center justify-center">
         <Skeleton className="size-9 rounded-lg" />
-        <ActivityOnly>
-          <span className="border-divider dark:border-divider-dark absolute inset-y-0 right-0 border-r" />
-        </ActivityOnly>
+        <span
+          className="border-divider dark:border-divider-dark absolute inset-y-0 right-0 border-r"
+          data-show-on-activity
+        />
       </div>
       <SidebarVisibility>
         <div

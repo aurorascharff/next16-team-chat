@@ -11,26 +11,10 @@ function HideOnActivity({ children }: { children: ReactNode }) {
   return children
 }
 
-function ShowOnActivity({ children }: { children: ReactNode }) {
-  const pathname = usePathname()
-  if (pathname?.startsWith('/activity')) {
-    return children
-  }
-  return null
-}
-
 export function SidebarVisibility({ children }: { children: ReactNode }) {
   return (
     <Suspense fallback={children}>
       <HideOnActivity>{children}</HideOnActivity>
-    </Suspense>
-  )
-}
-
-export function ActivityOnly({ children }: { children: ReactNode }) {
-  return (
-    <Suspense fallback={null}>
-      <ShowOnActivity>{children}</ShowOnActivity>
     </Suspense>
   )
 }
