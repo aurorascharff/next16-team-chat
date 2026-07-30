@@ -2,8 +2,10 @@
 
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { EmptyState } from '@/components/ui/empty-state'
+import { useNewMessageIndicator } from '@/features/message/hooks/use-new-message-indicator'
 import { messagesQueryOptions } from '@/features/message/message-query-options'
 import { MessageRow } from './message-row'
+import { NewMessagesButton } from './new-messages-button'
 
 export function MessageList({
   channelId,
@@ -15,6 +17,8 @@ export function MessageList({
   lastReadAt: string | null
 }) {
   const { data: messages } = useSuspenseQuery(messagesQueryOptions(channelId))
+  const messageIds = messages.map((message) => message.id)
+  const newMessages = useNewMessageIndicator(messageIds)
 
   if (messages.length === 0) {
     return (
@@ -42,20 +46,30 @@ export function MessageList({
     : undefined
 
   return (
-    <section
-      aria-label="Messages"
-      className="flex flex-1 flex-col-reverse overflow-y-auto py-3"
-    >
-      <div className="flex flex-col">
-        {messages.map((message) => {
-          return (
-            <div key={message.id}>
-              {message.id === firstUnreadId ? <NewMessagesDivider /> : null}
-              <MessageRow message={message} showThreadAffordance />
-            </div>
-          )
-        })}
+    <section aria-label="Messages" className="relative flex min-h-0 flex-1">
+      <div
+        className="flex-1 overflow-y-auto py-3"
+        ref={newMessages.viewportRef}
+        onScroll={newMessages.onScroll}
+      >
+        <div className="flex min-h-full flex-col justify-end">
+          {messages.map((message) => {
+            return (
+              <div key={message.id}>
+                {message.id === firstUnreadId ? <NewMessagesDivider /> : null}
+                <MessageRow message={message} showThreadAffordance />
+              </div>
+            )
+          })}
+        </div>
       </div>
+      <NewMessagesButton
+        count={newMessages.count}
+        onDismiss={newMessages.dismiss}
+        onScrollToEnd={() => {
+          newMessages.scrollToEnd()
+        }}
+      />
     </section>
   )
 }
