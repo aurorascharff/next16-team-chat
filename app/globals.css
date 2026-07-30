@@ -1,13 +1,5 @@
 @import 'tailwindcss';
 
-body:has([data-activity-page]) [data-hide-on-activity] {
-  display: none !important;
-}
-
-body:not(:has([data-activity-page])) [data-show-on-activity] {
-  display: none !important;
-}
-
 @theme {
   --color-gray: #9ca3af;
   --color-muted: #6b7280;

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function ActivityPage() {
   return (
-    <section className="min-h-dvh" data-activity-page>
+    <section className="min-h-dvh">
       <header className="border-divider dark:border-divider-dark bg-surface/80 dark:bg-surface-dark/80 sticky top-0 z-10 border-b px-5 py-4 backdrop-blur-lg">
         <h1>Activity</h1>
         <p className="text-muted dark:text-muted-dark mt-1 text-sm">
