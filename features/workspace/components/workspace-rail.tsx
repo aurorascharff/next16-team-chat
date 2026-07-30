@@ -87,11 +87,7 @@ function NavLinkShell({
         )}
         suppressHydrationWarning
       >
-        <Icon
-          aria-hidden
-          className="size-5"
-          strokeWidth={isActive ? 2.5 : 2}
-        />
+        <Icon aria-hidden className="size-5" strokeWidth={isActive ? 2.5 : 2} />
         {showDot ? (
           <span
             aria-label="New activity"

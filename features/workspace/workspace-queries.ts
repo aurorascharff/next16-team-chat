@@ -106,6 +106,10 @@ async function getActivityRawCached(userId: string) {
 }
 
 async function listActivity(userId: string): Promise<ActivityItem[]> {
+  'use cache'
+  cacheTag('messages', 'channels', activityTag(userId))
+  cacheLife({ stale: 30 })
+
   const raw = await getActivityRawCached(userId)
   const reads = await prisma.activityRead.findMany({
     select: { messageId: true },

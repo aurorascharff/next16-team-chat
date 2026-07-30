@@ -1,4 +1,4 @@
-import { revalidatePath, revalidateTag } from 'next/cache'
+import { revalidateTag } from 'next/cache'
 import { verifyAuth } from '@/features/user/user-queries'
 import {
   activityTag,
@@ -18,6 +18,5 @@ export async function POST(request: Request) {
 
   await markActivityItemsRead(user.id, itemIds)
   revalidateTag(activityTag(user.id), 'max')
-  revalidatePath('/activity')
   return new Response(null, { status: 204 })
 }

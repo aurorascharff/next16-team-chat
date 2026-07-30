@@ -219,7 +219,7 @@ export function lastReadTag(channelId: string, userId: string) {
 }
 
 export async function getLastReadAt(channelId: string, userId: string) {
-  'use cache: private'
+  'use cache'
   cacheTag(lastReadTag(channelId, userId))
   cacheLife({ stale: 60 })
 

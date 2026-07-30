@@ -45,7 +45,6 @@ export function ChannelLink({ channel }: Props) {
             : 'text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark font-medium hover:text-black dark:hover:text-white',
       )}
       href={href}
-      prefetch={true}
     >
       <Icon aria-hidden className="size-4 shrink-0" strokeWidth={2} />
       <span className="min-w-0 flex-1 truncate">{channel.name}</span>

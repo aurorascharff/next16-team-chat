@@ -54,7 +54,6 @@ export function ActivityRow({ item }: { item: ActivityItem }) {
       )}
       href={href}
       onClick={markRead}
-      prefetch={true}
     >
       <UserAvatar bot={item.actorIsBot} name={item.actor} />
       <div className="min-w-0 flex-1">
@@ -69,10 +68,7 @@ export function ActivityRow({ item }: { item: ActivityItem }) {
             {item.channelName}
           </span>
           <span aria-hidden>·</span>
-          <time
-            dateTime={item.createdAt}
-            title={formatTime(item.createdAt)}
-          >
+          <time dateTime={item.createdAt} title={formatTime(item.createdAt)}>
             <RelativeTime value={item.createdAt} />
           </time>
         </div>

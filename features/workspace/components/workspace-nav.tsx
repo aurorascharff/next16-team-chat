@@ -17,7 +17,6 @@ export function WorkspaceNav() {
     <Link
       className="hover:bg-card dark:hover:bg-card-dark flex items-center gap-2.5 rounded-lg p-1.5 transition-colors"
       href="/"
-      prefetch={true}
     >
       <BrandMark />
       <span className="flex min-w-0 flex-col leading-tight">
