@@ -40,13 +40,18 @@ export async function CurrentUserCard() {
 export function CurrentUserCardSkeleton() {
   return (
     <section className="border-divider dark:border-divider-dark bg-elevated dark:bg-elevated-dark flex h-16 shrink-0 items-center border-t">
-      <div className="flex h-full w-18 shrink-0 items-center justify-center">
+      <div className="relative flex h-full w-18 shrink-0 items-center justify-center">
         <Skeleton className="size-9 rounded-lg" />
+        <ActivityOnly>
+          <span className="border-divider dark:border-divider-dark absolute inset-y-0 right-0 border-r" />
+        </ActivityOnly>
       </div>
-      <div className="border-divider dark:border-divider-dark flex h-full flex-1 flex-col justify-center gap-1.5 border-r px-3">
-        <Skeleton className="h-3 w-24 rounded-full" />
-        <Skeleton className="h-2.5 w-16 rounded-full" />
-      </div>
+      <SidebarVisibility>
+        <div className="border-divider dark:border-divider-dark flex h-full flex-1 flex-col justify-center gap-1.5 border-r px-3">
+          <Skeleton className="h-3 w-24 rounded-full" />
+          <Skeleton className="h-2.5 w-16 rounded-full" />
+        </div>
+      </SidebarVisibility>
     </section>
   )
 }
