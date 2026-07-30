@@ -47,7 +47,11 @@ export async function MessageThread({ channelId }: { channelId: string }) {
 
   return (
     <HydrationBoundary state={state}>
-      <MessageList channelId={channelId} lastReadAt={lastReadAt} />
+      <MessageList
+        channelId={channelId}
+        currentUserId={user.id}
+        lastReadAt={lastReadAt}
+      />
     </HydrationBoundary>
   )
 }

@@ -7,9 +7,11 @@ import { MessageRow } from './message-row'
 
 export function MessageList({
   channelId,
+  currentUserId,
   lastReadAt,
 }: {
   channelId: string
+  currentUserId: string
   lastReadAt: string | null
 }) {
   const { data: messages } = useSuspenseQuery(messagesQueryOptions(channelId))
@@ -32,6 +34,7 @@ export function MessageList({
     ? messages.find((message) => {
         return (
           message.userId !== 'current' &&
+          message.userId !== currentUserId &&
           message.userName !== 'You' &&
           message.createdAt > lastReadAt
         )

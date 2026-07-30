@@ -10,83 +10,100 @@ export type ActivityItem = {
   messageId: string
   channelId: string
   channelName: string
-  author: string
+  actor: string
+  actorIsBot: boolean
   preview: string
-  replyCount: number
+  context: string | null
   read: boolean
-  kind: 'mention' | 'thread'
+  kind: 'reply-to-you' | 'reply-in-thread' | 'mention'
   createdAt: string
 }
 
 async function listActivity(userId: string): Promise<ActivityItem[]> {
-  const [mentions, threads] = await Promise.all([
+  const [replies, mentions, memberships] = await Promise.all([
+    prisma.message.findMany({
+      include: {
+        channel: true,
+        parent: { include: { user: true } },
+        user: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+      where: {
+        NOT: { userId },
+        parent: {
+          OR: [{ userId }, { replies: { some: { userId } } }],
+        },
+        parentId: { not: null },
+      },
+    }),
     prisma.mention.findMany({
       include: {
         message: {
-          include: {
-            _count: { select: { replies: true } },
-            channel: true,
-            user: true,
-          },
+          include: { channel: true, user: true },
         },
       },
       orderBy: { createdAt: 'desc' },
       take: 50,
       where: { userId },
     }),
-    prisma.message.findMany({
-      include: {
-        _count: { select: { replies: true } },
-        channel: true,
-        user: true,
-      },
-      orderBy: { createdAt: 'desc' },
-      where: {
-        parentId: null,
-        OR: [
-          { replies: { some: { NOT: { userId } } }, userId },
-          { replies: { some: { userId } }, NOT: { userId } },
-        ],
-      },
+    prisma.channelMember.findMany({
+      select: { channelId: true, lastReadAt: true },
+      where: { userId },
     }),
   ])
 
-  const byMessage = new Map<string, ActivityItem>()
+  const lastReadByChannel = new Map(
+    memberships.map((member) => {
+      return [member.channelId, member.lastReadAt?.toISOString() ?? null]
+    }),
+  )
+
+  const byThread = new Map<string, ActivityItem>()
+
+  for (const reply of replies) {
+    const parent = reply.parent
+    if (!parent) {
+      continue
+    }
+    if (byThread.has(parent.id)) {
+      continue
+    }
+    const lastReadAt = lastReadByChannel.get(reply.channelId) ?? null
+    byThread.set(parent.id, {
+      actor: reply.user.name,
+      actorIsBot: reply.userId === 'bot',
+      channelId: reply.channelId,
+      channelName: reply.channel.name,
+      context: parent.body,
+      createdAt: reply.createdAt.toISOString(),
+      id: reply.id,
+      kind: parent.userId === userId ? 'reply-to-you' : 'reply-in-thread',
+      messageId: parent.id,
+      preview: reply.body,
+      read: lastReadAt ? reply.createdAt.toISOString() <= lastReadAt : false,
+    })
+  }
+
+  const items: ActivityItem[] = [...byThread.values()]
 
   for (const mention of mentions) {
-    byMessage.set(mention.messageId, {
-      author: mention.message.user.name,
+    items.push({
+      actor: mention.message.user.name,
+      actorIsBot: mention.message.userId === 'bot',
       channelId: mention.channelId,
       channelName: mention.message.channel.name,
+      context: null,
       createdAt: mention.createdAt.toISOString(),
       id: mention.id,
       kind: 'mention',
-      messageId: mention.messageId,
+      messageId: mention.message.parentId ?? mention.messageId,
       preview: mention.message.body,
       read: mention.read,
-      replyCount: mention.message._count.replies,
     })
   }
 
-  for (const message of threads) {
-    if (byMessage.has(message.id)) {
-      continue
-    }
-    byMessage.set(message.id, {
-      author: message.user.name,
-      channelId: message.channelId,
-      channelName: message.channel.name,
-      createdAt: message.createdAt.toISOString(),
-      id: message.id,
-      kind: 'thread',
-      messageId: message.id,
-      preview: message.body,
-      read: true,
-      replyCount: message._count.replies,
-    })
-  }
-
-  return [...byMessage.values()]
+  return items
     .sort((a, b) => {
       return b.createdAt.localeCompare(a.createdAt)
     })
@@ -102,7 +119,7 @@ export async function getActivity() {
 
 async function getActivityCached(userId: string) {
   'use cache'
-  cacheTag('messages', 'mentions', mentionsTag(userId))
+  cacheTag('messages', 'mentions', 'channels', mentionsTag(userId))
   cacheLife({ stale: 30 })
   return listActivity(userId)
 }
