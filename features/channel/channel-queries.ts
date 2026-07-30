@@ -198,17 +198,28 @@ export async function searchChannels(userId: string) {
 }
 
 export async function markChannelRead(channelId: string, userId: string) {
-  await prisma.channel.updateMany({
-    data: { unread: 0 },
-    where: { id: channelId, unread: { gt: 0 } },
-  })
-  await prisma.channelMember.updateMany({
-    data: { lastReadAt: new Date() },
-    where: { channelId, userId },
-  })
+  const [channelUpdate, memberUpdate] = await Promise.all([
+    prisma.channel.updateMany({
+      data: { unread: 0 },
+      where: { id: channelId, unread: { gt: 0 } },
+    }),
+    prisma.channelMember.updateMany({
+      data: { lastReadAt: new Date() },
+      where: { channelId, userId },
+    }),
+  ])
+  return channelUpdate.count > 0 || memberUpdate.count > 0
+}
+
+export function lastReadTag(channelId: string, userId: string) {
+  return `last-read:${channelId}:${userId}`
 }
 
 export async function getLastReadAt(channelId: string, userId: string) {
+  'use cache: private'
+  cacheTag(lastReadTag(channelId, userId))
+  cacheLife({ stale: 60 })
+
   const member = await prisma.channelMember.findUnique({
     select: { lastReadAt: true },
     where: { channelId_userId: { channelId, userId } },
