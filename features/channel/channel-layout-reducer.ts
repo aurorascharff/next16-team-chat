@@ -81,13 +81,17 @@ export function applyLayoutAction(
     case 'deleteGroup': {
       const target = groups.find((group) => group.name === action.name)
       if (!target || action.name === UNGROUPED) return groups
-      const next = groups.filter((group) => group.name !== action.name)
-      let ungrouped = next.find((group) => group.name === UNGROUPED)
-      if (!ungrouped) {
-        ungrouped = { channels: [], name: UNGROUPED }
-        next.push(ungrouped)
+      const remaining = groups.filter((group) => group.name !== action.name)
+      const existing = remaining.find((group) => group.name === UNGROUPED)
+      const ungrouped: LayoutGroup = {
+        channels: [...(existing?.channels ?? []), ...target.channels],
+        name: UNGROUPED,
       }
-      ungrouped.channels = [...ungrouped.channels, ...target.channels]
+      const next = existing
+        ? remaining.map((group) =>
+            group.name === UNGROUPED ? ungrouped : group,
+          )
+        : [...remaining, ungrouped]
       return sortGroups(next)
     }
     default:
