@@ -3,8 +3,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { reactToMessage, sendMessage } from '@/features/message/message-actions'
-import { markMentionsReadAction } from '@/features/message/message-mention-actions'
-import { mentionKeys } from '@/features/message/message-mention-query-options'
 import { messageKeys } from '@/features/message/message-query-options'
 import type { Message, Reaction } from '@/features/message/types/message'
 
@@ -58,17 +56,6 @@ export function useReactionToggle(message: Message) {
   })
 
   return mutate
-}
-
-export function useMarkMentionsRead() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: () => markMentionsReadAction(),
-    onSuccess: () => {
-      queryClient.setQueryData(mentionKeys.unread, { count: 0 })
-    },
-  })
 }
 
 export function useSendMessage({

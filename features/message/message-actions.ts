@@ -4,6 +4,7 @@ import { updateTag } from 'next/cache'
 import { verifyAuth } from '@/features/user/user-queries'
 import {
   addMessage,
+  markMentionsRead,
   messagesTag,
   replyAsBotIfMentioned,
   repliesTag,

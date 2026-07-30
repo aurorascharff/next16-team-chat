@@ -222,9 +222,6 @@ export async function markChannelRead(channelId: string, userId: string) {
 }
 
 export async function getLastReadAt(channelId: string, userId: string) {
-  'use cache'
-  cacheTag('channels', `channels:${userId}`)
-  cacheLife('hours')
   const member = await prisma.channelMember.findUnique({
     select: { lastReadAt: true },
     where: { channelId_userId: { channelId, userId } },

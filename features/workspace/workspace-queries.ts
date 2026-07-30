@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { cacheLife, cacheTag } from 'next/cache'
-import { mentionsTag } from '@/features/message/message-mention-queries'
+import { mentionsTag } from '@/features/message/message-queries'
 import { getCurrentUser } from '@/features/user/user-queries'
 import { prisma } from '@/lib/db'
 

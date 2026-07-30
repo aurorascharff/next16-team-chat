@@ -6,7 +6,7 @@ import { Search } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { unreadMentionsQueryOptions } from '@/features/message/message-mention-query-options'
+import { unreadMentionsQueryOptions } from '@/features/message/message-query-options'
 import { isNavActive, PRIMARY_NAV } from '@/features/workspace/primary-nav'
 import { cn } from '@/lib/utils'
 
