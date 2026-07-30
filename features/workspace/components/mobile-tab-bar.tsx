@@ -38,6 +38,7 @@ function MobileTabBarShell({
     <nav
       aria-label="Primary"
       className="border-divider dark:border-divider-dark bg-surface/90 dark:bg-surface-dark/90 sticky bottom-0 z-40 flex shrink-0 border-t pb-[env(safe-area-inset-bottom)] backdrop-blur-lg md:hidden"
+      style={{ viewTransitionName: 'mobile-nav' }}
     >
       {PRIMARY_NAV.map((item) => {
         const { href, icon: Icon, label } = item
