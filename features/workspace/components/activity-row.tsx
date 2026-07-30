@@ -1,6 +1,5 @@
 'use client'
 
-import { useQueryClient } from '@tanstack/react-query'
 import { AtSign, CornerUpLeft, Hash, Reply } from 'lucide-react'
 import Link from 'next/link'
 import type { Route } from 'next'
@@ -11,10 +10,9 @@ import {
   formatRelativeTime,
   formatTime,
 } from '@/features/message/utils/format'
-import { activityKeys } from '@/features/workspace/workspace-query-options'
+import { useMarkActivityRead } from '@/features/workspace/hooks/workspace-mutations'
 import type { ActivityItem } from '@/features/workspace/workspace-queries'
-import { apiUrl, cn } from '@/lib/utils'
-import { ACTIVITY_READ_DIRTY_KEY } from './activity-read-navigation-refresh'
+import { cn } from '@/lib/utils'
 
 const ACTION: Record<
   ActivityItem['kind'],
@@ -26,7 +24,7 @@ const ACTION: Record<
 }
 
 export function ActivityRow({ item }: { item: ActivityItem }) {
-  const queryClient = useQueryClient()
+  const markActivityRead = useMarkActivityRead()
   const action = ACTION[item.kind]
   const ActionIcon = action.icon
   const href = `/channel/${item.channelId}?thread=${item.messageId}` as Route
@@ -35,17 +33,10 @@ export function ActivityRow({ item }: { item: ActivityItem }) {
     if (item.read) {
       return
     }
-    sessionStorage.setItem(ACTIVITY_READ_DIRTY_KEY, '1')
-    queryClient.setQueryData<{ count: number }>(
-      activityKeys.unread,
-      (current) => {
-        return { count: Math.max(0, (current?.count ?? 1) - 1) }
-      },
-    )
-    void fetch(apiUrl(`/api/activity/${item.id}/read`), {
-      keepalive: true,
-      method: 'POST',
-    }).catch(() => {})
+    markActivityRead.mutate({
+      itemIds: [item.id],
+      optimistic: 'decrement',
+    })
   }
 
   return (
