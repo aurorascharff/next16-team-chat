@@ -7,6 +7,7 @@ import type { Route } from 'next'
 import { useEffect, useRef, useState } from 'react'
 import { channelSearchQueryOptions } from '@/features/channel/channel-query-options'
 import { messagesQueryOptions } from '@/features/message/message-query-options'
+import { stripMarkdown } from '@/features/message/components/format'
 import { cn } from '@/lib/utils'
 
 type Result =
@@ -223,7 +224,7 @@ export function CommandPalette() {
                         />
                         <span className="min-w-0 flex-1 truncate">
                           <span className="font-medium">{result.author}:</span>{' '}
-                          {result.body}
+                          {stripMarkdown(result.body)}
                         </span>
                       </>
                     )}

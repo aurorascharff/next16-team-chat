@@ -9,11 +9,13 @@ import {
   getUnreadChannels,
 } from '@/features/channel/channel-queries'
 import { channelKeys } from '@/features/channel/channel-query-options'
+import { getCurrentUser } from '@/features/user/user-queries'
 import { cn } from '@/lib/utils'
 import { ChannelNav } from './channel-nav'
 
 export async function ChannelList() {
-  const [groups, unread] = await Promise.all([
+  const [user, groups, unread] = await Promise.all([
+    getCurrentUser(),
     getChannelLayout(),
     getUnreadChannels(),
   ])
@@ -23,7 +25,7 @@ export async function ChannelList() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <ChannelNav groups={groups} />
+      <ChannelNav groups={groups} key={user.id} />
     </HydrationBoundary>
   )
 }

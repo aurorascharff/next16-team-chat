@@ -1,65 +1,12 @@
 'use client'
 
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { SmilePlus } from 'lucide-react'
 import { useState } from 'react'
-import { reactToMessage } from '@/features/message/message-actions'
-import { messageKeys } from '@/features/message/message-query-options'
-import type { Message, Reaction } from '@/features/message/types/message'
+import { useReactionToggle } from '@/features/message/message-mutations'
+import type { Message } from '@/features/message/types/message'
 import { cn } from '@/lib/utils'
 
 const CHOICES = ['👍', '🎉', '❤️', '😂', '👀', '🚀', '✅', '🔥']
-
-function applyToggle(reactions: Reaction[] = [], emoji: string): Reaction[] {
-  const existing = reactions.find((reaction) => reaction.emoji === emoji)
-  if (!existing) {
-    return [...reactions, { count: 1, emoji, reacted: true }]
-  }
-  return reactions
-    .map((reaction) => {
-      if (reaction.emoji !== emoji) return reaction
-      const count = reaction.count + (reaction.reacted ? -1 : 1)
-      return { ...reaction, count, reacted: !reaction.reacted }
-    })
-    .filter((reaction) => reaction.count > 0)
-}
-
-function useReactionToggle(message: Message) {
-  const queryClient = useQueryClient()
-  const key = message.parentId
-    ? messageKeys.replies(message.parentId)
-    : messageKeys.channel(message.channelId)
-
-  const { mutate } = useMutation({
-    mutationFn: (emoji: string) => {
-      return reactToMessage({
-        channelId: message.channelId,
-        emoji,
-        messageId: message.id,
-        parentId: message.parentId ?? undefined,
-      })
-    },
-    onError: (_error, _emoji, context) => {
-      if (context?.previous !== undefined) {
-        queryClient.setQueryData(key, context.previous)
-      }
-    },
-    onMutate: async (emoji: string) => {
-      await queryClient.cancelQueries({ queryKey: key })
-      const previous = queryClient.getQueryData<Message[]>(key)
-      queryClient.setQueryData<Message[]>(key, (current = []) =>
-        current.map((item) =>
-          item.id === message.id
-            ? { ...item, reactions: applyToggle(item.reactions, emoji) }
-            : item,
-        ),
-      )
-      return { previous }
-    },
-  })
-
-  return mutate
-}
 
 export function MessageReactions({ message }: { message: Message }) {
   const reactions = message.reactions ?? []
@@ -75,10 +22,10 @@ export function MessageReactions({ message }: { message: Message }) {
         return (
           <button
             className={cn(
-              'flex h-6 items-center gap-1 rounded-full border px-2 text-xs font-medium transition-colors',
+              'flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium shadow-sm transition-colors',
               reaction.reacted
-                ? 'border-accent bg-accent-fade text-accent'
-                : 'border-divider dark:border-divider-dark hover:border-accent text-muted dark:text-muted-dark',
+                ? 'border-accent/30 bg-accent-fade text-accent hover:border-accent/60'
+                : 'border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark text-muted dark:text-muted-dark hover:border-accent hover:text-accent',
             )}
             key={reaction.emoji}
             onClick={() => {
@@ -95,26 +42,16 @@ export function MessageReactions({ message }: { message: Message }) {
   )
 }
 
-export function AddReaction({
-  message,
-  onOpenChange,
-}: {
-  message: Message
-  onOpenChange?: (open: boolean) => void
-}) {
-  const [open, setOpenState] = useState(false)
+export function AddReaction({ message }: { message: Message }) {
+  const [open, setOpen] = useState(false)
   const toggle = useReactionToggle(message)
-
-  function setOpen(next: boolean) {
-    setOpenState(next)
-    onOpenChange?.(next)
-  }
 
   return (
     <div className="relative">
       <button
         aria-label="Add reaction"
-        className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark text-muted dark:text-muted-dark hover:border-accent hover:text-accent flex size-7 items-center justify-center rounded-md border shadow-sm transition-colors"
+        className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark text-muted dark:text-muted-dark hover:border-accent hover:text-accent flex size-7 items-center justify-center rounded-md border opacity-0 shadow-sm transition-colors group-hover:opacity-100 data-[open=true]:opacity-100"
+        data-open={open}
         onClick={(event) => {
           event.currentTarget.blur()
           setOpen(!open)
@@ -131,7 +68,7 @@ export function AddReaction({
               return setOpen(false)
             }}
           />
-          <div className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark absolute top-9 right-0 z-20 flex gap-0.5 rounded-lg border p-1 shadow-lg">
+          <div className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark absolute bottom-9 left-0 z-20 flex gap-0.5 rounded-lg border p-1 shadow-lg">
             {CHOICES.map((emoji) => {
               return (
                 <button

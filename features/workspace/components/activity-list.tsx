@@ -19,6 +19,10 @@ export async function ActivityList() {
     )
   }
 
+  const firstReadId = items.some((item) => !item.read)
+    ? items.find((item) => item.read)?.id
+    : undefined
+
   return (
     <div className="flex flex-col">
       {items.map((item) => {
@@ -26,48 +30,62 @@ export async function ActivityList() {
           `/channel/${item.channelId}?thread=${item.messageId}` as Route
 
         return (
-          <Link
-            className="group border-divider dark:border-divider-dark hover:bg-card dark:hover:bg-card-dark flex items-center gap-3 border-b px-5 py-3.5 transition-colors"
-            href={href}
-            key={item.id}
-            prefetch={true}
-          >
-            <UserAvatar name={item.author} />
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5">
-                <strong className="text-[0.9375rem] font-semibold">
-                  {item.author}
-                </strong>
-                {item.kind === 'mention' ? (
-                  <span className="text-accent inline-flex items-center text-xs font-medium">
-                    <AtSign className="size-3" strokeWidth={2} />
-                    mentioned you
+          <div key={item.id}>
+            {item.id === firstReadId ? <ActivityDivider /> : null}
+            <Link
+              className="group border-divider dark:border-divider-dark hover:bg-card dark:hover:bg-card-dark flex items-center gap-3 border-b px-5 py-3.5 transition-colors"
+              href={href}
+              prefetch={true}
+            >
+              <UserAvatar name={item.author} />
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5">
+                  <strong className="text-[0.9375rem] font-semibold">
+                    {item.author}
+                  </strong>
+                  {item.kind === 'mention' ? (
+                    <span className="text-accent inline-flex items-center text-xs font-medium">
+                      <AtSign className="size-3" strokeWidth={2} />
+                      mentioned you
+                    </span>
+                  ) : null}
+                  <span className="text-muted dark:text-muted-dark inline-flex items-center text-xs">
+                    <Hash className="size-3" strokeWidth={2} />
+                    {item.channelName}
                   </span>
-                ) : null}
-                <span className="text-muted dark:text-muted-dark inline-flex items-center text-xs">
-                  <Hash className="size-3" strokeWidth={2} />
-                  {item.channelName}
-                </span>
+                </div>
+                <p className="text-muted dark:text-muted-dark mt-0.5 truncate text-[0.8125rem]">
+                  {stripMarkdown(item.preview)}
+                </p>
               </div>
-              <p className="text-muted dark:text-muted-dark mt-0.5 truncate text-[0.8125rem]">
-                {stripMarkdown(item.preview)}
-              </p>
-            </div>
-            {item.replyCount > 0 ? (
-              <span className="text-muted dark:text-muted-dark inline-flex shrink-0 items-center gap-1 text-xs font-medium">
-                <MessageSquare className="size-3.5" strokeWidth={2} />
-                {item.replyCount}
-              </span>
-            ) : null}
-            {!item.read ? (
-              <span
-                aria-label="Unread"
-                className="bg-accent inline-flex size-2 shrink-0 rounded-full"
-              />
-            ) : null}
-          </Link>
+              {item.replyCount > 0 ? (
+                <span className="text-muted dark:text-muted-dark inline-flex shrink-0 items-center gap-1 text-xs font-medium">
+                  <MessageSquare className="size-3.5" strokeWidth={2} />
+                  {item.replyCount}
+                </span>
+              ) : null}
+              {!item.read ? (
+                <span
+                  aria-label="Unread"
+                  className="bg-accent inline-flex size-2 shrink-0 rounded-full"
+                />
+              ) : null}
+            </Link>
+          </div>
         )
       })}
+    </div>
+  )
+}
+
+function ActivityDivider() {
+  return (
+    <div className="flex items-center gap-2 px-5 py-1.5">
+      <span className="bg-divider dark:bg-divider-dark h-px flex-1" />
+      <span className="text-muted dark:text-muted-dark text-xs font-medium">
+        Earlier
+      </span>
+      <span className="bg-divider dark:bg-divider-dark h-px flex-1" />
     </div>
   )
 }

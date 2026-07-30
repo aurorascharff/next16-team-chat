@@ -79,7 +79,7 @@ function ThreadBody({
         {replies.length} {replies.length === 1 ? 'reply' : 'replies'}
       </div>
       {replies.map((reply) => {
-        return <MessageRow isReply key={reply.id} message={reply} />
+        return <MessageRow key={reply.id} message={reply} />
       })}
     </>
   )

@@ -23,10 +23,7 @@ type Props = {
 }
 
 export function ChannelNav({ groups: initialGroups }: Props) {
-  const [groups, dispatch, isSaving] = useActionState(
-    channelLayoutReducer,
-    initialGroups,
-  )
+  const [groups, dispatch] = useActionState(channelLayoutReducer, initialGroups)
   const [optimisticGroups, addOptimistic] = useOptimistic(
     groups,
     applyLayoutAction,
@@ -108,7 +105,7 @@ export function ChannelNav({ groups: initialGroups }: Props) {
             {editingName === group.name ? (
               <input
                 autoFocus
-                className="text-muted dark:text-muted-dark focus:ring-accent min-h-6 w-full rounded bg-transparent px-2.5 py-1 text-xs font-semibold tracking-wide uppercase outline-none ring-inset focus:ring-1"
+                className="text-muted dark:text-muted-dark focus:ring-accent min-h-6 w-full rounded border border-transparent bg-transparent px-2.5 py-1 text-xs font-semibold tracking-wide uppercase outline-none ring-inset focus:ring-1"
                 defaultValue={group.name}
                 onBlur={(event) => {
                   return renameGroup(group.name, event.target.value)
@@ -236,7 +233,7 @@ export function ChannelNav({ groups: initialGroups }: Props) {
         type="button"
       >
         <Plus aria-hidden className="size-4 shrink-0" strokeWidth={2} />
-        {isSaving ? 'Saving…' : 'New group'}
+        New group
       </button>
     </nav>
   )

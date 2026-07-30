@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import { Suspense } from 'react'
+import { Toaster } from '@/components/ui/toaster'
 import {
   ChannelList,
   ChannelListSkeleton,
@@ -93,6 +94,7 @@ export default function RootLayout({
             <CommandPalette />
           </Suspense>
           <BotDriver />
+          <Toaster />
         </Providers>
       </body>
     </html>

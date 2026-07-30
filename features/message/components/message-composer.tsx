@@ -8,15 +8,12 @@ import {
   useLayoutEffect,
   useRef,
   useState,
-  useTransition,
 } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
-import { sendMessage } from '@/features/message/message-actions'
-import { messageKeys } from '@/features/message/message-query-options'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useSendMessage } from '@/features/message/message-mutations'
 import type { Message } from '@/features/message/types/message'
 import { MentionCombobox } from './mention-combobox'
 import { MessagePreview } from './message-preview'
-import { Skeleton } from '@/components/ui/skeleton'
 
 const MAX_LENGTH = 280
 
@@ -32,12 +29,11 @@ export function MessageComposer({
   const formRef = useRef<HTMLFormElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const optimisticIdRef = useRef(0)
-  const queryClient = useQueryClient()
+  const sendMessage = useSendMessage({ channelId, parentId })
   const [error, setError] = useState('')
   const [mode, setMode] = useState<'write' | 'preview'>('write')
   const [value, setValue] = useState('')
   const [writeHeight, setWriteHeight] = useState(0)
-  const [isPending, startTransition] = useTransition()
   const [caretOffset, setCaretOffset] = useState<number | null>(null)
   const fieldId = useId()
 
@@ -122,54 +118,7 @@ export function MessageComposer({
     setError('')
     setValue('')
     setMode('write')
-
-    const key = parentId
-      ? messageKeys.replies(parentId)
-      : messageKeys.channel(channelId)
-
-    queryClient.setQueryData<Message[]>(key, (current = []) => [
-      ...current,
-      optimistic,
-    ])
-
-    startTransition(async () => {
-      const result = await sendMessage({ body, channelId, parentId })
-
-      queryClient.setQueryData<Message[]>(key, (current = []) =>
-        current.map((message) =>
-          message.id === optimistic.id
-            ? result.ok
-              ? { ...result.message, status: 'sent' }
-              : { ...message, status: 'failed' }
-            : message,
-        ),
-      )
-
-      if (result.ok && parentId) {
-        queryClient.setQueryData<Message[]>(
-          messageKeys.channel(channelId),
-          (current = []) =>
-            current.map((message) =>
-              message.id === parentId
-                ? { ...message, replyCount: (message.replyCount ?? 0) + 1 }
-                : message,
-            ),
-        )
-      }
-
-      if (result.ok) {
-        queryClient.invalidateQueries({
-          queryKey: messageKeys.channel(channelId),
-        })
-        if (parentId) {
-          queryClient.invalidateQueries({
-            queryKey: messageKeys.replies(parentId),
-          })
-        }
-      }
-
-      if (!result.ok) setError(result.error)
-    })
+    sendMessage.mutate(optimistic)
   }
 
   const toolbarButton =
@@ -265,11 +214,10 @@ export function MessageComposer({
         ) : null}
         <div className="border-divider dark:border-divider-dark flex items-center justify-end border-t p-1.5">
           <button
-            className="bg-accent hover:bg-accent-hover flex min-h-8 items-center justify-center rounded-lg px-3.5 text-[0.8125rem] font-semibold text-white transition-colors disabled:cursor-progress disabled:opacity-55"
-            disabled={isPending}
+            className="bg-accent hover:bg-accent-hover flex min-h-8 items-center justify-center rounded-lg px-3.5 text-[0.8125rem] font-semibold text-white transition-colors"
             type="submit"
           >
-            {isPending ? 'Sending…' : 'Send'}
+            Send
           </button>
         </div>
       </div>
