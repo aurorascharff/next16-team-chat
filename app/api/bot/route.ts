@@ -1,4 +1,5 @@
 import { revalidateTag } from 'next/cache'
+import { channelTag } from '@/features/channel/channel-queries'
 import { postBotMessage } from '@/features/demo/bot-queries'
 import { messagesTag } from '@/features/message/message-queries'
 
@@ -7,7 +8,8 @@ export async function POST() {
   if (channelId) {
     revalidateTag(messagesTag(channelId), 'max')
     revalidateTag('messages', 'max')
-    revalidateTag('channels', 'max')
+    revalidateTag(channelTag(channelId), 'max')
+    revalidateTag('channels:unread', 'max')
   }
   return new Response(null, { status: 204 })
 }

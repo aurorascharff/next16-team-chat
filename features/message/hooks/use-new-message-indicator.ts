@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState, type UIEvent } from 'react'
+import { useLayoutEffect, useRef, useState, type UIEvent } from 'react'
 
 export function useNewMessageIndicator(messageIds: string[], resetKey: string) {
   const viewportRef = useRef<HTMLDivElement | null>(null)
@@ -43,7 +43,7 @@ export function useNewMessageIndicator(messageIds: string[], resetKey: string) {
     }
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (previousResetKey.current === resetKey) return
 
     previousResetKey.current = resetKey
@@ -51,15 +51,13 @@ export function useNewMessageIndicator(messageIds: string[], resetKey: string) {
     setCount(0)
     setIsAtEnd(true)
 
-    requestAnimationFrame(() => {
-      const viewport = viewportRef.current
-      if (!viewport) return
+    const viewport = viewportRef.current
+    if (!viewport) return
 
-      viewport.scrollTo({ behavior: 'auto', top: viewport.scrollHeight })
-    })
+    viewport.scrollTo({ behavior: 'auto', top: viewport.scrollHeight })
   }, [lastMessageId, resetKey])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!lastMessageId) {
       previousLastMessageId.current = null
       setCount(0)
@@ -70,9 +68,7 @@ export function useNewMessageIndicator(messageIds: string[], resetKey: string) {
 
     if (previous === null) {
       previousLastMessageId.current = lastMessageId
-      requestAnimationFrame(() => {
-        scrollToEnd('auto')
-      })
+      scrollToEnd('auto')
       return
     }
 
@@ -82,9 +78,7 @@ export function useNewMessageIndicator(messageIds: string[], resetKey: string) {
 
     const viewport = viewportRef.current
     if (!viewport || isViewportAtEnd(viewport)) {
-      requestAnimationFrame(() => {
-        scrollToEnd('auto')
-      })
+      scrollToEnd('auto')
       return
     }
 

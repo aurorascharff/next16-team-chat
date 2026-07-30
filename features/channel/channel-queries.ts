@@ -122,6 +122,10 @@ export async function listChannelsForUser(userId: string) {
 }
 
 export async function getUnreadChannels() {
+  'use cache'
+  cacheTag('channels:unread')
+  cacheLife({ stale: 15 })
+
   const channels = await prisma.channel.findMany({
     select: { id: true, unread: true },
     where: { unread: { gt: 0 } },

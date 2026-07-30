@@ -13,8 +13,8 @@ export async function POST(
   const { channelId } = await params
   const changed = await markChannelRead(channelId, user.id)
   if (changed) {
-    revalidateTag('channels', 'max')
     revalidateTag(lastReadTag(channelId, user.id), 'max')
+    revalidateTag('channels:unread', 'max')
   }
   return new Response(null, { status: 204 })
 }
