@@ -55,8 +55,5 @@ export function useMarkActivityRead() {
 
       return { previous }
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: activityKeys.unread })
-    },
   })
 }
