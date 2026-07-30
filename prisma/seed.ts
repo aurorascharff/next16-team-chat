@@ -374,6 +374,33 @@ async function main() {
     ],
   })
 
+  // Stamp lastReadAt so unread channels show a "New" divider for MY_USER.
+  // Non-members and other users are marked fully read.
+  const now = new Date()
+  await prisma.channelMember.updateMany({ data: { lastReadAt: now } })
+
+  for (const channel of channels) {
+    const unread = channel.unread ?? 0
+    const topLevel = messages
+      .filter(([, channelId, , , , parentId]) => {
+        return channelId === channel.id && !parentId
+      })
+      .sort(([, , , , a], [, , , , b]) => {
+        return new Date(a).getTime() - new Date(b).getTime()
+      })
+
+    if (unread === 0 || topLevel.length === 0) continue
+
+    const firstUnreadIndex = Math.max(0, topLevel.length - unread)
+    const firstUnread = topLevel[firstUnreadIndex]
+    const readBefore = new Date(new Date(firstUnread[4]).getTime() - 1000)
+
+    await prisma.channelMember.updateMany({
+      data: { lastReadAt: readBefore },
+      where: { channelId: channel.id, userId: MY_USER },
+    })
+  }
+
   console.log('Seeded Huddle workspace')
 }
 

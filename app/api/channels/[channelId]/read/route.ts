@@ -6,9 +6,9 @@ export async function POST(
   _request: Request,
   { params }: { params: Promise<{ channelId: string }> },
 ) {
-  await verifyAuth()
+  const user = await verifyAuth()
   const { channelId } = await params
-  await markChannelRead(channelId)
+  await markChannelRead(channelId, user.id)
   revalidateTag('channels', 'max')
   return new Response(null, { status: 204 })
 }

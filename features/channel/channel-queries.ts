@@ -210,11 +210,23 @@ export async function searchChannels(userId: string) {
   return listChannels(userId)
 }
 
-export async function markChannelRead(channelId: string) {
+export async function markChannelRead(channelId: string, userId: string) {
   await prisma.channel.updateMany({
     data: { unread: 0 },
     where: { id: channelId, unread: { gt: 0 } },
   })
+  await prisma.channelMember.updateMany({
+    data: { lastReadAt: new Date() },
+    where: { channelId, userId },
+  })
+}
+
+export async function getLastReadAt(channelId: string, userId: string) {
+  const member = await prisma.channelMember.findUnique({
+    select: { lastReadAt: true },
+    where: { channelId_userId: { channelId, userId } },
+  })
+  return member?.lastReadAt?.toISOString() ?? null
 }
 
 export async function reorderChannels(

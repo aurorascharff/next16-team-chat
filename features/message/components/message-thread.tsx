@@ -5,6 +5,7 @@ import {
 } from '@tanstack/react-query'
 import { cacheLife, cacheTag } from 'next/cache'
 import { Skeleton } from '@/components/ui/skeleton'
+import { getLastReadAt } from '@/features/channel/channel-queries'
 import { isSlowMode } from '@/features/demo/slow-mode'
 import {
   getMessagesCached,
@@ -39,11 +40,14 @@ async function getMessagesState(
 
 export async function MessageThread({ channelId }: { channelId: string }) {
   const user = await getCurrentUser()
-  const state = await getMessagesState(channelId, user.id, await isSlowMode())
+  const [state, lastReadAt] = await Promise.all([
+    getMessagesState(channelId, user.id, await isSlowMode()),
+    getLastReadAt(channelId, user.id),
+  ])
 
   return (
     <HydrationBoundary state={state}>
-      <MessageList channelId={channelId} />
+      <MessageList channelId={channelId} lastReadAt={lastReadAt} />
     </HydrationBoundary>
   )
 }

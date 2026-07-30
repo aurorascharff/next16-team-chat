@@ -39,6 +39,7 @@ export type ChannelMemberMinAggregateOutputType = {
   userId: string | null
   groupId: string | null
   position: number | null
+  lastReadAt: Date | null
 }
 
 export type ChannelMemberMaxAggregateOutputType = {
@@ -46,6 +47,7 @@ export type ChannelMemberMaxAggregateOutputType = {
   userId: string | null
   groupId: string | null
   position: number | null
+  lastReadAt: Date | null
 }
 
 export type ChannelMemberCountAggregateOutputType = {
@@ -53,6 +55,7 @@ export type ChannelMemberCountAggregateOutputType = {
   userId: number
   groupId: number
   position: number
+  lastReadAt: number
   _all: number
 }
 
@@ -70,6 +73,7 @@ export type ChannelMemberMinAggregateInputType = {
   userId?: true
   groupId?: true
   position?: true
+  lastReadAt?: true
 }
 
 export type ChannelMemberMaxAggregateInputType = {
@@ -77,6 +81,7 @@ export type ChannelMemberMaxAggregateInputType = {
   userId?: true
   groupId?: true
   position?: true
+  lastReadAt?: true
 }
 
 export type ChannelMemberCountAggregateInputType = {
@@ -84,6 +89,7 @@ export type ChannelMemberCountAggregateInputType = {
   userId?: true
   groupId?: true
   position?: true
+  lastReadAt?: true
   _all?: true
 }
 
@@ -178,6 +184,7 @@ export type ChannelMemberGroupByOutputType = {
   userId: string
   groupId: string | null
   position: number
+  lastReadAt: Date | null
   _count: ChannelMemberCountAggregateOutputType | null
   _avg: ChannelMemberAvgAggregateOutputType | null
   _sum: ChannelMemberSumAggregateOutputType | null
@@ -208,6 +215,7 @@ export type ChannelMemberWhereInput = {
   userId?: Prisma.StringFilter<"ChannelMember"> | string
   groupId?: Prisma.StringNullableFilter<"ChannelMember"> | string | null
   position?: Prisma.IntFilter<"ChannelMember"> | number
+  lastReadAt?: Prisma.DateTimeNullableFilter<"ChannelMember"> | Date | string | null
   channel?: Prisma.XOR<Prisma.ChannelScalarRelationFilter, Prisma.ChannelWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   group?: Prisma.XOR<Prisma.ChannelGroupNullableScalarRelationFilter, Prisma.ChannelGroupWhereInput> | null
@@ -218,6 +226,7 @@ export type ChannelMemberOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   groupId?: Prisma.SortOrderInput | Prisma.SortOrder
   position?: Prisma.SortOrder
+  lastReadAt?: Prisma.SortOrderInput | Prisma.SortOrder
   channel?: Prisma.ChannelOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
   group?: Prisma.ChannelGroupOrderByWithRelationInput
@@ -232,6 +241,7 @@ export type ChannelMemberWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.StringFilter<"ChannelMember"> | string
   groupId?: Prisma.StringNullableFilter<"ChannelMember"> | string | null
   position?: Prisma.IntFilter<"ChannelMember"> | number
+  lastReadAt?: Prisma.DateTimeNullableFilter<"ChannelMember"> | Date | string | null
   channel?: Prisma.XOR<Prisma.ChannelScalarRelationFilter, Prisma.ChannelWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   group?: Prisma.XOR<Prisma.ChannelGroupNullableScalarRelationFilter, Prisma.ChannelGroupWhereInput> | null
@@ -242,6 +252,7 @@ export type ChannelMemberOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   groupId?: Prisma.SortOrderInput | Prisma.SortOrder
   position?: Prisma.SortOrder
+  lastReadAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ChannelMemberCountOrderByAggregateInput
   _avg?: Prisma.ChannelMemberAvgOrderByAggregateInput
   _max?: Prisma.ChannelMemberMaxOrderByAggregateInput
@@ -257,10 +268,12 @@ export type ChannelMemberScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"ChannelMember"> | string
   groupId?: Prisma.StringNullableWithAggregatesFilter<"ChannelMember"> | string | null
   position?: Prisma.IntWithAggregatesFilter<"ChannelMember"> | number
+  lastReadAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ChannelMember"> | Date | string | null
 }
 
 export type ChannelMemberCreateInput = {
   position?: number
+  lastReadAt?: Date | string | null
   channel: Prisma.ChannelCreateNestedOneWithoutMembersInput
   user: Prisma.UserCreateNestedOneWithoutMembershipsInput
   group?: Prisma.ChannelGroupCreateNestedOneWithoutMembersInput
@@ -271,10 +284,12 @@ export type ChannelMemberUncheckedCreateInput = {
   userId: string
   groupId?: string | null
   position?: number
+  lastReadAt?: Date | string | null
 }
 
 export type ChannelMemberUpdateInput = {
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   channel?: Prisma.ChannelUpdateOneRequiredWithoutMembersNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutMembershipsNestedInput
   group?: Prisma.ChannelGroupUpdateOneWithoutMembersNestedInput
@@ -285,6 +300,7 @@ export type ChannelMemberUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ChannelMemberCreateManyInput = {
@@ -292,10 +308,12 @@ export type ChannelMemberCreateManyInput = {
   userId: string
   groupId?: string | null
   position?: number
+  lastReadAt?: Date | string | null
 }
 
 export type ChannelMemberUpdateManyMutationInput = {
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ChannelMemberUncheckedUpdateManyInput = {
@@ -303,6 +321,7 @@ export type ChannelMemberUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ChannelMemberListRelationFilter = {
@@ -325,6 +344,7 @@ export type ChannelMemberCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   groupId?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  lastReadAt?: Prisma.SortOrder
 }
 
 export type ChannelMemberAvgOrderByAggregateInput = {
@@ -336,6 +356,7 @@ export type ChannelMemberMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   groupId?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  lastReadAt?: Prisma.SortOrder
 }
 
 export type ChannelMemberMinOrderByAggregateInput = {
@@ -343,6 +364,7 @@ export type ChannelMemberMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   groupId?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  lastReadAt?: Prisma.SortOrder
 }
 
 export type ChannelMemberSumOrderByAggregateInput = {
@@ -475,12 +497,17 @@ export type ChannelMemberUncheckedUpdateManyWithoutGroupNestedInput = {
   deleteMany?: Prisma.ChannelMemberScalarWhereInput | Prisma.ChannelMemberScalarWhereInput[]
 }
 
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
 }
 
 export type ChannelMemberCreateWithoutUserInput = {
   position?: number
+  lastReadAt?: Date | string | null
   channel: Prisma.ChannelCreateNestedOneWithoutMembersInput
   group?: Prisma.ChannelGroupCreateNestedOneWithoutMembersInput
 }
@@ -489,6 +516,7 @@ export type ChannelMemberUncheckedCreateWithoutUserInput = {
   channelId: string
   groupId?: string | null
   position?: number
+  lastReadAt?: Date | string | null
 }
 
 export type ChannelMemberCreateOrConnectWithoutUserInput = {
@@ -525,10 +553,12 @@ export type ChannelMemberScalarWhereInput = {
   userId?: Prisma.StringFilter<"ChannelMember"> | string
   groupId?: Prisma.StringNullableFilter<"ChannelMember"> | string | null
   position?: Prisma.IntFilter<"ChannelMember"> | number
+  lastReadAt?: Prisma.DateTimeNullableFilter<"ChannelMember"> | Date | string | null
 }
 
 export type ChannelMemberCreateWithoutChannelInput = {
   position?: number
+  lastReadAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutMembershipsInput
   group?: Prisma.ChannelGroupCreateNestedOneWithoutMembersInput
 }
@@ -537,6 +567,7 @@ export type ChannelMemberUncheckedCreateWithoutChannelInput = {
   userId: string
   groupId?: string | null
   position?: number
+  lastReadAt?: Date | string | null
 }
 
 export type ChannelMemberCreateOrConnectWithoutChannelInput = {
@@ -567,6 +598,7 @@ export type ChannelMemberUpdateManyWithWhereWithoutChannelInput = {
 
 export type ChannelMemberCreateWithoutGroupInput = {
   position?: number
+  lastReadAt?: Date | string | null
   channel: Prisma.ChannelCreateNestedOneWithoutMembersInput
   user: Prisma.UserCreateNestedOneWithoutMembershipsInput
 }
@@ -575,6 +607,7 @@ export type ChannelMemberUncheckedCreateWithoutGroupInput = {
   channelId: string
   userId: string
   position?: number
+  lastReadAt?: Date | string | null
 }
 
 export type ChannelMemberCreateOrConnectWithoutGroupInput = {
@@ -607,10 +640,12 @@ export type ChannelMemberCreateManyUserInput = {
   channelId: string
   groupId?: string | null
   position?: number
+  lastReadAt?: Date | string | null
 }
 
 export type ChannelMemberUpdateWithoutUserInput = {
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   channel?: Prisma.ChannelUpdateOneRequiredWithoutMembersNestedInput
   group?: Prisma.ChannelGroupUpdateOneWithoutMembersNestedInput
 }
@@ -619,22 +654,26 @@ export type ChannelMemberUncheckedUpdateWithoutUserInput = {
   channelId?: Prisma.StringFieldUpdateOperationsInput | string
   groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ChannelMemberUncheckedUpdateManyWithoutUserInput = {
   channelId?: Prisma.StringFieldUpdateOperationsInput | string
   groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ChannelMemberCreateManyChannelInput = {
   userId: string
   groupId?: string | null
   position?: number
+  lastReadAt?: Date | string | null
 }
 
 export type ChannelMemberUpdateWithoutChannelInput = {
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutMembershipsNestedInput
   group?: Prisma.ChannelGroupUpdateOneWithoutMembersNestedInput
 }
@@ -643,22 +682,26 @@ export type ChannelMemberUncheckedUpdateWithoutChannelInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ChannelMemberUncheckedUpdateManyWithoutChannelInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   groupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ChannelMemberCreateManyGroupInput = {
   channelId: string
   userId: string
   position?: number
+  lastReadAt?: Date | string | null
 }
 
 export type ChannelMemberUpdateWithoutGroupInput = {
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   channel?: Prisma.ChannelUpdateOneRequiredWithoutMembersNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutMembershipsNestedInput
 }
@@ -667,12 +710,14 @@ export type ChannelMemberUncheckedUpdateWithoutGroupInput = {
   channelId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ChannelMemberUncheckedUpdateManyWithoutGroupInput = {
   channelId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  lastReadAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -682,6 +727,7 @@ export type ChannelMemberSelect<ExtArgs extends runtime.Types.Extensions.Interna
   userId?: boolean
   groupId?: boolean
   position?: boolean
+  lastReadAt?: boolean
   channel?: boolean | Prisma.ChannelDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   group?: boolean | Prisma.ChannelMember$groupArgs<ExtArgs>
@@ -692,6 +738,7 @@ export type ChannelMemberSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   userId?: boolean
   groupId?: boolean
   position?: boolean
+  lastReadAt?: boolean
   channel?: boolean | Prisma.ChannelDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   group?: boolean | Prisma.ChannelMember$groupArgs<ExtArgs>
@@ -702,6 +749,7 @@ export type ChannelMemberSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   userId?: boolean
   groupId?: boolean
   position?: boolean
+  lastReadAt?: boolean
   channel?: boolean | Prisma.ChannelDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   group?: boolean | Prisma.ChannelMember$groupArgs<ExtArgs>
@@ -712,9 +760,10 @@ export type ChannelMemberSelectScalar = {
   userId?: boolean
   groupId?: boolean
   position?: boolean
+  lastReadAt?: boolean
 }
 
-export type ChannelMemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"channelId" | "userId" | "groupId" | "position", ExtArgs["result"]["channelMember"]>
+export type ChannelMemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"channelId" | "userId" | "groupId" | "position" | "lastReadAt", ExtArgs["result"]["channelMember"]>
 export type ChannelMemberInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   channel?: boolean | Prisma.ChannelDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -743,6 +792,7 @@ export type $ChannelMemberPayload<ExtArgs extends runtime.Types.Extensions.Inter
     userId: string
     groupId: string | null
     position: number
+    lastReadAt: Date | null
   }, ExtArgs["result"]["channelMember"]>
   composites: {}
 }
@@ -1173,6 +1223,7 @@ export interface ChannelMemberFieldRefs {
   readonly userId: Prisma.FieldRef<"ChannelMember", 'String'>
   readonly groupId: Prisma.FieldRef<"ChannelMember", 'String'>
   readonly position: Prisma.FieldRef<"ChannelMember", 'Int'>
+  readonly lastReadAt: Prisma.FieldRef<"ChannelMember", 'DateTime'>
 }
     
 

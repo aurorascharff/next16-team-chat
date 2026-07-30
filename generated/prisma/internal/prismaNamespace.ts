@@ -1095,7 +1095,8 @@ export const ChannelMemberScalarFieldEnum = {
   channelId: 'channelId',
   userId: 'userId',
   groupId: 'groupId',
-  position: 'position'
+  position: 'position',
+  lastReadAt: 'lastReadAt'
 } as const
 
 export type ChannelMemberScalarFieldEnum = (typeof ChannelMemberScalarFieldEnum)[keyof typeof ChannelMemberScalarFieldEnum]

@@ -52,10 +52,11 @@ model ChannelGroup {
 }
 
 model ChannelMember {
-  channelId String
-  userId    String
-  groupId   String?
-  position  Int     @default(0)
+  channelId  String
+  userId     String
+  groupId    String?
+  position   Int       @default(0)
+  lastReadAt DateTime?
 
   channel Channel       @relation(fields: [channelId], references: [id], onDelete: Cascade)
   user    User          @relation(fields: [userId], references: [id], onDelete: Cascade)
