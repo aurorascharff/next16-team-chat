@@ -50,7 +50,7 @@ export function AddReaction({ message }: { message: Message }) {
     <div className="relative">
       <button
         aria-label="Add reaction"
-        className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark text-muted dark:text-muted-dark hover:border-accent hover:text-accent flex size-7 items-center justify-center rounded-md border opacity-0 shadow-sm transition-colors group-hover:opacity-100 data-[open=true]:opacity-100"
+        className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark hover:text-accent flex size-7 items-center justify-center rounded-md transition-colors"
         data-open={open}
         onClick={(event) => {
           event.currentTarget.blur()
@@ -68,7 +68,7 @@ export function AddReaction({ message }: { message: Message }) {
               return setOpen(false)
             }}
           />
-          <div className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark absolute bottom-9 left-0 z-20 flex gap-0.5 rounded-lg border p-1 shadow-lg">
+          <div className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark absolute top-9 right-0 z-20 flex gap-0.5 rounded-lg border p-1 shadow-lg">
             {CHOICES.map((emoji) => {
               return (
                 <button

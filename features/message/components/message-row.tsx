@@ -101,45 +101,47 @@ export function MessageRow({
         <div className="max-w-3xl space-y-2 text-[0.9375rem] leading-relaxed break-words text-zinc-800 dark:text-zinc-200">
           {formatMarkdown(message.body, validMentions)}
         </div>
-        {!sending && !failed ? (
+        {!sending && !failed && message.reactions?.length ? (
           <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
             <MessageReactions message={message} />
-            <AddReaction message={message} />
-            {showThreadAffordance ? (
-              <button
-                className={cn(
-                  'flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium shadow-sm transition-colors',
-                  replyCount > 0
-                    ? 'border-accent/30 bg-accent-fade text-accent hover:border-accent/60'
-                    : 'border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark text-muted dark:text-muted-dark hover:border-accent hover:text-accent opacity-0 group-hover:opacity-100',
-                )}
-                onClick={() => {
-                  return openThread(message.channelId, message.id)
-                }}
-                type="button"
-              >
-                <MessageSquare
-                  aria-hidden
-                  className="size-3.5"
-                  strokeWidth={2}
-                />
-                {replyCount > 0
-                  ? `${replyCount} ${replyCount === 1 ? 'reply' : 'replies'}`
-                  : 'Reply'}
-              </button>
-            ) : null}
           </div>
+        ) : null}
+        {!sending && !failed && showThreadAffordance && replyCount > 0 ? (
+          <button
+            className="text-accent hover:bg-accent-fade border-accent/20 hover:border-accent/30 -mx-1 mt-1.5 flex items-center gap-2 rounded-md border border-transparent px-2 py-1.5 text-xs font-semibold transition-colors"
+            onClick={() => {
+              return openThread(message.channelId, message.id)
+            }}
+            type="button"
+          >
+            <MessageSquare aria-hidden className="size-3.5" strokeWidth={2} />
+            {replyCount} {replyCount === 1 ? 'reply' : 'replies'}
+          </button>
         ) : null}
       </div>
       {!sending && !failed ? (
-        <div className="absolute top-1 right-4 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+        <div className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark absolute top-2 right-4 flex items-center gap-0.5 rounded-lg border p-0.5 opacity-0 shadow-sm transition-opacity group-hover:opacity-100">
+          <AddReaction message={message} />
+          {showThreadAffordance ? (
+            <button
+              aria-label="Reply in thread"
+              className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark hover:text-accent flex size-7 items-center justify-center rounded-md transition-colors"
+              onClick={() => {
+                return openThread(message.channelId, message.id)
+              }}
+              title="Reply in thread"
+              type="button"
+            >
+              <MessageSquare aria-hidden className="size-3.5" strokeWidth={2} />
+            </button>
+          ) : null}
           <button
             aria-label="Copy link to message"
             className={cn(
-              'border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark flex size-7 items-center justify-center rounded-md border shadow-sm transition-colors',
+              'flex size-7 items-center justify-center rounded-md transition-colors',
               copied
-                ? 'border-success text-success'
-                : 'text-muted dark:text-muted-dark hover:border-accent hover:text-accent',
+                ? 'text-success'
+                : 'text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark hover:text-accent',
             )}
             onClick={copyLink}
             title={copied ? 'Copied!' : 'Copy link'}
