@@ -24,6 +24,7 @@ import {
   MobileTabBar,
   MobileTabBarSkeleton,
 } from '@/features/workspace/components/mobile-tab-bar'
+import { ActivityReadNavigationRefresh } from '@/features/workspace/components/activity-read-navigation-refresh'
 import { Providers } from './providers'
 import './globals.css'
 
@@ -97,6 +98,7 @@ export default function RootLayout({
           <Suspense fallback={null}>
             <CommandPalette />
           </Suspense>
+          <ActivityReadNavigationRefresh />
           <BotDriver />
           <Toaster />
         </Providers>
