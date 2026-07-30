@@ -10,7 +10,10 @@ import {
 } from '@/features/channel/components/channel-details'
 import { ChannelDetailPanel } from '@/features/message/components/channel-detail-panel'
 import { MarkChannelRead } from '@/features/channel/components/mark-channel-read'
-import { MessageComposer } from '@/features/message/components/message-composer'
+import {
+  MessageComposer,
+  MessageComposerFallback,
+} from '@/features/message/components/message-composer'
 import {
   MessageThread,
   MessageThreadSkeleton,
@@ -58,7 +61,7 @@ export default function ChannelPage({
               })}
             </Crossfade>
           </Suspense>
-          <Suspense fallback={null}>
+          <Suspense fallback={<MessageComposerFallback />}>
             {params.then(({ channelId }) => {
               return <MessageComposer channelId={channelId} />
             })}
