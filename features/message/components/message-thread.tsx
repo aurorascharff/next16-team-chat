@@ -1,5 +1,6 @@
 import { HydrationBoundary } from '@tanstack/react-query'
 import { Skeleton } from '@/components/ui/skeleton'
+import { MarkChannelRead } from '@/features/channel/components/mark-channel-read'
 import { getLastReadAt } from '@/features/channel/channel-queries'
 import { getMessagesForUser } from '@/features/message/message-queries'
 import { messageKeys } from '@/features/message/message-query-options'
@@ -30,6 +31,7 @@ export async function MessageThread({ channelId }: { channelId: string }) {
         key={channelId}
         lastReadAt={lastReadAt}
       />
+      <MarkChannelRead channelId={channelId} />
     </HydrationBoundary>
   )
 }

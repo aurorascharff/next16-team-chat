@@ -9,7 +9,6 @@ import {
   ChannelDetailsSkeleton,
 } from '@/features/channel/components/channel-details'
 import { ChannelDetailPanel } from '@/features/message/components/channel-detail-panel'
-import { MarkChannelRead } from '@/features/channel/components/mark-channel-read'
 import {
   MessageComposer,
   MessageComposerFallback,
@@ -42,12 +41,9 @@ export default function ChannelPage({
     <div className="grid h-dvh grid-rows-[auto_minmax(0,1fr)] max-md:h-[calc(100dvh-3.5rem)]">
       <Suspense fallback={<ChannelHeaderSkeleton />}>
         {params.then(({ channelId }) => (
-          <>
-            <MarkChannelRead channelId={channelId} />
-            <Crossfade>
-              <ChannelHeader channelId={channelId} />
-            </Crossfade>
-          </>
+          <Crossfade>
+            <ChannelHeader channelId={channelId} />
+          </Crossfade>
         ))}
       </Suspense>
       <div className="flex min-h-0 lg:grid lg:grid-cols-[minmax(0,1fr)_auto]">

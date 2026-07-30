@@ -208,15 +208,12 @@ export async function markChannelRead(channelId: string, userId: string) {
     where: { id: channelId, unread: { gt: 0 } },
   })
 
-  if (channelUpdate.count === 0) {
-    return false
-  }
-
-  await prisma.channelMember.updateMany({
+  const memberUpdate = await prisma.channelMember.updateMany({
     data: { lastReadAt: new Date() },
     where: { channelId, userId },
   })
-  return true
+
+  return channelUpdate.count > 0 || memberUpdate.count > 0
 }
 
 export function lastReadTag(channelId: string, userId: string) {
