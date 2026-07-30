@@ -1,0 +1,56 @@
+'use client'
+
+import { useQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import { unreadChannelsQueryOptions } from '@/features/channel/channel-query-options'
+import { unreadActivityQueryOptions } from '@/features/workspace/workspace-query-options'
+
+const DEFAULT_FAVICON = '/logo.svg'
+const UNREAD_FAVICON = `data:image/svg+xml,${encodeURIComponent(`
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="huddle" x1="0" y1="0" x2="96" y2="96" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2457FA"/>
+      <stop offset="1" stop-color="#1D47CF"/>
+    </linearGradient>
+  </defs>
+  <rect width="96" height="96" rx="22" fill="url(#huddle)"/>
+  <g transform="translate(24 24) scale(2)" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+    <circle cx="9" cy="7" r="4"/>
+    <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+  </g>
+  <circle cx="74" cy="22" r="15" fill="#EF4444"/>
+  <circle cx="74" cy="22" r="15" fill="none" stroke="white" stroke-width="6"/>
+</svg>
+`)}`
+
+export function UnreadFavicon() {
+  const { data: unreadChannels } = useQuery(unreadChannelsQueryOptions())
+  const { data: unreadActivity } = useQuery(unreadActivityQueryOptions())
+
+  const hasUnreadChannels = Object.keys(unreadChannels ?? {}).length > 0
+  const hasUnreadActivity = Boolean(unreadActivity && unreadActivity.count > 0)
+  const href =
+    hasUnreadChannels || hasUnreadActivity ? UNREAD_FAVICON : DEFAULT_FAVICON
+
+  useEffect(() => {
+    const links = Array.from(
+      document.querySelectorAll<HTMLLinkElement>('link[rel~="icon"]'),
+    )
+
+    if (links.length === 0) {
+      const link = document.createElement('link')
+      link.rel = 'icon'
+      document.head.append(link)
+      links.push(link)
+    }
+
+    for (const link of links) {
+      link.type = 'image/svg+xml'
+      link.href = href
+    }
+  }, [href])
+
+  return null
+}

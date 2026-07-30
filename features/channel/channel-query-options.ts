@@ -43,6 +43,5 @@ export function unreadChannelsQueryOptions() {
     },
     queryKey: channelKeys.unread,
     refetchInterval: 5_000,
-    staleTime: 15_000,
   })
 }

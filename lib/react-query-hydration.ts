@@ -7,6 +7,7 @@ import {
   type DehydratedState,
   type QueryKey,
 } from '@tanstack/react-query'
+import { QUERY_STALE_SECONDS } from './query-cache-policy'
 
 type HydratedQuery = {
   queryKey: QueryKey
@@ -27,7 +28,9 @@ export async function dehydrate(
   queries: HydratedQuery[],
   options: HydrationOptions = {},
 ): Promise<DehydratedState> {
-  const updatedAt = await getHydrationUpdatedAt(options.stale ?? 30)
+  const updatedAt = await getHydrationUpdatedAt(
+    options.stale ?? QUERY_STALE_SECONDS,
+  )
 
   const queryClient = new QueryClient()
 

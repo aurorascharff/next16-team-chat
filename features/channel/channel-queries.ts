@@ -110,8 +110,8 @@ export function channelTag(channelId: string) {
 }
 
 export async function getChannelLayout() {
-  const user = await getCurrentUser()
-  return getChannelLayoutCached(user.id, await isSlowMode())
+  const [user, slow] = await Promise.all([getCurrentUser(), isSlowMode()])
+  return getChannelLayoutCached(user.id, slow)
 }
 
 export async function listChannelsForUser(userId: string) {
@@ -124,7 +124,7 @@ export async function listChannelsForUser(userId: string) {
 export async function getUnreadChannels() {
   'use cache'
   cacheTag('channels:unread')
-  cacheLife({ stale: 15 })
+  cacheLife({ stale: 30, revalidate: 30 })
 
   const channels = await prisma.channel.findMany({
     select: { id: true, unread: true },
