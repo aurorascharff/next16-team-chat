@@ -2,14 +2,9 @@ import { Suspense } from 'react'
 import { Crossfade } from '@/components/ui/crossfade'
 import { MarkMentionsRead } from '@/features/message/components/mark-mentions-read'
 import {
-  MentionsList,
-  MentionsListSkeleton,
-} from '@/features/message/components/mentions-list'
-import {
-  InboxList,
-  WorkspaceListSkeleton,
-  WorkspacePanelHeader,
-} from '@/features/workspace/components/workspace-panel'
+  ActivityList,
+  ActivityListSkeleton,
+} from '@/features/workspace/components/activity-list'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -22,22 +17,16 @@ export default function InboxPage() {
   return (
     <section className="min-h-dvh">
       <MarkMentionsRead />
-      <div className="border-divider dark:border-divider-dark border-b px-5 pt-5 pb-3">
-        <h1>Mentions</h1>
+      <header className="border-divider dark:border-divider-dark bg-surface/80 dark:bg-surface-dark/80 sticky top-0 z-10 border-b px-5 py-4 backdrop-blur-lg">
+        <h1>Activity</h1>
         <p className="text-muted dark:text-muted-dark mt-1 text-sm">
-          Messages where someone @mentioned you.
+          Mentions and thread replies across your channels, newest first.
         </p>
-      </div>
-      <Suspense fallback={<MentionsListSkeleton />}>
+      </header>
+      <Suspense fallback={<ActivityListSkeleton />}>
         <Crossfade>
-          <MentionsList />
+          <ActivityList />
         </Crossfade>
-        <WorkspacePanelHeader view="inbox" />
-        <Suspense fallback={<WorkspaceListSkeleton />}>
-          <Crossfade>
-            <InboxList />
-          </Crossfade>
-        </Suspense>
       </Suspense>
     </section>
   )

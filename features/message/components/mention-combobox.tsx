@@ -1,10 +1,18 @@
 'use client'
 
 import * as Ariakit from '@ariakit/react'
-import { useQuery } from '@tanstack/react-query'
-import { KeyboardEvent, RefObject, useDeferredValue, useMemo } from 'react'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { Loader2 } from 'lucide-react'
+import {
+  Component,
+  KeyboardEvent,
+  ReactNode,
+  RefObject,
+  Suspense,
+  useDeferredValue,
+} from 'react'
 import { UserAvatar } from '@/components/ui/user-avatar'
-import { usersQueryOptions } from '@/features/user/user-query-options'
+import { userSearchQueryOptions } from '@/features/user/user-query-options'
 
 const MENTION_TRIGGER = '@'
 
@@ -65,25 +73,11 @@ export function MentionCombobox({
   textareaRef: RefObject<HTMLTextAreaElement | null>
   value: string
 }) {
-  const combobox = Ariakit.useComboboxStore()
+  const combobox = Ariakit.useComboboxStore({ placement: 'top-start' })
   const searchValue = Ariakit.useStoreState(combobox, 'value')
   const open = Ariakit.useStoreState(combobox, 'open')
   const deferredSearch = useDeferredValue(searchValue)
-  const { data: users = [] } = useQuery(usersQueryOptions())
-
-  const matches = useMemo(() => {
-    const query = deferredSearch.toLowerCase()
-    return users
-      .filter((user) => {
-        return (
-          user.handle.toLowerCase().includes(query) ||
-          user.name.toLowerCase().includes(query)
-        )
-      })
-      .slice(0, 6)
-  }, [deferredSearch, users])
-
-  const hasMatches = matches.length > 0
+  const isStale = searchValue !== deferredSearch
 
   function onChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
     if (getTrigger(event.target) || getTriggerOffset(event.target) !== -1) {
@@ -142,33 +136,92 @@ export function MentionCombobox({
       <Ariakit.ComboboxPopover
         className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark z-30 w-56 overflow-hidden rounded-lg border shadow-lg"
         gutter={4}
-        hidden={!hasMatches || !open}
+        hidden={!open}
         store={combobox}
         style={{ viewTransitionName: 'none' }}
         unmountOnHide
       >
-        {matches.map((user) => {
-          return (
-            <Ariakit.ComboboxItem
-              className="data-active-item:bg-accent-fade flex w-full cursor-pointer items-center gap-2.5 px-2.5 py-1.5"
-              focusOnHover
-              key={user.id}
-              onClick={() => onSelectMention(user.handle)}
-              value={user.handle}
-            >
-              <UserAvatar bot={user.id === 'bot'} name={user.name} size="sm" />
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-[0.8125rem] font-medium">
-                  {user.name}
-                </span>
-                <span className="text-muted dark:text-muted-dark block truncate text-xs">
-                  @{user.handle}
-                </span>
-              </span>
-            </Ariakit.ComboboxItem>
-          )
-        })}
+        <MentionResultsBoundary
+          fallback={
+            <div className="text-muted dark:text-muted-dark px-2.5 py-2 text-xs">
+              Couldn’t load people.
+            </div>
+          }
+        >
+          <Suspense fallback={<MentionResultsFallback />}>
+            <div className={isStale ? 'opacity-60 transition-opacity' : ''}>
+              <MentionResults
+                onSelect={onSelectMention}
+                query={deferredSearch}
+              />
+            </div>
+          </Suspense>
+        </MentionResultsBoundary>
       </Ariakit.ComboboxPopover>
     </>
   )
+}
+
+function MentionResults({
+  onSelect,
+  query,
+}: {
+  onSelect: (handle: string) => void
+  query: string
+}) {
+  const { data: users } = useSuspenseQuery(userSearchQueryOptions(query))
+
+  if (users.length === 0) {
+    return (
+      <div className="text-muted dark:text-muted-dark px-2.5 py-2 text-xs">
+        No people found.
+      </div>
+    )
+  }
+
+  return users.map((user) => {
+    return (
+      <Ariakit.ComboboxItem
+        className="data-active-item:bg-accent-fade flex w-full cursor-pointer items-center gap-2.5 px-2.5 py-1.5"
+        focusOnHover
+        key={user.id}
+        onClick={() => onSelect(user.handle)}
+        value={user.handle}
+      >
+        <UserAvatar bot={user.id === 'bot'} name={user.name} size="sm" />
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[0.8125rem] font-medium">
+            {user.name}
+          </span>
+          <span className="text-muted dark:text-muted-dark block truncate text-xs">
+            @{user.handle}
+          </span>
+        </span>
+      </Ariakit.ComboboxItem>
+    )
+  })
+}
+
+function MentionResultsFallback() {
+  return (
+    <div className="text-muted dark:text-muted-dark flex items-center gap-2 px-2.5 py-2 text-xs">
+      <Loader2 aria-hidden className="size-3.5 animate-spin" />
+      Loading people…
+    </div>
+  )
+}
+
+class MentionResultsBoundary extends Component<
+  { children: ReactNode; fallback: ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false }
+
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+
+  render() {
+    return this.state.hasError ? this.props.fallback : this.props.children
+  }
 }

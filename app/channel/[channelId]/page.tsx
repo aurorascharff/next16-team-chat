@@ -67,7 +67,11 @@ export default function ChannelPage({
             })}
           </Suspense>
         </div>
-        <Suspense fallback={null}>
+        <Suspense
+          fallback={
+            <div className="hidden shrink-0 lg:block" style={{ width: 320 }} />
+          }
+        >
           <ChannelDetailPanel
             details={
               <Suspense fallback={<ChannelDetailsSkeleton />}>

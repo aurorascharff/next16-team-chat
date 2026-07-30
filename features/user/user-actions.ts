@@ -17,4 +17,6 @@ export async function switchUser(userId: string) {
   })
 
   updateTag('current-user')
+  updateTag('channels')
+  updateTag('mentions')
 }

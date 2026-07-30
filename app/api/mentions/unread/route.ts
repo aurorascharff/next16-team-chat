@@ -1,5 +1,5 @@
 import { getCurrentUser } from '@/features/user/user-queries'
-import { getUnreadMentionCount } from '@/features/message/mention-queries'
+import { getUnreadMentionCount } from '@/features/message/message-mention-queries'
 
 export async function GET() {
   const user = await getCurrentUser()

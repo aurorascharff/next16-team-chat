@@ -16,6 +16,24 @@ export async function getUsers(): Promise<User[]> {
   })
 }
 
+export async function searchUsers(query: string): Promise<User[]> {
+  'use cache'
+  cacheTag('users')
+  return prisma.user.findMany({
+    orderBy: { name: 'asc' },
+    select: { handle: true, id: true, name: true, role: true },
+    take: 6,
+    where: query
+      ? {
+          OR: [
+            { handle: { contains: query, mode: 'insensitive' } },
+            { name: { contains: query, mode: 'insensitive' } },
+          ],
+        }
+      : undefined,
+  })
+}
+
 export async function getCurrentUser(): Promise<User> {
   'use cache: private'
   cacheTag('current-user')

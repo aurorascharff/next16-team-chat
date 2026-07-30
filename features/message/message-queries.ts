@@ -116,17 +116,24 @@ export async function addMessage({
 
   const mentionedIds = parseMentions(body, users).filter((id) => id !== user.id)
   if (mentionedIds.length > 0) {
-    await prisma.mention.createMany({
-      data: mentionedIds.map((mentionedId) => {
-        return {
-          channelId,
-          id: `mention-${crypto.randomUUID()}`,
-          messageId: message.id,
-          userId: mentionedId,
-        }
-      }),
-      skipDuplicates: true,
+    const members = await prisma.channelMember.findMany({
+      select: { userId: true },
+      where: { channelId, userId: { in: mentionedIds } },
     })
+    const memberIds = members.map((member) => member.userId)
+    if (memberIds.length > 0) {
+      await prisma.mention.createMany({
+        data: memberIds.map((mentionedId) => {
+          return {
+            channelId,
+            id: `mention-${crypto.randomUUID()}`,
+            messageId: message.id,
+            userId: mentionedId,
+          }
+        }),
+        skipDuplicates: true,
+      })
+    }
   }
 
   return toMessage(message)

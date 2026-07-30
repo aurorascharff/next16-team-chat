@@ -1,6 +1,6 @@
 'use client'
 
-import { Clock, Link2, MessageSquare, TriangleAlert } from 'lucide-react'
+import { Check, Clock, Link2, MessageSquare, TriangleAlert } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { UserAvatar } from '@/components/ui/user-avatar'
@@ -12,9 +12,11 @@ import { AddReaction, MessageReactions } from './message-reactions'
 import { useThread } from './use-thread'
 
 export function MessageRow({
+  isReply = false,
   message,
   showThreadAffordance = false,
 }: {
+  isReply?: boolean
   message: Message
   showThreadAffordance?: boolean
 }) {
@@ -23,6 +25,7 @@ export function MessageRow({
   const searchParams = useSearchParams()
   const articleRef = useRef<HTMLElement>(null)
   const [copied, setCopied] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const sending = message.status === 'sending'
   const failed = message.status === 'failed'
   const replyCount = message.replyCount ?? 0
@@ -50,6 +53,7 @@ export function MessageRow({
       className={cn(
         'group relative flex gap-3 px-5 py-1.5 transition-colors',
         sending ? 'opacity-70' : 'hover:bg-card dark:hover:bg-card-dark',
+        isReply && 'border-accent/40 ml-2 border-l-2 pl-4',
       )}
       id={`message-${message.id}`}
       ref={articleRef}
@@ -79,56 +83,57 @@ export function MessageRow({
         <div className="max-w-3xl space-y-2 text-[0.9375rem] leading-relaxed break-words text-zinc-800 dark:text-zinc-200">
           {formatMarkdown(message.body, validMentions)}
         </div>
-        {!sending &&
-        !failed &&
-        (message.reactions?.length ||
-          (showThreadAffordance && replyCount > 0)) ? (
+        {!sending && !failed && message.reactions?.length ? (
           <div className="mt-1 flex flex-wrap items-center gap-1">
             <MessageReactions message={message} />
-            {showThreadAffordance && replyCount > 0 ? (
-              <button
-                className="border-divider dark:border-divider-dark hover:border-accent hover:text-accent text-accent flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-semibold transition-colors"
-                onClick={() => {
-                  return openThread(message.channelId, message.id)
-                }}
-                type="button"
-              >
-                <MessageSquare
-                  aria-hidden
-                  className="size-3.5"
-                  strokeWidth={2}
-                />
-                {replyCount} {replyCount === 1 ? 'reply' : 'replies'}
-              </button>
-            ) : null}
           </div>
         ) : null}
       </div>
+      {!sending && !failed && showThreadAffordance ? (
+        <button
+          className={cn(
+            'absolute right-4 bottom-2 flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium shadow-sm transition-colors',
+            replyCount > 0
+              ? 'border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark text-muted dark:text-muted-dark hover:border-accent hover:text-accent'
+              : 'border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark text-muted dark:text-muted-dark hover:border-accent hover:text-accent opacity-0 group-hover:opacity-100',
+          )}
+          onClick={() => {
+            return openThread(message.channelId, message.id)
+          }}
+          type="button"
+        >
+          <MessageSquare aria-hidden className="size-3.5" strokeWidth={2} />
+          {replyCount > 0
+            ? `${replyCount} ${replyCount === 1 ? 'reply' : 'replies'}`
+            : 'Reply'}
+        </button>
+      ) : null}
       {!sending && !failed ? (
-        <div className="absolute top-1 right-4 flex items-center gap-1 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
-          <AddReaction message={message} />
+        <div
+          className={cn(
+            'absolute top-1 right-4 flex items-center gap-1 transition-opacity group-hover:opacity-100',
+            menuOpen ? 'opacity-100' : 'opacity-0',
+          )}
+        >
+          <AddReaction message={message} onOpenChange={setMenuOpen} />
           <button
             aria-label="Copy link to message"
-            className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark text-muted dark:text-muted-dark hover:border-accent hover:text-accent flex size-7 items-center justify-center rounded-md border shadow-sm transition-colors"
+            className={cn(
+              'border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark flex size-7 items-center justify-center rounded-md border shadow-sm transition-colors',
+              copied
+                ? 'border-success text-success'
+                : 'text-muted dark:text-muted-dark hover:border-accent hover:text-accent',
+            )}
             onClick={copyLink}
             title={copied ? 'Copied!' : 'Copy link'}
             type="button"
           >
-            <Link2 aria-hidden className="size-3.5" strokeWidth={2} />
+            {copied ? (
+              <Check aria-hidden className="size-3.5" strokeWidth={2.5} />
+            ) : (
+              <Link2 aria-hidden className="size-3.5" strokeWidth={2} />
+            )}
           </button>
-          {showThreadAffordance && replyCount === 0 ? (
-            <button
-              aria-label="Reply in thread"
-              className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark text-muted dark:text-muted-dark hover:border-accent hover:text-accent flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium shadow-sm transition-colors"
-              onClick={() => {
-                return openThread(message.channelId, message.id)
-              }}
-              type="button"
-            >
-              <MessageSquare aria-hidden className="size-3.5" strokeWidth={2} />
-              Reply
-            </button>
-          ) : null}
         </div>
       ) : null}
     </article>

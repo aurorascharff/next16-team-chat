@@ -4,6 +4,7 @@ import { apiUrl } from '@/lib/utils'
 
 export const userKeys = {
   all: ['users'] as const,
+  search: (query: string) => ['users', 'search', query] as const,
 }
 
 export function usersQueryOptions() {
@@ -15,5 +16,19 @@ export function usersQueryOptions() {
     },
     queryKey: userKeys.all,
     staleTime: Infinity,
+  })
+}
+
+export function userSearchQueryOptions(query: string) {
+  return queryOptions({
+    queryFn: async (): Promise<User[]> => {
+      const res = await fetch(
+        apiUrl(`/api/users?q=${encodeURIComponent(query)}`),
+      )
+      if (!res.ok) throw new Error('Failed to search users')
+      return res.json()
+    },
+    queryKey: userKeys.search(query),
+    staleTime: 60_000,
   })
 }

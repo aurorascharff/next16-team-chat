@@ -2,8 +2,8 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { markMentionsReadAction } from '@/features/message/mention-actions'
-import { mentionKeys } from '@/features/message/mention-query-options'
+import { markMentionsReadAction } from '@/features/message/message-mention-actions'
+import { mentionKeys } from '@/features/message/message-mention-query-options'
 
 export function MarkMentionsRead() {
   const queryClient = useQueryClient()

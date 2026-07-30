@@ -36,6 +36,7 @@ export function repliesQueryOptions(messageId: string) {
       return res.json()
     },
     queryKey: messageKeys.replies(messageId),
+    refetchInterval: 10_000,
     staleTime: Number.POSITIVE_INFINITY,
   })
 }

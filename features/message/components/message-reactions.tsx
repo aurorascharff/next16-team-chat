@@ -95,17 +95,29 @@ export function MessageReactions({ message }: { message: Message }) {
   )
 }
 
-export function AddReaction({ message }: { message: Message }) {
-  const [open, setOpen] = useState(false)
+export function AddReaction({
+  message,
+  onOpenChange,
+}: {
+  message: Message
+  onOpenChange?: (open: boolean) => void
+}) {
+  const [open, setOpenState] = useState(false)
   const toggle = useReactionToggle(message)
+
+  function setOpen(next: boolean) {
+    setOpenState(next)
+    onOpenChange?.(next)
+  }
 
   return (
     <div className="relative">
       <button
         aria-label="Add reaction"
         className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark text-muted dark:text-muted-dark hover:border-accent hover:text-accent flex size-7 items-center justify-center rounded-md border shadow-sm transition-colors"
-        onClick={() => {
-          return setOpen((value) => !value)
+        onClick={(event) => {
+          event.currentTarget.blur()
+          setOpen(!open)
         }}
         type="button"
       >

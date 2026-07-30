@@ -59,10 +59,7 @@ export function MessageThreadSkeleton() {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="border-divider dark:border-divider-dark flex items-center border-b px-5 py-2">
-        <Skeleton className="h-8 w-full rounded-lg" />
-      </div>
-      <div className="flex flex-1 flex-col gap-1 pt-3">
+      <div className="flex flex-1 flex-col gap-1 py-3">
         {rows.map((row, i) => {
           return (
             <div className="flex gap-3 px-5 py-2.5" key={i}>

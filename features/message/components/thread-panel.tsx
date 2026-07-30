@@ -3,6 +3,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { X } from 'lucide-react'
 import { Suspense } from 'react'
+import { Crossfade } from '@/components/ui/crossfade'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   messagesQueryOptions,
@@ -20,10 +21,6 @@ export function ThreadPanel({
   messageId: string
 }) {
   const { closeThread } = useThread()
-  const { data: messages } = useSuspenseQuery(messagesQueryOptions(channelId))
-  const parent = messages.find((message) => {
-    return message.id === messageId
-  })
 
   return (
     <aside
@@ -47,9 +44,10 @@ export function ThreadPanel({
         </button>
       </header>
       <div className="flex-1 overflow-y-auto py-2">
-        {parent ? <MessageRow message={parent} /> : null}
         <Suspense fallback={<ThreadRepliesSkeleton />}>
-          <ThreadReplies messageId={messageId} />
+          <Crossfade>
+            <ThreadBody channelId={channelId} messageId={messageId} />
+          </Crossfade>
         </Suspense>
       </div>
       <MessageComposer
@@ -61,16 +59,27 @@ export function ThreadPanel({
   )
 }
 
-function ThreadReplies({ messageId }: { messageId: string }) {
+function ThreadBody({
+  channelId,
+  messageId,
+}: {
+  channelId: string
+  messageId: string
+}) {
+  const { data: messages } = useSuspenseQuery(messagesQueryOptions(channelId))
   const { data: replies } = useSuspenseQuery(repliesQueryOptions(messageId))
+  const parent = messages.find((message) => {
+    return message.id === messageId
+  })
 
   return (
     <>
+      {parent ? <MessageRow message={parent} /> : null}
       <div className="border-divider dark:border-divider-dark text-muted dark:text-muted-dark mx-5 my-2 flex items-center gap-3 border-t pt-3 text-xs font-medium">
         {replies.length} {replies.length === 1 ? 'reply' : 'replies'}
       </div>
       {replies.map((reply) => {
-        return <MessageRow key={reply.id} message={reply} />
+        return <MessageRow isReply key={reply.id} message={reply} />
       })}
     </>
   )

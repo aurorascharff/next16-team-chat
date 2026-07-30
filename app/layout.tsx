@@ -57,10 +57,18 @@ export default function RootLayout({
       <body>
         <Providers>
           <div className="flex min-h-dvh flex-col md:flex-row">
-            <Suspense fallback={<div className="w-18 max-md:hidden" />}>
+            <Suspense
+              fallback={
+                <div className="border-divider dark:border-divider-dark bg-elevated dark:bg-elevated-dark hidden w-18 shrink-0 border-r md:block" />
+              }
+            >
               <WorkspaceRail />
             </Suspense>
-            <Suspense fallback={<div className="w-64 max-md:hidden" />}>
+            <Suspense
+              fallback={
+                <div className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark hidden w-64 shrink-0 border-r md:block" />
+              }
+            >
               <ChannelSidebar>
                 <Suspense fallback={<WorkspaceNavSkeleton />}>
                   <WorkspaceNav />

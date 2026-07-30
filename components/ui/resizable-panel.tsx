@@ -1,24 +1,16 @@
 'use client'
 
-import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 const MIN_WIDTH = 280
 const MAX_WIDTH = 560
 const DEFAULT_WIDTH = 320
-const STORAGE_KEY = 'huddle:sidebar-width'
 
 export function ResizablePanel({ children }: { children: ReactNode }) {
   const [width, setWidth] = useState(DEFAULT_WIDTH)
   const [dragging, setDragging] = useState(false)
   const panelRef = useRef<HTMLDivElement>(null)
-
-  useLayoutEffect(() => {
-    const stored = Number(localStorage.getItem(STORAGE_KEY))
-    if (stored >= MIN_WIDTH && stored <= MAX_WIDTH) {
-      setWidth(stored)
-    }
-  }, [])
 
   function onPointerMove(event: PointerEvent) {
     const rect = panelRef.current?.getBoundingClientRect()
@@ -35,10 +27,6 @@ export function ResizablePanel({ children }: { children: ReactNode }) {
   function stopDragging() {
     setDragging(false)
     document.removeEventListener('pointermove', onPointerMove)
-    setWidth((current) => {
-      localStorage.setItem(STORAGE_KEY, String(current))
-      return current
-    })
   }
 
   function startDragging() {
