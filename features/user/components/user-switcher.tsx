@@ -1,6 +1,8 @@
 'use client'
 
+import { useQueryClient } from '@tanstack/react-query'
 import { ArrowLeftRight } from 'lucide-react'
+import type { Route } from 'next'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 import { switchUser } from '@/features/user/user-actions'
@@ -8,6 +10,7 @@ import { cn } from '@/lib/utils'
 
 export function UserSwitcher({ currentUserId }: { currentUserId: string }) {
   const router = useRouter()
+  const queryClient = useQueryClient()
   const [isPending, startTransition] = useTransition()
   const nextUserId = currentUserId === 'ada' ? 'grace' : 'ada'
 
@@ -19,9 +22,9 @@ export function UserSwitcher({ currentUserId }: { currentUserId: string }) {
       disabled={isPending}
       onClick={() => {
         startTransition(async () => {
-          await switchUser(nextUserId)
-          router.push('/')
-          router.refresh()
+          const destination = await switchUser(nextUserId)
+          queryClient.clear()
+          router.push(destination as Route)
         })
       }}
       title="Switch user"

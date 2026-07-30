@@ -1,7 +1,6 @@
-'use server'
+import 'server-only'
 
-import { updateTag } from 'next/cache'
-import { addMessage, messagesTag } from '@/features/message/message-queries'
+import { addMessage } from '@/features/message/message-queries'
 import { prisma } from '@/lib/db'
 
 const LINES_BY_CHANNEL: Record<string, string[]> = {
@@ -16,7 +15,7 @@ const LINES_BY_CHANNEL: Record<string, string[]> = {
     '**Docs status**\n- Upgrade guide: source-led, 90% done\n- Blog post: outline approved\n- Screenshots: pending mobile pass',
   ],
   'proj-ai-tools': [
-    '**Agent eval report**\n- Pass rate 94% (+6 pts after prompt fix)\n- Traces cleaner, fewer retries\n- Regression: none\n\n@Mira audit notes are in the thread.',
+    '**Agent eval report**\n- Pass rate 94% (+6 pts after prompt fix)\n- Traces cleaner, fewer retries\n- Regression: none\n\n@Mira audit notes ready for review.',
     '**Repo update** — `next16-app-architecture` skill\n- Tightened sync-page + id-prop guidance\n- Added cache-seed example\n- PR #128 up for review',
     '**Prompt diff summary**\n- 3 prompts updated, 1 removed\n- Token use −22% on the audit flow\n\n@Aurora mind a look before I merge?',
   ],
@@ -27,11 +26,11 @@ const LINES_BY_CHANNEL: Record<string, string[]> = {
   ],
   'team-design': [
     '**Design QA report**\n- Header CLS resolved after shared-cache change\n- Sidebar unread dots calmer\n- Message density tightened\n\n@Nico nice catch on the header.',
-    '**Polish summary**\n- Composer states reviewed\n- Mobile channel strip aligned\n- Remaining: empty-state copy\n\n@Aurora states are in the thread.',
-    '**Repo update** — `feat/sidebar-polish`\n- 3 commits, ready to merge\n- Before/after screenshots attached in thread',
+    '**Polish summary**\n- Composer states reviewed\n- Mobile channel strip aligned\n- Remaining: empty-state copy\n\n@Aurora states ready for review.',
+    '**Repo update** — `feat/sidebar-polish`\n- 3 commits, ready to merge\n- Before/after screenshots attached',
   ],
   'team-frontend': [
-    '**Perf report** — prefetch audit\n- Full-prefetch cost documented (no guide dupes)\n- Partial-prefetch numbers in the thread\n- Instant-nav tests passing on all channel routes\n\n@Aurora numbers are ready.',
+    '**Perf report** — prefetch audit\n- Full-prefetch cost documented (no guide dupes)\n- Partial-prefetch numbers logged\n- Instant-nav tests passing on all channel routes\n\n@Aurora numbers are ready.',
     '**Route-shell summary**\n- Static shells prerendering cleanly\n- No client waterfalls detected\n- Follow-up: document the trace method\n\n@Mira want to pair on the writeup?',
     '**Repo update** — `main`\n- Navigation traces cleaned up\n- 4 commits since last sync',
   ],
@@ -64,7 +63,7 @@ const GENERIC = [
 
 export async function postBotMessage() {
   const channels = await prisma.channel.findMany({ select: { id: true } })
-  if (channels.length === 0) return
+  if (channels.length === 0) return null
 
   const channel = channels[Math.floor(Math.random() * channels.length)]
   const lines = LINES_BY_CHANNEL[channel.id] ?? GENERIC
@@ -75,5 +74,5 @@ export async function postBotMessage() {
     data: { unread: { increment: 1 } },
     where: { id: channel.id },
   })
-  updateTag(messagesTag(channel.id))
+  return channel.id
 }

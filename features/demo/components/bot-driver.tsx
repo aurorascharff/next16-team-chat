@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { postBotMessage } from '@/features/demo/bot-actions'
+import { apiUrl } from '@/lib/utils'
 
 const INTERVAL_MS = 60_000
 
@@ -12,9 +12,11 @@ export function BotDriver() {
     const id = setInterval(() => {
       if (running.current || document.hidden) return
       running.current = true
-      void postBotMessage().finally(() => {
-        running.current = false
-      })
+      void fetch(apiUrl('/api/bot'), { method: 'POST' })
+        .catch(() => {})
+        .finally(() => {
+          running.current = false
+        })
     }, INTERVAL_MS)
 
     return () => {

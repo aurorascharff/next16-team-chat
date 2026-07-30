@@ -1,6 +1,7 @@
 import { AtSign, Hash, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import type { Route } from 'next'
+import { Fragment } from 'react'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
 import { UserAvatar } from '@/components/ui/user-avatar'
@@ -28,12 +29,13 @@ export async function ActivityList() {
       {items.map((item) => {
         const href =
           `/channel/${item.channelId}?thread=${item.messageId}` as Route
+        const showDivider = item.id === firstReadId
 
         return (
-          <div key={item.id}>
-            {item.id === firstReadId ? <ActivityDivider /> : null}
+          <Fragment key={item.id}>
+            {showDivider ? <ActivityDivider /> : null}
             <Link
-              className="group border-divider dark:border-divider-dark hover:bg-card dark:hover:bg-card-dark flex items-center gap-3 border-b px-5 py-3.5 transition-colors"
+              className="group hover:bg-card dark:hover:bg-card-dark border-divider dark:border-divider-dark flex items-center gap-3 border-b px-5 py-3.5 transition-colors"
               href={href}
               prefetch={true}
             >
@@ -71,7 +73,7 @@ export async function ActivityList() {
                 />
               ) : null}
             </Link>
-          </div>
+          </Fragment>
         )
       })}
     </div>
@@ -80,8 +82,7 @@ export async function ActivityList() {
 
 function ActivityDivider() {
   return (
-    <div className="flex items-center gap-2 px-5 py-1.5">
-      <span className="bg-divider dark:bg-divider-dark h-px flex-1" />
+    <div className="border-divider dark:border-divider-dark flex items-center gap-2 border-b px-5 py-1.5">
       <span className="text-muted dark:text-muted-dark text-xs font-medium">
         Earlier
       </span>
