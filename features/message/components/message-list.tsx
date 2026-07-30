@@ -37,7 +37,7 @@ export function MessageList({
   const hasUnreadMessages = unreadMessages.length > 0
   const showUnreadJump =
     newMessages.isAtEnd && hasUnreadMessages && !isUnreadMarkerVisible
-  const showNewMessagesJump = !newMessages.isAtEnd
+  const showNewMessagesJump = newMessages.count > 0 && !newMessages.isAtEnd
 
   useEffect(() => {
     const marker = unreadMarkerRef.current
@@ -107,6 +107,7 @@ export function MessageList({
         <UnreadMessagesButton
           count={unreadMessages.length}
           onScrollToUnread={() => {
+            newMessages.dismiss()
             unreadMarkerRef.current?.scrollIntoView({
               block: 'start',
               behavior: 'smooth',

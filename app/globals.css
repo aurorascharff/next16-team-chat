@@ -162,9 +162,3 @@ body:has([data-user-switching]) nav[aria-label='Channels'] {
 ::view-transition-new(mobile-nav) {
   animation: none;
 }
-
-::view-transition-group(channel-messages),
-::view-transition-old(channel-messages),
-::view-transition-new(channel-messages) {
-  animation: none;
-}

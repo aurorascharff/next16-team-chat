@@ -1,4 +1,4 @@
-import { Suspense, ViewTransition } from 'react'
+import { Suspense } from 'react'
 import { Crossfade } from '@/components/ui/crossfade'
 import {
   ChannelHeader,
@@ -53,11 +53,11 @@ export default function ChannelPage({
       <div className="flex min-h-0 lg:grid lg:grid-cols-[minmax(0,1fr)_auto]">
         <div className="grid min-h-0 min-w-0 flex-1 grid-rows-[minmax(0,1fr)_auto]">
           <Suspense fallback={<MessageThreadSkeleton />}>
-            <ViewTransition default="none" name="channel-messages">
+            <Crossfade>
               {params.then(({ channelId }) => (
                 <MessageThread channelId={channelId} />
               ))}
-            </ViewTransition>
+            </Crossfade>
           </Suspense>
           <Suspense fallback={<MessageComposerFallback />}>
             {params.then(({ channelId }) => (
