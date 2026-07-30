@@ -6,24 +6,65 @@ import { unreadChannelsQueryOptions } from '@/features/channel/channel-query-opt
 import { unreadActivityQueryOptions } from '@/features/workspace/workspace-query-options'
 
 const DEFAULT_FAVICON = '/logo.svg'
-const UNREAD_FAVICON = `data:image/svg+xml,${encodeURIComponent(`
-<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="huddle" x1="0" y1="0" x2="96" y2="96" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#2457FA"/>
-      <stop offset="1" stop-color="#1D47CF"/>
-    </linearGradient>
-  </defs>
-  <rect width="96" height="96" rx="22" fill="url(#huddle)"/>
-  <g transform="translate(24 24) scale(2)" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-    <circle cx="9" cy="7" r="4"/>
-    <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
-  </g>
-  <circle cx="74" cy="22" r="15" fill="#EF4444"/>
-  <circle cx="74" cy="22" r="15" fill="none" stroke="white" stroke-width="6"/>
-</svg>
-`)}`
+
+function createUnreadFavicon() {
+  const canvas = document.createElement('canvas')
+  canvas.height = 96
+  canvas.width = 96
+
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return DEFAULT_FAVICON
+
+  const gradient = ctx.createLinearGradient(0, 0, 96, 96)
+  gradient.addColorStop(0, '#2457FA')
+  gradient.addColorStop(1, '#1D47CF')
+
+  ctx.fillStyle = gradient
+  ctx.beginPath()
+  ctx.roundRect(0, 0, 96, 96, 22)
+  ctx.fill()
+
+  ctx.strokeStyle = '#FFFFFF'
+  ctx.lineWidth = 4
+  ctx.lineCap = 'round'
+  ctx.lineJoin = 'round'
+
+  ctx.beginPath()
+  ctx.arc(42, 38, 8, 0, Math.PI * 2)
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.moveTo(24, 70)
+  ctx.lineTo(24, 66)
+  ctx.quadraticCurveTo(24, 58, 32, 58)
+  ctx.lineTo(52, 58)
+  ctx.quadraticCurveTo(60, 58, 60, 66)
+  ctx.lineTo(60, 70)
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.moveTo(64, 70)
+  ctx.lineTo(64, 66)
+  ctx.quadraticCurveTo(64, 60, 58, 57)
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.arc(62, 39, 8, -Math.PI / 2, Math.PI / 2)
+  ctx.stroke()
+
+  ctx.fillStyle = '#EF4444'
+  ctx.beginPath()
+  ctx.arc(73, 23, 16, 0, Math.PI * 2)
+  ctx.fill()
+
+  ctx.strokeStyle = '#FFFFFF'
+  ctx.lineWidth = 6
+  ctx.beginPath()
+  ctx.arc(73, 23, 16, 0, Math.PI * 2)
+  ctx.stroke()
+
+  return canvas.toDataURL('image/png')
+}
 
 export function UnreadFavicon() {
   const { data: unreadChannels } = useQuery(unreadChannelsQueryOptions())
@@ -31,26 +72,24 @@ export function UnreadFavicon() {
 
   const hasUnreadChannels = Object.keys(unreadChannels ?? {}).length > 0
   const hasUnreadActivity = Boolean(unreadActivity && unreadActivity.count > 0)
-  const href =
-    hasUnreadChannels || hasUnreadActivity ? UNREAD_FAVICON : DEFAULT_FAVICON
+  const hasUnread = hasUnreadChannels || hasUnreadActivity
 
   useEffect(() => {
-    const links = Array.from(
-      document.querySelectorAll<HTMLLinkElement>('link[rel~="icon"]'),
+    let link = document.querySelector<HTMLLinkElement>(
+      'link[data-huddle-favicon]',
     )
 
-    if (links.length === 0) {
-      const link = document.createElement('link')
+    if (!link) {
+      link = document.createElement('link')
+      link.dataset.huddleFavicon = 'true'
       link.rel = 'icon'
       document.head.append(link)
-      links.push(link)
     }
 
-    for (const link of links) {
-      link.type = 'image/svg+xml'
-      link.href = href
-    }
-  }, [href])
+    const href = hasUnread ? createUnreadFavicon() : DEFAULT_FAVICON
+    link.type = href.startsWith('data:') ? 'image/png' : 'image/svg+xml'
+    link.href = href
+  }, [hasUnread])
 
   return null
 }

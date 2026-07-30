@@ -14,6 +14,7 @@ import {
 import { activityKeys } from '@/features/workspace/workspace-query-options'
 import type { ActivityItem } from '@/features/workspace/workspace-queries'
 import { apiUrl, cn } from '@/lib/utils'
+import { ACTIVITY_READ_DIRTY_KEY } from './activity-read-navigation-refresh'
 
 const ACTION: Record<
   ActivityItem['kind'],
@@ -34,6 +35,7 @@ export function ActivityRow({ item }: { item: ActivityItem }) {
     if (item.read) {
       return
     }
+    sessionStorage.setItem(ACTIVITY_READ_DIRTY_KEY, '1')
     queryClient.setQueryData<{ count: number }>(
       activityKeys.unread,
       (current) => {

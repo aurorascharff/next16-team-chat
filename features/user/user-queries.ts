@@ -10,6 +10,7 @@ export const SESSION_COOKIE = 'message-demo-user'
 export async function getUsers(): Promise<User[]> {
   'use cache'
   cacheTag('users')
+  cacheLife('hours')
   return prisma.user.findMany({
     orderBy: { name: 'asc' },
     select: { handle: true, id: true, name: true, role: true },
@@ -19,6 +20,7 @@ export async function getUsers(): Promise<User[]> {
 export async function searchUsers(query: string): Promise<User[]> {
   'use cache'
   cacheTag('users')
+  cacheLife('hours')
   return prisma.user.findMany({
     orderBy: { name: 'asc' },
     select: { handle: true, id: true, name: true, role: true },

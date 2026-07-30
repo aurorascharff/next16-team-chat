@@ -109,9 +109,10 @@ export function channelTag(channelId: string) {
   return `channel:${channelId}`
 }
 
-export async function getChannelLayout() {
+export async function getCurrentChannelLayout() {
   const [user, slow] = await Promise.all([getCurrentUser(), isSlowMode()])
-  return getChannelLayoutCached(user.id, slow)
+  const groups = await getChannelLayoutCached(user.id, slow)
+  return { groups, userId: user.id }
 }
 
 export async function listChannelsForUser(userId: string) {

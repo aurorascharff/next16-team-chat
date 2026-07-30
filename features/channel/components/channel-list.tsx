@@ -1,16 +1,27 @@
+import { HydrationBoundary } from '@tanstack/react-query'
 import { Skeleton } from '@/components/ui/skeleton'
-import { getChannelLayout } from '@/features/channel/channel-queries'
-import { getCurrentUser } from '@/features/user/user-queries'
+import {
+  getCurrentChannelLayout,
+  getUnreadChannels,
+} from '@/features/channel/channel-queries'
+import { channelKeys } from '@/features/channel/channel-query-options'
+import { dehydrate } from '@/lib/react-query-hydration'
 import { cn } from '@/lib/utils'
 import { ChannelNav } from './channel-nav'
 
 export async function ChannelList() {
-  const [user, groups] = await Promise.all([
-    getCurrentUser(),
-    getChannelLayout(),
+  const [{ groups, userId }, unread] = await Promise.all([
+    getCurrentChannelLayout(),
+    getUnreadChannels(),
   ])
 
-  return <ChannelNav groups={groups} key={user.id} />
+  return (
+    <HydrationBoundary
+      state={await dehydrate([{ data: unread, queryKey: channelKeys.unread }])}
+    >
+      <ChannelNav groups={groups} key={userId} />
+    </HydrationBoundary>
+  )
 }
 
 export function ChannelListSkeleton() {

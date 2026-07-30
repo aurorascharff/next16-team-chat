@@ -98,23 +98,24 @@ async function listActivityRaw(userId: string) {
   })
 }
 
-async function getActivityRawCached(userId: string) {
-  'use cache'
-  cacheTag('messages', 'channels', activityTag(userId))
-  cacheLife({ stale: 30 })
-  return listActivityRaw(userId)
-}
-
 async function listActivity(userId: string): Promise<ActivityItem[]> {
   'use cache'
-  cacheTag('messages', 'channels', activityTag(userId))
-  cacheLife({ stale: 30 })
+  cacheTag(
+    'messages',
+    'channels',
+    activityTag(userId),
+    `activity-reads:${userId}`,
+  )
+  cacheLife({ stale: 30, revalidate: 30 })
 
-  const raw = await getActivityRawCached(userId)
-  const reads = await prisma.activityRead.findMany({
-    select: { messageId: true },
-    where: { messageId: { in: raw.map((item) => item.id) }, userId },
-  })
+  const raw = await listActivityRaw(userId)
+  const reads =
+    raw.length > 0
+      ? await prisma.activityRead.findMany({
+          select: { messageId: true },
+          where: { messageId: { in: raw.map((item) => item.id) }, userId },
+        })
+      : []
   const readIds = new Set(reads.map((read) => read.messageId))
 
   return raw
