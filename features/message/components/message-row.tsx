@@ -1,9 +1,17 @@
 'use client'
 
-import { Check, Clock, Link2, MessageSquare, TriangleAlert } from 'lucide-react'
+import {
+  Check,
+  Clock,
+  Link2,
+  MessageSquare,
+  RotateCw,
+  TriangleAlert,
+} from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { UserAvatar } from '@/components/ui/user-avatar'
+import { useSendMessage } from '@/features/message/message-mutations'
 import type { Message } from '@/features/message/types/message'
 import { useValidMentions } from '@/features/user/use-valid-mentions'
 import { cn } from '@/lib/utils'
@@ -21,6 +29,10 @@ export function MessageRow({
   const { openThread } = useThread()
   const validMentions = useValidMentions()
   const searchParams = useSearchParams()
+  const sendMessage = useSendMessage({
+    channelId: message.channelId,
+    parentId: message.parentId ?? undefined,
+  })
   const articleRef = useRef<HTMLElement>(null)
   const [copied, setCopied] = useState(false)
   const sending = message.status === 'sending'
@@ -66,9 +78,19 @@ export function MessageRow({
               Sending
             </span>
           ) : failed ? (
-            <span className="text-danger inline-flex items-center gap-1 text-xs font-medium">
+            <span className="text-danger inline-flex items-center gap-1.5 text-xs font-medium">
               <TriangleAlert aria-hidden className="size-3" strokeWidth={2} />
               Not sent
+              <button
+                className="text-danger hover:text-danger/80 inline-flex items-center gap-1 font-semibold underline underline-offset-2"
+                onClick={() => {
+                  return sendMessage.mutate(message)
+                }}
+                type="button"
+              >
+                <RotateCw aria-hidden className="size-3" strokeWidth={2} />
+                Retry
+              </button>
             </span>
           ) : (
             <span className="text-muted dark:text-muted-dark text-xs">

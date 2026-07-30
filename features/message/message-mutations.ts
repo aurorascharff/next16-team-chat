@@ -87,14 +87,18 @@ export function useSendMessage({
     mutationFn: (optimistic: Message) => {
       return sendMessage({ body: optimistic.body, channelId, parentId })
     },
-    onError: () => {
-      toast.error('Could not send message. Try again.')
-    },
     onMutate: (optimistic: Message) => {
-      queryClient.setQueryData<Message[]>(key, (current = []) => [
-        ...current,
-        optimistic,
-      ])
+      queryClient.setQueryData<Message[]>(key, (current = []) => {
+        const exists = current.some((message) => message.id === optimistic.id)
+        if (exists) {
+          return current.map((message) =>
+            message.id === optimistic.id
+              ? { ...message, status: 'sending' }
+              : message,
+          )
+        }
+        return [...current, optimistic]
+      })
     },
     onSuccess: (result, optimistic) => {
       queryClient.setQueryData<Message[]>(key, (current = []) =>
@@ -118,10 +122,15 @@ export function useSendMessage({
             ),
         )
       }
-
-      if (!result.ok) {
-        toast.error(result.error)
-      }
+    },
+    onError: (_error, optimistic) => {
+      queryClient.setQueryData<Message[]>(key, (current = []) =>
+        current.map((message) =>
+          message.id === optimistic.id
+            ? { ...message, status: 'failed' }
+            : message,
+        ),
+      )
     },
   })
 }
