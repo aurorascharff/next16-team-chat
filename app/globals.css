@@ -49,6 +49,20 @@
   }
 }
 
+@keyframes message-highlight {
+  0%,
+  60% {
+    background-color: var(--color-accent-fade);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.message-highlight {
+  animation: message-highlight 2.4s ease-out;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
@@ -88,10 +102,38 @@
 
 .skeleton-animation {
   background: color-mix(in oklab, var(--color-muted) 18%, transparent);
+  background-image: linear-gradient(
+    100deg,
+    transparent 20%,
+    color-mix(in oklab, var(--color-muted) 14%, transparent) 40%,
+    color-mix(in oklab, var(--color-muted) 14%, transparent) 60%,
+    transparent 80%
+  );
+  background-repeat: no-repeat;
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
 }
 
 :where(.dark) .skeleton-animation {
   background: color-mix(in oklab, var(--color-muted-dark) 22%, transparent);
+  background-image: linear-gradient(
+    100deg,
+    transparent 20%,
+    color-mix(in oklab, var(--color-muted-dark) 18%, transparent) 40%,
+    color-mix(in oklab, var(--color-muted-dark) 18%, transparent) 60%,
+    transparent 80%
+  );
+  background-repeat: no-repeat;
+  background-size: 200% 100%;
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
 }
 
 .skeleton-animation:not([class*='rounded-']) {
@@ -104,6 +146,11 @@
   ::view-transition-new(*) {
     animation-duration: 0s !important;
     animation-delay: 0s !important;
+  }
+
+  .message-highlight,
+  .skeleton-animation {
+    animation: none !important;
   }
 }
 

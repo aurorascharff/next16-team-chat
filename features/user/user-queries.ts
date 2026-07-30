@@ -2,15 +2,28 @@ import 'server-only'
 
 import { cacheLife, cacheTag } from 'next/cache'
 import { cookies } from 'next/headers'
-import { getFallbackUser, SESSION_COOKIE, USERS } from './user-data'
+import type { User } from '@/features/user/types/user'
+import { prisma } from '@/lib/db'
 
-export async function getCurrentUser() {
+export const SESSION_COOKIE = 'message-demo-user'
+
+export async function getUsers(): Promise<User[]> {
+  'use cache'
+  cacheTag('users')
+  return prisma.user.findMany({
+    orderBy: { name: 'asc' },
+    select: { handle: true, id: true, name: true, role: true },
+  })
+}
+
+export async function getCurrentUser(): Promise<User> {
   'use cache: private'
   cacheTag('current-user')
   cacheLife({ stale: 60 })
   const cookieStore = await cookies()
   const userId = cookieStore.get(SESSION_COOKIE)?.value
-  return userId && USERS[userId] ? USERS[userId] : getFallbackUser()
+  const users = await getUsers()
+  return users.find((user) => user.id === userId) ?? users[0]
 }
 
 export async function verifyAuth() {

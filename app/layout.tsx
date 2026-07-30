@@ -17,7 +17,6 @@ import {
 import { WorkspaceRail } from '@/features/workspace/components/workspace-rail'
 import { ChannelSidebar } from '@/features/workspace/components/channel-sidebar'
 import { SearchButton } from '@/features/workspace/components/search-button'
-import { UserSwitchProvider } from '@/features/user/components/user-switch-context'
 import { CommandPalette } from '@/features/channel/components/command-palette'
 import { BotDriver } from '@/features/demo/components/bot-driver'
 import {
@@ -57,37 +56,35 @@ export default function RootLayout({
     >
       <body>
         <Providers>
-          <UserSwitchProvider>
-            <div className="flex min-h-dvh flex-col md:flex-row">
-              <Suspense fallback={<div className="w-18 max-md:hidden" />}>
-                <WorkspaceRail />
-              </Suspense>
-              <Suspense fallback={<div className="w-64 max-md:hidden" />}>
-                <ChannelSidebar>
-                  <Suspense fallback={<WorkspaceNavSkeleton />}>
-                    <WorkspaceNav />
-                  </Suspense>
-                  <SearchButton />
-                  <Suspense fallback={<ChannelListSkeleton />}>
-                    <ChannelList />
-                  </Suspense>
-                  <div className="mt-auto">
-                    <Suspense fallback={<CurrentUserCardSkeleton />}>
-                      <CurrentUserCard />
-                    </Suspense>
-                  </div>
-                </ChannelSidebar>
-              </Suspense>
-              <main className="min-w-0 flex-1">{children}</main>
-            </div>
-            <Suspense fallback={<MobileTabBarSkeleton />}>
-              <MobileTabBar />
+          <div className="flex min-h-dvh flex-col md:flex-row">
+            <Suspense fallback={<div className="w-18 max-md:hidden" />}>
+              <WorkspaceRail />
             </Suspense>
-            <Suspense fallback={null}>
-              <CommandPalette />
+            <Suspense fallback={<div className="w-64 max-md:hidden" />}>
+              <ChannelSidebar>
+                <Suspense fallback={<WorkspaceNavSkeleton />}>
+                  <WorkspaceNav />
+                </Suspense>
+                <SearchButton />
+                <Suspense fallback={<ChannelListSkeleton />}>
+                  <ChannelList />
+                </Suspense>
+                <div className="mt-auto">
+                  <Suspense fallback={<CurrentUserCardSkeleton />}>
+                    <CurrentUserCard />
+                  </Suspense>
+                </div>
+              </ChannelSidebar>
             </Suspense>
-            <BotDriver />
-          </UserSwitchProvider>
+            <main className="min-w-0 flex-1">{children}</main>
+          </div>
+          <Suspense fallback={<MobileTabBarSkeleton />}>
+            <MobileTabBar />
+          </Suspense>
+          <Suspense fallback={null}>
+            <CommandPalette />
+          </Suspense>
+          <BotDriver />
         </Providers>
       </body>
     </html>

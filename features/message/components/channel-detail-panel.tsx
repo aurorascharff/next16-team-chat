@@ -2,7 +2,7 @@
 
 import { type ReactNode } from 'react'
 import { ResizablePanel } from '@/components/ui/resizable-panel'
-import { useThread } from './thread-context'
+import { useThread } from './use-thread'
 import { ThreadPanel } from './thread-panel'
 
 export function ChannelDetailPanel({ details }: { details: ReactNode }) {

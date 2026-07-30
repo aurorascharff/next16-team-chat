@@ -1,15 +1,8 @@
 import type { ReactNode } from 'react'
-import { USERS } from '@/features/user/user-data'
 
-const VALID_MENTIONS = new Set(
-  Object.values(USERS).flatMap((user) => [
-    user.name.toLowerCase(),
-    user.handle.toLowerCase(),
-  ]),
-)
-
-function isValidMention(token: string) {
-  return VALID_MENTIONS.has(token.slice(1).toLowerCase())
+function isValidMention(token: string, validMentions?: Set<string>) {
+  if (!validMentions) return true
+  return validMentions.has(token.slice(1).toLowerCase())
 }
 
 export function formatTime(value: string) {
@@ -31,7 +24,10 @@ export function stripMarkdown(body: string): string {
     .trim()
 }
 
-export function formatInline(body: string): ReactNode {
+export function formatInline(
+  body: string,
+  validMentions?: Set<string>,
+): ReactNode {
   const parts = body.split(
     /(`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*|\[[^\]]+\]\((?:https?:\/\/|\/)[^)]+\)|@[A-Za-z][\w-]*)/g,
   )
@@ -65,7 +61,7 @@ export function formatInline(body: string): ReactNode {
     }
 
     if (/^@[A-Za-z][\w-]*$/.test(part)) {
-      if (!isValidMention(part)) {
+      if (!isValidMention(part, validMentions)) {
         return part
       }
       return (
@@ -97,19 +93,26 @@ export function formatInline(body: string): ReactNode {
   })
 }
 
-function formatLines(text: string, keyPrefix: string): ReactNode {
+function formatLines(
+  text: string,
+  keyPrefix: string,
+  validMentions?: Set<string>,
+): ReactNode {
   const lines = text.split('\n')
   return lines.map((line, index) => {
     return (
       <span key={`${keyPrefix}-${index}`}>
-        {formatInline(line)}
+        {formatInline(line, validMentions)}
         {index < lines.length - 1 ? <br /> : null}
       </span>
     )
   })
 }
 
-export function formatMarkdown(body: string): ReactNode {
+export function formatMarkdown(
+  body: string,
+  validMentions?: Set<string>,
+): ReactNode {
   const lines = body.trim().split('\n')
   const nodes: ReactNode[] = []
   let paragraph: string[] = []
@@ -120,7 +123,7 @@ export function formatMarkdown(body: string): ReactNode {
     const key = `p-${nodes.length}`
     nodes.push(
       <p className="whitespace-pre-wrap" key={key}>
-        {formatLines(paragraph.join('\n'), key)}
+        {formatLines(paragraph.join('\n'), key, validMentions)}
       </p>,
     )
     paragraph = []
@@ -132,7 +135,7 @@ export function formatMarkdown(body: string): ReactNode {
     nodes.push(
       <ul className="list-disc space-y-0.5 pl-5" key={`ul-${nodes.length}`}>
         {items.map((item, index) => {
-          return <li key={index}>{formatInline(item)}</li>
+          return <li key={index}>{formatInline(item, validMentions)}</li>
         })}
       </ul>,
     )

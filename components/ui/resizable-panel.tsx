@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 const MIN_WIDTH = 280
@@ -13,7 +13,7 @@ export function ResizablePanel({ children }: { children: ReactNode }) {
   const [dragging, setDragging] = useState(false)
   const panelRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const stored = Number(localStorage.getItem(STORAGE_KEY))
     if (stored >= MIN_WIDTH && stored <= MAX_WIDTH) {
       setWidth(stored)

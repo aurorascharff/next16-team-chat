@@ -10,7 +10,7 @@ import {
 } from '@/features/message/message-query-options'
 import { MessageComposer } from './message-composer'
 import { MessageRow } from './message-row'
-import { useThread } from './thread-context'
+import { useThread } from './use-thread'
 
 export function ThreadPanel({
   channelId,

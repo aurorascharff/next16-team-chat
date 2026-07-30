@@ -5,6 +5,7 @@ import {
   KeyboardEvent,
   SyntheticEvent,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
   useTransition,
@@ -13,13 +14,10 @@ import { useQueryClient } from '@tanstack/react-query'
 import { sendMessage } from '@/features/message/message-actions'
 import { messageKeys } from '@/features/message/message-query-options'
 import type { Message } from '@/features/message/types/message'
-import { USERS } from '@/features/user/user-data'
-import { UserAvatar } from '@/components/ui/user-avatar'
+import { MentionCombobox } from './mention-combobox'
 import { MessagePreview } from './message-preview'
 
 const MAX_LENGTH = 280
-
-const MENTIONABLE = Object.values(USERS)
 
 export function MessageComposer({
   channelId,
@@ -36,52 +34,26 @@ export function MessageComposer({
   const queryClient = useQueryClient()
   const [error, setError] = useState('')
   const [mode, setMode] = useState<'write' | 'preview'>('write')
-  const [preview, setPreview] = useState('')
+  const [value, setValue] = useState('')
   const [writeHeight, setWriteHeight] = useState(0)
   const [isPending, startTransition] = useTransition()
+  const [caretOffset, setCaretOffset] = useState<number | null>(null)
   const fieldId = useId()
-  const [mention, setMention] = useState<{
-    query: string
-    start: number
-  } | null>(null)
-  const [mentionIndex, setMentionIndex] = useState(0)
 
-  const mentionMatches = mention
-    ? MENTIONABLE.filter((user) => {
-        const q = mention.query.toLowerCase()
-        return (
-          user.handle.toLowerCase().includes(q) ||
-          user.name.toLowerCase().includes(q)
-        )
-      }).slice(0, 6)
-    : []
+  useLayoutEffect(() => {
+    if (caretOffset != null) {
+      textareaRef.current?.setSelectionRange(caretOffset, caretOffset)
+    }
+  }, [caretOffset])
 
-  function syncMention() {
-    const el = textareaRef.current
-    if (!el) return setMention(null)
-    const caret = el.selectionStart
-    const before = el.value.slice(0, caret)
-    const match = /(?:^|\s)@([A-Za-z][\w-]*)?$/.exec(before)
-    if (!match) return setMention(null)
-    setMention({
-      query: match[1] ?? '',
-      start: caret - (match[1]?.length ?? 0),
-    })
-    setMentionIndex(0)
-  }
-
-  function insertMention(handle: string) {
-    const el = textareaRef.current
-    if (!el || !mention) return
-    el.focus()
-    el.setSelectionRange(mention.start, el.selectionStart)
-    document.execCommand('insertText', false, `${handle} `)
-    setMention(null)
+  function onValueChange(next: string, caret?: number) {
+    setValue(next)
+    setError('')
+    if (caret != null) setCaretOffset(caret)
   }
 
   function showPreview() {
     setWriteHeight(textareaRef.current?.offsetHeight ?? 0)
-    setPreview(textareaRef.current?.value.trim() ?? '')
     setMode('preview')
   }
 
@@ -89,39 +61,15 @@ export function MessageComposer({
     const el = textareaRef.current
     if (!el) return
     const { selectionEnd: end, selectionStart: start } = el
-    const selected = el.value.slice(start, end)
-    el.focus()
-    document.execCommand('insertText', false, `${marker}${selected}${marker}`)
+    const selected = value.slice(start, end)
+    const next = `${value.slice(0, start)}${marker}${selected}${marker}${value.slice(end)}`
+    setValue(next)
     const innerStart = start + marker.length
-    el.setSelectionRange(innerStart, innerStart + selected.length)
+    setCaretOffset(innerStart + selected.length)
+    el.focus()
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
-    if (mention && mentionMatches.length > 0) {
-      if (event.key === 'ArrowDown') {
-        event.preventDefault()
-        setMentionIndex((i) => (i + 1) % mentionMatches.length)
-        return
-      }
-      if (event.key === 'ArrowUp') {
-        event.preventDefault()
-        setMentionIndex(
-          (i) => (i - 1 + mentionMatches.length) % mentionMatches.length,
-        )
-        return
-      }
-      if (event.key === 'Enter' || event.key === 'Tab') {
-        event.preventDefault()
-        insertMention(`@${mentionMatches[mentionIndex].handle}`)
-        return
-      }
-      if (event.key === 'Escape') {
-        event.preventDefault()
-        setMention(null)
-        return
-      }
-    }
-
     if (!(event.metaKey || event.ctrlKey)) {
       return
     }
@@ -148,8 +96,7 @@ export function MessageComposer({
 
   function onSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
-    const form = new FormData(event.currentTarget)
-    const body = String(form.get('body') ?? '').trim()
+    const body = value.trim()
 
     if (!body) {
       setError('Write a message first.')
@@ -172,9 +119,8 @@ export function MessageComposer({
       userName: 'You',
     }
     setError('')
-    formRef.current?.reset()
+    setValue('')
     setMode('write')
-    setPreview('')
 
     const key = parentId
       ? messageKeys.replies(parentId)
@@ -214,6 +160,9 @@ export function MessageComposer({
     })
   }
 
+  const toolbarButton =
+    'text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex size-7 items-center justify-center rounded-md transition-colors hover:text-black dark:hover:text-white'
+
   return (
     <form
       className="border-divider dark:border-divider-dark bg-surface/90 dark:bg-surface-dark/90 sticky bottom-0 flex flex-col gap-2 border-t px-5 py-3 backdrop-blur-lg"
@@ -227,13 +176,9 @@ export function MessageComposer({
         >
           <button
             aria-label="Bold"
-            className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex size-7 items-center justify-center rounded-md transition-colors hover:text-black dark:hover:text-white"
-            onClick={() => {
-              return wrapSelection('**')
-            }}
-            onMouseDown={(event) => {
-              return event.preventDefault()
-            }}
+            className={toolbarButton}
+            onClick={() => wrapSelection('**')}
+            onMouseDown={(event) => event.preventDefault()}
             title="Bold (⌘B)"
             type="button"
           >
@@ -241,13 +186,9 @@ export function MessageComposer({
           </button>
           <button
             aria-label="Italic"
-            className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex size-7 items-center justify-center rounded-md transition-colors hover:text-black dark:hover:text-white"
-            onClick={() => {
-              return wrapSelection('*')
-            }}
-            onMouseDown={(event) => {
-              return event.preventDefault()
-            }}
+            className={toolbarButton}
+            onClick={() => wrapSelection('*')}
+            onMouseDown={(event) => event.preventDefault()}
             title="Italic (⌘I)"
             type="button"
           >
@@ -255,13 +196,9 @@ export function MessageComposer({
           </button>
           <button
             aria-label="Inline code"
-            className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex size-7 items-center justify-center rounded-md transition-colors hover:text-black dark:hover:text-white"
-            onClick={() => {
-              return wrapSelection('`')
-            }}
-            onMouseDown={(event) => {
-              return event.preventDefault()
-            }}
+            className={toolbarButton}
+            onClick={() => wrapSelection('`')}
+            onMouseDown={(event) => event.preventDefault()}
             title="Code (⌘⇧C)"
             type="button"
           >
@@ -280,9 +217,7 @@ export function MessageComposer({
             ) : (
               <button
                 className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex h-7 items-center gap-1.5 rounded-md px-2 text-xs font-medium transition-colors hover:text-black dark:hover:text-white"
-                onClick={() => {
-                  return setMode('write')
-                }}
+                onClick={() => setMode('write')}
                 type="button"
               >
                 <PenLine aria-hidden className="size-3.5" strokeWidth={2} />
@@ -294,71 +229,26 @@ export function MessageComposer({
         <label className="sr-only" htmlFor={fieldId}>
           Message
         </label>
-        <div className="relative">
-          <textarea
-            className={
-              mode === 'preview'
-                ? 'hidden'
-                : 'min-h-20 w-full resize-none bg-transparent px-3.5 py-3 text-sm leading-relaxed outline-none'
-            }
-            id={fieldId}
-            maxLength={MAX_LENGTH}
-            name="body"
-            onBlur={() => {
-              return setTimeout(() => setMention(null), 120)
-            }}
-            onClick={syncMention}
-            onInput={syncMention}
-            onKeyDown={onKeyDown}
-            onKeyUp={syncMention}
-            placeholder={placeholder ?? `Message #${channelId}`}
-            ref={textareaRef}
-            rows={3}
-          />
-          {mention && mentionMatches.length > 0 && mode === 'write' ? (
-            <ul className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark absolute bottom-full left-3 z-20 mb-1 w-56 overflow-hidden rounded-lg border shadow-lg">
-              {mentionMatches.map((user, index) => {
-                return (
-                  <li key={user.id}>
-                    <button
-                      className={
-                        'flex w-full items-center gap-2.5 px-2.5 py-1.5 text-left transition-colors ' +
-                        (index === mentionIndex
-                          ? 'bg-accent-fade'
-                          : 'hover:bg-card dark:hover:bg-card-dark')
-                      }
-                      onMouseDown={(event) => {
-                        event.preventDefault()
-                        insertMention(`@${user.handle}`)
-                      }}
-                      type="button"
-                    >
-                      <UserAvatar
-                        bot={user.id === 'bot'}
-                        name={user.name}
-                        size="sm"
-                      />
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-[0.8125rem] font-medium">
-                          {user.name}
-                        </span>
-                        <span className="text-muted dark:text-muted-dark block truncate text-xs">
-                          @{user.handle}
-                        </span>
-                      </span>
-                    </button>
-                  </li>
-                )
-              })}
-            </ul>
-          ) : null}
-        </div>
+        <MentionCombobox
+          className={
+            mode === 'preview'
+              ? 'hidden'
+              : 'min-h-20 w-full resize-none bg-transparent px-3.5 py-3 text-sm leading-relaxed outline-none'
+          }
+          id={fieldId}
+          maxLength={MAX_LENGTH}
+          onKeyDown={onKeyDown}
+          onValueChange={onValueChange}
+          placeholder={placeholder ?? `Message #${channelId}`}
+          textareaRef={textareaRef}
+          value={value}
+        />
         {mode === 'preview' ? (
           <div
             className="px-3.5 py-3"
             style={{ minHeight: writeHeight || undefined }}
           >
-            <MessagePreview body={preview} />
+            <MessagePreview body={value.trim()} />
           </div>
         ) : null}
         <div className="border-divider dark:border-divider-dark flex items-center justify-end border-t p-1.5">

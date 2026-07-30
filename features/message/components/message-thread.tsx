@@ -11,7 +11,8 @@ import {
   messagesTag,
 } from '@/features/message/message-queries'
 import { messageKeys } from '@/features/message/message-query-options'
-import { getCurrentUser } from '@/features/user/user-queries'
+import { getCurrentUser, getUsers } from '@/features/user/user-queries'
+import { userKeys } from '@/features/user/user-query-options'
 import { cn } from '@/lib/utils'
 import { MessageList } from './message-list'
 
@@ -25,9 +26,13 @@ async function getMessagesState(
   cacheLife({ stale: 30 })
 
   const queryClient = new QueryClient()
-  const messages = await getMessagesCached(channelId, userId, slow)
+  const [messages, users] = await Promise.all([
+    getMessagesCached(channelId, userId, slow),
+    getUsers(),
+  ])
 
   queryClient.setQueryData(messageKeys.channel(channelId), messages)
+  queryClient.setQueryData(userKeys.all, users)
 
   return dehydrate(queryClient)
 }

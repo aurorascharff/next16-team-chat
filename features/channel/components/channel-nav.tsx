@@ -76,7 +76,7 @@ export function ChannelNav({ groups: initialGroups }: Props) {
           <div
             className={cn(
               'flex flex-col gap-0.5 rounded-lg transition-colors',
-              overGroup === group.name && 'bg-accent-fade',
+              overGroup === group.name && 'bg-accent/5 dark:bg-accent/10',
             )}
             key={group.name}
             onDragOver={(event) => {
@@ -108,7 +108,7 @@ export function ChannelNav({ groups: initialGroups }: Props) {
             {editingName === group.name ? (
               <input
                 autoFocus
-                className="bg-surface dark:bg-elevated-dark ring-divider dark:ring-divider-dark focus:ring-muted min-h-6 w-full rounded px-2.5 py-1 text-xs font-semibold tracking-wide uppercase ring-1 outline-none"
+                className="text-muted dark:text-muted-dark focus:ring-accent min-h-6 w-full rounded bg-transparent px-2.5 py-1 text-xs font-semibold tracking-wide uppercase outline-none ring-inset focus:ring-1"
                 defaultValue={group.name}
                 onBlur={(event) => {
                   return renameGroup(group.name, event.target.value)

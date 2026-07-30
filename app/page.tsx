@@ -1,11 +1,18 @@
 import { redirect } from 'next/navigation'
 import type { Route } from 'next'
+import { Suspense, type ReactNode } from 'react'
 import { listChannelsForUser } from '@/features/channel/channel-queries'
 import { getCurrentUser } from '@/features/user/user-queries'
 
-export const instant = false
+export default function HomePage() {
+  return (
+    <Suspense fallback={null}>
+      <RedirectToFirstChannel />
+    </Suspense>
+  )
+}
 
-export default async function HomePage() {
+async function RedirectToFirstChannel(): Promise<ReactNode> {
   const user = await getCurrentUser()
   const channels = await listChannelsForUser(user.id)
   const first = channels[0]

@@ -1,12 +1,15 @@
 'use client'
 
-import { Clock, MessageSquare, TriangleAlert } from 'lucide-react'
+import { Clock, Link2, MessageSquare, TriangleAlert } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
 import { UserAvatar } from '@/components/ui/user-avatar'
 import type { Message } from '@/features/message/types/message'
+import { useValidMentions } from '@/features/user/use-valid-mentions'
 import { cn } from '@/lib/utils'
 import { formatMarkdown, formatTime } from './format'
 import { AddReaction, MessageReactions } from './message-reactions'
-import { useThread } from './thread-context'
+import { useThread } from './use-thread'
 
 export function MessageRow({
   message,
@@ -16,9 +19,31 @@ export function MessageRow({
   showThreadAffordance?: boolean
 }) {
   const { openThread } = useThread()
+  const validMentions = useValidMentions()
+  const searchParams = useSearchParams()
+  const articleRef = useRef<HTMLElement>(null)
+  const [copied, setCopied] = useState(false)
   const sending = message.status === 'sending'
   const failed = message.status === 'failed'
   const replyCount = message.replyCount ?? 0
+  const linked = searchParams.get('message') === message.id
+
+  useEffect(() => {
+    if (!linked) return
+    const el = articleRef.current
+    if (!el) return
+    el.scrollIntoView({ block: 'center' })
+    el.classList.remove('message-highlight')
+    void el.offsetWidth
+    el.classList.add('message-highlight')
+  }, [linked])
+
+  async function copyLink() {
+    const url = `${window.location.origin}/channel/${message.channelId}?message=${message.id}`
+    await navigator.clipboard.writeText(url)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }
 
   return (
     <article
@@ -26,6 +51,8 @@ export function MessageRow({
         'group relative flex gap-3 px-5 py-1.5 transition-colors',
         sending ? 'opacity-70' : 'hover:bg-card dark:hover:bg-card-dark',
       )}
+      id={`message-${message.id}`}
+      ref={articleRef}
     >
       <UserAvatar bot={message.userId === 'bot'} name={message.userName} />
       <div className="min-w-0 flex-1">
@@ -50,7 +77,7 @@ export function MessageRow({
           )}
         </div>
         <div className="max-w-3xl space-y-2 text-[0.9375rem] leading-relaxed break-words text-zinc-800 dark:text-zinc-200">
-          {formatMarkdown(message.body)}
+          {formatMarkdown(message.body, validMentions)}
         </div>
         {!sending &&
         !failed &&
@@ -80,6 +107,15 @@ export function MessageRow({
       {!sending && !failed ? (
         <div className="absolute top-1 right-4 flex items-center gap-1 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
           <AddReaction message={message} />
+          <button
+            aria-label="Copy link to message"
+            className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark text-muted dark:text-muted-dark hover:border-accent hover:text-accent flex size-7 items-center justify-center rounded-md border shadow-sm transition-colors"
+            onClick={copyLink}
+            title={copied ? 'Copied!' : 'Copy link'}
+            type="button"
+          >
+            <Link2 aria-hidden className="size-3.5" strokeWidth={2} />
+          </button>
           {showThreadAffordance && replyCount === 0 ? (
             <button
               aria-label="Reply in thread"

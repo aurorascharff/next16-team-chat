@@ -2,8 +2,8 @@ import 'server-only'
 
 import { cacheLife, cacheTag } from 'next/cache'
 import { isSlowMode } from '@/features/demo/slow-mode'
-import { USERS } from '@/features/user/user-data'
-import { getCurrentUser } from '@/features/user/user-queries'
+import type { User } from '@/features/user/types/user'
+import { getCurrentUser, getUsers } from '@/features/user/user-queries'
 import { prisma } from '@/lib/db'
 import { delay } from '@/lib/utils'
 
@@ -71,12 +71,12 @@ async function listReplies(parentId: string, currentUserId?: string) {
   return replies.map((reply) => toMessage(reply, currentUserId))
 }
 
-function parseMentions(body: string): string[] {
+function parseMentions(body: string, users: User[]): string[] {
   const tokens = body.match(/@([A-Za-z][\w-]*)/g)
   if (!tokens) return []
 
   const byLabel = new Map<string, string>()
-  for (const person of Object.values(USERS)) {
+  for (const person of users) {
     byLabel.set(person.name.toLowerCase(), person.id)
     byLabel.set(person.handle.toLowerCase(), person.id)
   }
@@ -100,7 +100,8 @@ export async function addMessage({
   parentId?: string
   userId: string
 }) {
-  const user = USERS[userId] ?? USERS.ada
+  const users = await getUsers()
+  const user = users.find((candidate) => candidate.id === userId) ?? users[0]
   const message = await prisma.message.create({
     include: messageInclude,
     data: {
@@ -113,7 +114,7 @@ export async function addMessage({
     },
   })
 
-  const mentionedIds = parseMentions(body).filter((id) => id !== user.id)
+  const mentionedIds = parseMentions(body, users).filter((id) => id !== user.id)
   if (mentionedIds.length > 0) {
     await prisma.mention.createMany({
       data: mentionedIds.map((mentionedId) => {
@@ -153,7 +154,8 @@ export async function replyAsBotIfMentioned({
   parentId?: string
 }): Promise<string | null> {
   if (authorId === 'bot') return null
-  if (!parseMentions(body).includes('bot')) return null
+  const users = await getUsers()
+  if (!parseMentions(body, users).includes('bot')) return null
 
   const threadParent = parentId ?? messageId
   const reply = BOT_REPLIES[Math.floor(Math.random() * BOT_REPLIES.length)]

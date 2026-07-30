@@ -18,8 +18,6 @@ import {
   MessageThread,
   MessageThreadSkeleton,
 } from '@/features/message/components/message-thread'
-import { ThreadProvider } from '@/features/message/components/thread-context'
-import { ThreadDeepLink } from '@/features/message/components/thread-deep-link'
 import { getChannel } from '@/features/channel/channel-queries'
 import type { Metadata } from 'next'
 
@@ -41,40 +39,35 @@ export default function ChannelPage({
   params,
 }: PageProps<'/channel/[channelId]'>) {
   return (
-    <ThreadProvider>
-      <div className="grid h-dvh grid-rows-[auto_minmax(0,1fr)] max-md:h-[calc(100dvh-3.5rem)]">
-        <Suspense fallback={null}>
+    <div className="grid h-dvh grid-rows-[auto_minmax(0,1fr)] max-md:h-[calc(100dvh-3.5rem)]">
+      <Suspense fallback={null}>
+        {params.then(({ channelId }) => {
+          return <MarkChannelRead channelId={channelId} />
+        })}
+      </Suspense>
+      <Suspense fallback={<ChannelHeaderSkeleton />}>
+        <Crossfade>
           {params.then(({ channelId }) => {
-            return (
-              <>
-                <MarkChannelRead channelId={channelId} />
-                <ThreadDeepLink channelId={channelId} />
-              </>
-            )
+            return <ChannelHeader channelId={channelId} />
           })}
-        </Suspense>
-        <Suspense fallback={<ChannelHeaderSkeleton />}>
-          <Crossfade>
-            {params.then(({ channelId }) => {
-              return <ChannelHeader channelId={channelId} />
-            })}
-          </Crossfade>
-        </Suspense>
-        <div className="flex min-h-0 lg:grid lg:grid-cols-[minmax(0,1fr)_auto]">
-          <div className="grid min-h-0 min-w-0 flex-1 grid-rows-[minmax(0,1fr)_auto]">
-            <Suspense fallback={<MessageThreadSkeleton />}>
-              <Crossfade>
-                {params.then(({ channelId }) => {
-                  return <MessageThread channelId={channelId} />
-                })}
-              </Crossfade>
-            </Suspense>
-            <Suspense fallback={<MessageComposerFallback />}>
+        </Crossfade>
+      </Suspense>
+      <div className="flex min-h-0 lg:grid lg:grid-cols-[minmax(0,1fr)_auto]">
+        <div className="grid min-h-0 min-w-0 flex-1 grid-rows-[minmax(0,1fr)_auto]">
+          <Suspense fallback={<MessageThreadSkeleton />}>
+            <Crossfade>
               {params.then(({ channelId }) => {
-                return <MessageComposer channelId={channelId} />
+                return <MessageThread channelId={channelId} />
               })}
-            </Suspense>
-          </div>
+            </Crossfade>
+          </Suspense>
+          <Suspense fallback={<MessageComposerFallback />}>
+            {params.then(({ channelId }) => {
+              return <MessageComposer channelId={channelId} />
+            })}
+          </Suspense>
+        </div>
+        <Suspense fallback={null}>
           <ChannelDetailPanel
             details={
               <Suspense fallback={<ChannelDetailsSkeleton />}>
@@ -86,8 +79,8 @@ export default function ChannelPage({
               </Suspense>
             }
           />
-        </div>
+        </Suspense>
       </div>
-    </ThreadProvider>
+    </div>
   )
 }
