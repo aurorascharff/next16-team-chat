@@ -43,22 +43,30 @@ export function MessageThreadSkeleton() {
   ]
 
   return (
-    <div className="flex flex-1 flex-col justify-end overflow-hidden">
-      <div className="flex flex-col gap-1 py-3">
-        {rows.map((row, i) => {
-          return (
-            <div className="flex gap-3 px-5 py-2.5" key={i}>
-              <Skeleton className="size-9 shrink-0 rounded-lg" />
-              <div className="flex flex-1 flex-col gap-2 pt-1">
-                <Skeleton className={cn('h-3 rounded-full', row.name)} />
-                <Skeleton
-                  className={cn('h-3.5 max-w-lg rounded-full', row.body)}
-                />
-              </div>
-            </div>
-          )
-        })}
+    <section
+      aria-hidden
+      aria-label="Messages"
+      className="relative flex min-h-0 flex-1"
+    >
+      <div className="flex-1 overflow-y-auto py-3">
+        <div className="flex min-h-full flex-col justify-end">
+          <div className="flex flex-col gap-1">
+            {rows.map((row, i) => {
+              return (
+                <div className="flex gap-3 px-5 py-2.5" key={i}>
+                  <Skeleton className="size-9 shrink-0 rounded-lg" />
+                  <div className="flex flex-1 flex-col gap-2 pt-1">
+                    <Skeleton className={cn('h-3 rounded-full', row.name)} />
+                    <Skeleton
+                      className={cn('h-3.5 max-w-lg rounded-full', row.body)}
+                    />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   )
 }
