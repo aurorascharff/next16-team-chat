@@ -86,9 +86,13 @@ async function listActivity(userId: string): Promise<ActivityItem[]> {
     })
   }
 
-  return [...byMessage.values()].sort((a, b) => {
-    return b.createdAt.localeCompare(a.createdAt)
-  })
+  return [...byMessage.values()]
+    .sort((a, b) => {
+      return b.createdAt.localeCompare(a.createdAt)
+    })
+    .sort((a, b) => {
+      return Number(a.read) - Number(b.read)
+    })
 }
 
 export async function getActivity() {
