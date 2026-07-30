@@ -12,6 +12,8 @@ import {
 } from '@/features/workspace/utils/primary-nav'
 import { cn } from '@/lib/utils'
 
+type PrimaryNavItem = (typeof PRIMARY_NAV)[number]
+
 export function WorkspaceRail() {
   return (
     <nav
@@ -19,21 +21,21 @@ export function WorkspaceRail() {
       className="border-divider dark:border-divider-dark bg-elevated dark:bg-elevated-dark flex h-full w-18 shrink-0 flex-col items-center gap-1 border-r pt-3"
     >
       {PRIMARY_NAV.map((item) => {
-        return <PrimaryNavLink item={item} key={item.href} />
+        return <NavLink item={item} key={item.href} />
       })}
     </nav>
   )
 }
 
-function PrimaryNavLink({ item }: { item: (typeof PRIMARY_NAV)[number] }) {
+function NavLink({ item }: { item: PrimaryNavItem }) {
   return (
-    <Suspense fallback={<PrimaryNavLinkShell item={item} />}>
-      <PrimaryNavLinkInner item={item} />
+    <Suspense fallback={<NavLinkShell item={item} />}>
+      <NavLinkInner item={item} />
     </Suspense>
   )
 }
 
-function PrimaryNavLinkInner({ item }: { item: (typeof PRIMARY_NAV)[number] }) {
+function NavLinkInner({ item }: { item: PrimaryNavItem }) {
   const pathname = usePathname()
   const [mounted, setMounted] = useState(false)
   const { data: activity } = useQuery({
@@ -49,22 +51,18 @@ function PrimaryNavLinkInner({ item }: { item: (typeof PRIMARY_NAV)[number] }) {
   }, [])
 
   return (
-    <PrimaryNavLinkShell
-      hasActivity={hasActivity}
-      isActive={isActive}
-      item={item}
-    />
+    <NavLinkShell hasActivity={hasActivity} isActive={isActive} item={item} />
   )
 }
 
-function PrimaryNavLinkShell({
+function NavLinkShell({
   hasActivity = false,
   isActive = false,
   item,
 }: {
   hasActivity?: boolean
   isActive?: boolean
-  item: (typeof PRIMARY_NAV)[number]
+  item: PrimaryNavItem
 }) {
   const { href, icon: Icon, label } = item
   const showDot = item.showActivityDot && hasActivity && !isActive
