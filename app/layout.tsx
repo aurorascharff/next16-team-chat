@@ -98,7 +98,9 @@ export default function RootLayout({
           <Suspense fallback={null}>
             <CommandPalette />
           </Suspense>
-          <ActivityReadNavigationRefresh />
+          <Suspense fallback={null}>
+            <ActivityReadNavigationRefresh />
+          </Suspense>
           <BotDriver />
           <Toaster />
         </Providers>
