@@ -57,7 +57,7 @@ export default function RootLayout({
     >
       <body>
         <Providers>
-          <div className="flex min-h-dvh flex-col md:flex-row">
+          <div className="flex min-h-[calc(100dvh-3.5rem)] flex-col md:min-h-dvh md:flex-row">
             <Suspense
               fallback={
                 <div className="border-divider dark:border-divider-dark bg-elevated dark:bg-elevated-dark hidden w-18 shrink-0 border-r md:block" />

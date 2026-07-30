@@ -88,15 +88,22 @@ function ThreadBody({
 function ThreadRepliesSkeleton() {
   return (
     <div className="flex flex-col gap-1">
-      <div className="mx-5 my-2 border-t border-transparent pt-3">
+      <div className="flex gap-3 px-5 py-1.5">
+        <Skeleton className="size-9 shrink-0 rounded-lg" />
+        <div className="flex flex-1 flex-col gap-2 pt-1">
+          <Skeleton className="h-3.5 w-24 rounded-full" />
+          <Skeleton className="h-3.5 w-3/4 rounded-full" />
+        </div>
+      </div>
+      <div className="mx-5 my-2 pt-3">
         <Skeleton className="h-3 w-16 rounded-full" />
       </div>
       {['w-2/3', 'w-1/2'].map((width, i) => {
         return (
-          <div className="flex gap-3 px-5 py-2.5" key={i}>
+          <div className="flex gap-3 px-5 py-1.5" key={i}>
             <Skeleton className="size-9 shrink-0 rounded-lg" />
             <div className="flex flex-1 flex-col gap-2 pt-1">
-              <Skeleton className="h-3 w-20 rounded-full" />
+              <Skeleton className="h-3.5 w-20 rounded-full" />
               <Skeleton className={`h-3.5 rounded-full ${width}`} />
             </div>
           </div>

@@ -96,16 +96,16 @@ function ActivityDivider() {
 export function ActivityListSkeleton() {
   return (
     <div className="flex flex-col">
-      {['w-40', 'w-56', 'w-32', 'w-48'].map((width, index) => {
+      {['w-full', 'w-4/5', 'w-full', 'w-2/3'].map((width, index) => {
         return (
           <div
             className="border-divider dark:border-divider-dark flex items-center gap-3 border-b px-5 py-3.5"
             key={index}
           >
             <Skeleton className="size-9 shrink-0 rounded-lg" />
-            <div className="flex flex-1 flex-col gap-2">
-              <Skeleton className="h-3.5 w-28 rounded-full" />
-              <Skeleton className={`h-3 rounded-full ${width}`} />
+            <div className="flex min-w-0 flex-1 flex-col gap-2">
+              <Skeleton className="h-3.5 w-32 rounded-full" />
+              <Skeleton className={`h-3 max-w-md rounded-full ${width}`} />
             </div>
           </div>
         )
