@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { UserAvatar } from '@/components/ui/user-avatar'
 import { stripMarkdown } from '@/features/message/components/format'
 import { getActivity } from '@/features/workspace/workspace-queries'
+import { cn } from '@/lib/utils'
 
 export async function ActivityList() {
   const items = await getActivity()
@@ -20,22 +21,25 @@ export async function ActivityList() {
     )
   }
 
-  const firstReadId = items.some((item) => !item.read)
-    ? items.find((item) => item.read)?.id
-    : undefined
+  const firstReadIndex = items.findIndex((item) => item.read)
+  const hasDivider = items.some((item) => !item.read) && firstReadIndex > 0
+  const lastUnreadId = hasDivider ? items[firstReadIndex - 1]?.id : undefined
+  const firstReadId = hasDivider ? items[firstReadIndex]?.id : undefined
 
   return (
     <div className="flex flex-col">
       {items.map((item) => {
         const href =
           `/channel/${item.channelId}?thread=${item.messageId}` as Route
-        const showDivider = item.id === firstReadId
 
         return (
           <Fragment key={item.id}>
-            {showDivider ? <ActivityDivider /> : null}
+            {item.id === firstReadId ? <ActivityDivider /> : null}
             <Link
-              className="group hover:bg-card dark:hover:bg-card-dark border-divider dark:border-divider-dark flex items-center gap-3 border-b px-5 py-3.5 transition-colors"
+              className={cn(
+                'group hover:bg-card dark:hover:bg-card-dark border-divider dark:border-divider-dark flex items-center gap-3 px-5 py-3.5 transition-colors',
+                item.id === lastUnreadId ? '' : 'border-b',
+              )}
               href={href}
               prefetch={true}
             >
@@ -82,11 +86,9 @@ export async function ActivityList() {
 
 function ActivityDivider() {
   return (
-    <div className="border-divider dark:border-divider-dark flex items-center gap-2 border-b px-5 py-1.5">
-      <span className="text-muted dark:text-muted-dark text-xs font-medium">
-        Earlier
-      </span>
-      <span className="bg-divider dark:bg-divider-dark h-px flex-1" />
+    <div className="flex items-center gap-2 px-5 py-2">
+      <span className="text-accent text-xs font-semibold">Earlier</span>
+      <span className="bg-accent/40 h-px flex-1" />
     </div>
   )
 }
