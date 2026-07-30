@@ -19,7 +19,11 @@ export async function CurrentUserCard() {
         </ActivityOnly>
       </div>
       <SidebarVisibility>
-        <div className="border-divider dark:border-divider-dark flex h-full min-w-0 flex-1 items-center gap-2.5 border-r pr-3 pl-3">
+        <div
+          className="border-divider dark:border-divider-dark flex h-full min-w-0 flex-1 items-center gap-2.5 border-r pr-3 pl-3"
+          data-hide-on-activity
+          suppressHydrationWarning
+        >
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold">{user.name}</p>
             <span className="text-muted dark:text-muted-dark flex items-center gap-1.5 truncate text-xs">
@@ -47,7 +51,11 @@ export function CurrentUserCardSkeleton() {
         </ActivityOnly>
       </div>
       <SidebarVisibility>
-        <div className="border-divider dark:border-divider-dark flex h-full flex-1 flex-col justify-center gap-1.5 border-r px-3">
+        <div
+          className="border-divider dark:border-divider-dark flex h-full flex-1 flex-col justify-center gap-1.5 border-r px-3"
+          data-hide-on-activity
+          suppressHydrationWarning
+        >
           <Skeleton className="h-3 w-24 rounded-full" />
           <Skeleton className="h-2.5 w-16 rounded-full" />
         </div>

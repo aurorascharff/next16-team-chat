@@ -21,7 +21,7 @@ function ShowOnActivity({ children }: { children: ReactNode }) {
 
 export function SidebarVisibility({ children }: { children: ReactNode }) {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={children}>
       <HideOnActivity>{children}</HideOnActivity>
     </Suspense>
   )

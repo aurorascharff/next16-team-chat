@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+html[data-route='activity'] [data-hide-on-activity] {
+  display: none !important;
+}
+
 @theme {
   --color-gray: #9ca3af;
   --color-muted: #6b7280;

@@ -11,6 +11,12 @@ export function ActivityReadNavigationRefresh() {
   const previousPathname = useRef<string | null>(null)
 
   useEffect(() => {
+    if (pathname.startsWith('/activity')) {
+      document.documentElement.dataset.route = 'activity'
+    } else {
+      delete document.documentElement.dataset.route
+    }
+
     const previous = previousPathname.current
     previousPathname.current = pathname
 
