@@ -87,25 +87,27 @@ function ThreadBody({
 
 function ThreadRepliesSkeleton() {
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex gap-3 px-5 py-1.5">
+    <div className="flex flex-col opacity-45">
+      <div className="border-divider/40 dark:border-divider-dark/40 flex min-h-20 gap-3 border-b px-5 py-3">
         <Skeleton className="size-9 shrink-0 rounded-lg" />
         <div className="flex flex-1 flex-col gap-2 pt-1">
-          <Skeleton className="h-3.5 w-24 rounded-full" />
-          <Skeleton className="h-3.5 w-3/4 rounded-full" />
+          <Skeleton className="h-3 w-24 rounded" />
+          <Skeleton className="h-3.5 w-full max-w-sm rounded" />
         </div>
       </div>
-      <div className="mx-5 my-2 pt-3">
-        <Skeleton className="h-3 w-16 rounded-full" />
+      <div className="mx-5 my-3">
+        <Skeleton className="h-3 w-16 rounded" />
       </div>
-      {['w-2/3', 'w-1/2'].map((width, i) => {
+      {Array.from({ length: 2 }).map((_, i) => {
         return (
-          <div className="flex gap-3 px-5 py-1.5" key={i}>
+          <div className="flex min-h-16 gap-3 px-5 py-3" key={i}>
             <Skeleton className="size-9 shrink-0 rounded-lg" />
-            <div className="flex flex-1 flex-col gap-2 pt-1">
-              <Skeleton className="h-3.5 w-20 rounded-full" />
-              <Skeleton className={`h-3.5 rounded-full ${width}`} />
-            </div>
+            {i === 0 ? (
+              <div className="flex flex-1 flex-col gap-2 pt-1">
+                <Skeleton className="h-3 w-20 rounded" />
+                <Skeleton className="h-3.5 w-2/3 rounded" />
+              </div>
+            ) : null}
           </div>
         )
       })}

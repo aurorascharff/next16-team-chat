@@ -7,7 +7,6 @@ import { messageKeys } from '@/features/message/message-query-options'
 import { getCurrentUser, getUsers } from '@/features/user/user-queries'
 import { userKeys } from '@/features/user/user-query-options'
 import { dehydrate } from '@/lib/react-query-hydration'
-import { cn } from '@/lib/utils'
 import { MessageList } from './message-list'
 
 export async function MessageThread({ channelId }: { channelId: string }) {
@@ -37,37 +36,29 @@ export async function MessageThread({ channelId }: { channelId: string }) {
 }
 
 export function MessageThreadSkeleton() {
-  const rows = [
-    { body: 'w-3/4', name: 'w-24' },
-    { body: 'w-1/2', name: 'w-20' },
-    { body: 'w-5/6', name: 'w-28' },
-    { body: 'w-2/5', name: 'w-16' },
-    { body: 'w-2/3', name: 'w-24' },
-  ]
-
   return (
     <section
       aria-hidden
       aria-label="Messages"
-      className="relative flex min-h-0 flex-1"
+      className="flex flex-1 flex-col-reverse overflow-y-auto py-3"
     >
-      <div className="flex-1 overflow-y-auto py-3">
-        <div className="flex min-h-full flex-col justify-end">
-          <div className="flex flex-col gap-1">
-            {rows.map((row, i) => {
-              return (
-                <div className="flex gap-3 px-5 py-2.5" key={i}>
-                  <Skeleton className="size-9 shrink-0 rounded-lg" />
-                  <div className="flex flex-1 flex-col gap-2 pt-1">
-                    <Skeleton className={cn('h-3 rounded-full', row.name)} />
-                    <Skeleton
-                      className={cn('h-3.5 max-w-lg rounded-full', row.body)}
-                    />
-                  </div>
-                </div>
-              )
-            })}
-          </div>
+      <div className="flex flex-col opacity-45">
+        {Array.from({ length: 4 }).map((_, i) => {
+          return (
+            <div
+              className="border-divider/40 dark:border-divider-dark/40 flex min-h-20 gap-3 border-b px-5 py-3"
+              key={i}
+            >
+              <Skeleton className="size-9 shrink-0 rounded-lg" />
+              <div className="flex flex-1 flex-col gap-2 pt-1">
+                <Skeleton className="h-3 w-24 rounded" />
+                <Skeleton className="h-3.5 w-full max-w-md rounded" />
+              </div>
+            </div>
+          )
+        })}
+        <div className="flex min-h-20 gap-3 px-5 py-3">
+          <Skeleton className="size-9 shrink-0 rounded-lg" />
         </div>
       </div>
     </section>

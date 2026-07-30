@@ -137,14 +137,6 @@ export async function getUnreadActivityCount(userId: string) {
   return items.filter((item) => !item.read).length
 }
 
-export async function markActivityRead(userId: string, itemId: string) {
-  await prisma.activityRead.upsert({
-    create: { messageId: itemId, userId },
-    update: {},
-    where: { userId_messageId: { messageId: itemId, userId } },
-  })
-}
-
 export async function markActivityItemsRead(userId: string, itemIds: string[]) {
   if (itemIds.length === 0) {
     return

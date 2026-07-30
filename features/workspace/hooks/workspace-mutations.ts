@@ -1,6 +1,7 @@
 'use client'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { markActivityReadAction } from '@/features/workspace/workspace-actions'
 import { activityKeys } from '@/features/workspace/workspace-query-options'
 
 type MarkActivityReadInput = {
@@ -13,16 +14,7 @@ export function useMarkActivityRead() {
 
   return useMutation({
     mutationFn: async ({ itemIds }: MarkActivityReadInput) => {
-      const res = await fetch('/api/activity/read', {
-        body: JSON.stringify({ itemIds }),
-        headers: { 'content-type': 'application/json' },
-        keepalive: true,
-        method: 'POST',
-      })
-
-      if (!res.ok) {
-        throw new Error('Failed to mark activity read')
-      }
+      await markActivityReadAction(itemIds)
     },
     onError: (_error, _input, context) => {
       if (context?.previous) {
