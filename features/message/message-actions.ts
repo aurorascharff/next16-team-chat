@@ -56,7 +56,7 @@ export async function sendMessage({
     updateTag(repliesTag(botThread))
   }
   updateTag(messagesTag(channelId))
-  updateTag('mentions')
+  updateTag('messages')
 
   return { message, ok: true }
 }

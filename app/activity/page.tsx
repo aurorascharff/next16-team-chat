@@ -1,6 +1,4 @@
 import { Suspense } from 'react'
-import { Crossfade } from '@/components/ui/crossfade'
-import { MarkMentionsRead } from '@/features/message/components/mark-mentions-read'
 import {
   ActivityList,
   ActivityListSkeleton,
@@ -16,7 +14,6 @@ export const metadata: Metadata = {
 export default function ActivityPage() {
   return (
     <section className="min-h-dvh">
-      <MarkMentionsRead />
       <header className="border-divider dark:border-divider-dark bg-surface/80 dark:bg-surface-dark/80 sticky top-0 z-10 border-b px-5 py-4 backdrop-blur-lg">
         <h1>Activity</h1>
         <p className="text-muted dark:text-muted-dark mt-1 text-sm">
@@ -24,9 +21,7 @@ export default function ActivityPage() {
         </p>
       </header>
       <Suspense fallback={<ActivityListSkeleton />}>
-        <Crossfade>
-          <ActivityList />
-        </Crossfade>
+        <ActivityList />
       </Suspense>
     </section>
   )

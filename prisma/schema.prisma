@@ -14,11 +14,12 @@ model User {
   role      String
   createdAt DateTime @default(now())
 
-  messages    Message[]
-  memberships ChannelMember[]
-  groups      ChannelGroup[]
-  reactions   Reaction[]
-  mentions    Mention[]
+  messages      Message[]
+  memberships   ChannelMember[]
+  groups        ChannelGroup[]
+  reactions     Reaction[]
+  mentions      Mention[]
+  activityReads ActivityRead[]
 }
 
 model Channel {
@@ -101,6 +102,17 @@ model Mention {
 
   @@unique([messageId, userId])
   @@index([userId, read])
+}
+
+model ActivityRead {
+  userId    String
+  messageId String
+  readAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, messageId])
+  @@index([userId])
 }
 
 model Reaction {

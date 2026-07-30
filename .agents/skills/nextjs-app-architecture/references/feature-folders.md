@@ -8,9 +8,10 @@ How to organize code under `features/` and `app/`.
 features/<domain>/
   <domain>-queries.ts   # Server-only queries
   <domain>-actions.ts   # Server actions
+  <domain>-query-options.ts # Client data-library query keys/options, when needed
   components/           # Server + client components, each with its skeleton
   types/                # Feature-local public types, when needed by multiple files
-  hooks/                # Feature-local client hooks, when not shared across features
+  hooks/                # Actual feature-local React hooks and hook wrappers
   providers/            # Feature-local providers, only when the provider belongs to this domain
 ```
 
@@ -64,13 +65,24 @@ Use a local support folder when the code belongs to one feature:
 
 ```
 features/message/
+  message-query-options.ts
   types/
     message.ts
   hooks/
+    message-mutations.ts
     use-message-draft.ts
   providers/
     message-draft-provider.tsx
 ```
+
+Feature-owned client coordination stays with the feature. Place each file by the shape it exports and the domain it belongs to:
+
+- Query keys/options for client data libraries live at the feature root (`message-query-options.ts`, `channel-query-options.ts`, `workspace-query-options.ts`).
+- Mutation wrappers that export `use*` hooks live in `hooks/` (`message-mutations.ts` exporting `useSendMessage`).
+- Browser-only state helpers live in `hooks/` when their public API is a hook (`use-thread.ts`, `use-message-draft.ts`).
+- Client leaf components that coordinate a server write live in `components/` next to the UI they support (`mark-activity-read.tsx` posts read activity in the background while the current `/activity` tree stays stable).
+
+Keep the file prefix aligned with the feature folder when a file exports a grouped feature contract (`workspace-query-options.ts`, not `activity-query-options.ts` in `features/workspace/`). Support code for a sub-concept still lives with the parent feature: reactions on messages belong in `features/message/`; unread activity chrome belongs in `features/workspace/`. In the messaging patch, reaction source labels stayed with message rendering, while Activity read state stayed with workspace chrome.
 
 Promote only when there are real cross-feature consumers:
 

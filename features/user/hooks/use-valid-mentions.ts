@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { usersQueryOptions } from '@/features/user/hooks/user-query-options'
+import { usersQueryOptions } from '@/features/user/user-query-options'
 
 export function useValidMentions() {
   const { data: users } = useQuery(usersQueryOptions())

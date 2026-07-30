@@ -1,7 +1,6 @@
 import 'server-only'
 
 import { cacheLife, cacheTag } from 'next/cache'
-import { mentionsTag } from '@/features/message/message-queries'
 import { getCurrentUser } from '@/features/user/user-queries'
 import { prisma } from '@/lib/db'
 
@@ -19,8 +18,12 @@ export type ActivityItem = {
   createdAt: string
 }
 
-async function listActivity(userId: string): Promise<ActivityItem[]> {
-  const [replies, mentions, memberships] = await Promise.all([
+export function activityTag(userId: string) {
+  return `activity:${userId}`
+}
+
+async function listActivityRaw(userId: string) {
+  const [replies, mentions] = await Promise.all([
     prisma.message.findMany({
       include: {
         channel: true,
@@ -47,19 +50,9 @@ async function listActivity(userId: string): Promise<ActivityItem[]> {
       take: 50,
       where: { userId },
     }),
-    prisma.channelMember.findMany({
-      select: { channelId: true, lastReadAt: true },
-      where: { userId },
-    }),
   ])
 
-  const lastReadByChannel = new Map(
-    memberships.map((member) => {
-      return [member.channelId, member.lastReadAt?.toISOString() ?? null]
-    }),
-  )
-
-  const byThread = new Map<string, ActivityItem>()
+  const byThread = new Map<string, Omit<ActivityItem, 'read'>>()
 
   for (const reply of replies) {
     const parent = reply.parent
@@ -69,7 +62,6 @@ async function listActivity(userId: string): Promise<ActivityItem[]> {
     if (byThread.has(parent.id)) {
       continue
     }
-    const lastReadAt = lastReadByChannel.get(reply.channelId) ?? null
     byThread.set(parent.id, {
       actor: reply.user.name,
       actorIsBot: reply.userId === 'bot',
@@ -81,11 +73,10 @@ async function listActivity(userId: string): Promise<ActivityItem[]> {
       kind: parent.userId === userId ? 'reply-to-you' : 'reply-in-thread',
       messageId: parent.id,
       preview: reply.body,
-      read: lastReadAt ? reply.createdAt.toISOString() <= lastReadAt : false,
     })
   }
 
-  const items: ActivityItem[] = [...byThread.values()]
+  const items = [...byThread.values()]
 
   for (const mention of mentions) {
     items.push({
@@ -99,13 +90,32 @@ async function listActivity(userId: string): Promise<ActivityItem[]> {
       kind: 'mention',
       messageId: mention.message.parentId ?? mention.messageId,
       preview: mention.message.body,
-      read: mention.read,
     })
   }
 
-  return items
-    .sort((a, b) => {
-      return b.createdAt.localeCompare(a.createdAt)
+  return items.sort((a, b) => {
+    return b.createdAt.localeCompare(a.createdAt)
+  })
+}
+
+async function getActivityRawCached(userId: string) {
+  'use cache'
+  cacheTag('messages', 'channels', activityTag(userId))
+  cacheLife({ stale: 30 })
+  return listActivityRaw(userId)
+}
+
+async function listActivity(userId: string): Promise<ActivityItem[]> {
+  const raw = await getActivityRawCached(userId)
+  const reads = await prisma.activityRead.findMany({
+    select: { messageId: true },
+    where: { messageId: { in: raw.map((item) => item.id) }, userId },
+  })
+  const readIds = new Set(reads.map((read) => read.messageId))
+
+  return raw
+    .map((item) => {
+      return { ...item, read: readIds.has(item.id) }
     })
     .sort((a, b) => {
       return Number(a.read) - Number(b.read)
@@ -114,12 +124,31 @@ async function listActivity(userId: string): Promise<ActivityItem[]> {
 
 export async function getActivity() {
   const user = await getCurrentUser()
-  return getActivityCached(user.id)
+  return listActivity(user.id)
 }
 
-async function getActivityCached(userId: string) {
-  'use cache'
-  cacheTag('messages', 'mentions', 'channels', mentionsTag(userId))
-  cacheLife({ stale: 30 })
-  return listActivity(userId)
+export async function getUnreadActivityCount(userId: string) {
+  const items = await listActivity(userId)
+  return items.filter((item) => !item.read).length
+}
+
+export async function markActivityRead(userId: string, itemId: string) {
+  await prisma.activityRead.upsert({
+    create: { messageId: itemId, userId },
+    update: {},
+    where: { userId_messageId: { messageId: itemId, userId } },
+  })
+}
+
+export async function markActivityItemsRead(userId: string, itemIds: string[]) {
+  if (itemIds.length === 0) {
+    return
+  }
+
+  await prisma.activityRead.createMany({
+    data: itemIds.map((itemId) => {
+      return { messageId: itemId, userId }
+    }),
+    skipDuplicates: true,
+  })
 }

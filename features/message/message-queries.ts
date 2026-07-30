@@ -9,7 +9,7 @@ import { delay } from '@/lib/utils'
 
 const messageInclude = {
   _count: { select: { replies: true } },
-  reactions: true,
+  reactions: { include: { user: true } },
   user: true,
 } as const
 
@@ -23,15 +23,23 @@ function toMessage(
     userId: string
     user: { name: string }
     _count?: { replies: number }
-    reactions?: { emoji: string; userId: string }[]
+    reactions?: { emoji: string; userId: string; user: { name: string } }[]
   },
   currentUserId?: string,
 ) {
-  const byEmoji = new Map<string, { count: number; reacted: boolean }>()
+  const byEmoji = new Map<
+    string,
+    { count: number; reacted: boolean; users: string[] }
+  >()
   for (const reaction of message.reactions ?? []) {
-    const entry = byEmoji.get(reaction.emoji) ?? { count: 0, reacted: false }
+    const entry = byEmoji.get(reaction.emoji) ?? {
+      count: 0,
+      reacted: false,
+      users: [],
+    }
     entry.count += 1
     if (reaction.userId === currentUserId) entry.reacted = true
+    entry.users.push(reaction.user.name)
     byEmoji.set(reaction.emoji, entry)
   }
 
@@ -42,7 +50,12 @@ function toMessage(
     id: message.id,
     parentId: message.parentId,
     reactions: [...byEmoji.entries()].map(([emoji, value]) => {
-      return { count: value.count, emoji, reacted: value.reacted }
+      return {
+        count: value.count,
+        emoji,
+        reacted: value.reacted,
+        users: value.users,
+      }
     }),
     replyCount: message._count?.replies ?? 0,
     userId: message.userId,
@@ -239,19 +252,4 @@ async function getRepliesCached(
   cacheLife({ stale: 30 })
   await delay(500, slow)
   return listReplies(messageId, userId)
-}
-
-export function mentionsTag(userId: string) {
-  return `mentions:${userId}`
-}
-
-export async function markMentionsRead(userId: string) {
-  await prisma.mention.updateMany({
-    data: { read: true },
-    where: { read: false, userId },
-  })
-}
-
-export async function getUnreadMentionCount(userId: string) {
-  return prisma.mention.count({ where: { read: false, userId } })
 }

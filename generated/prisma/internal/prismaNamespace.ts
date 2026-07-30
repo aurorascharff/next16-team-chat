@@ -403,6 +403,7 @@ export const ModelName = {
   ChannelMember: 'ChannelMember',
   Message: 'Message',
   Mention: 'Mention',
+  ActivityRead: 'ActivityRead',
   Reaction: 'Reaction',
   PinnedItem: 'PinnedItem'
 } as const
@@ -420,7 +421,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "channel" | "channelGroup" | "channelMember" | "message" | "mention" | "reaction" | "pinnedItem"
+    modelProps: "user" | "channel" | "channelGroup" | "channelMember" | "message" | "mention" | "activityRead" | "reaction" | "pinnedItem"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -868,6 +869,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ActivityRead: {
+      payload: Prisma.$ActivityReadPayload<ExtArgs>
+      fields: Prisma.ActivityReadFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ActivityReadFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ActivityReadPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ActivityReadFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ActivityReadPayload>
+        }
+        findFirst: {
+          args: Prisma.ActivityReadFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ActivityReadPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ActivityReadFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ActivityReadPayload>
+        }
+        findMany: {
+          args: Prisma.ActivityReadFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ActivityReadPayload>[]
+        }
+        create: {
+          args: Prisma.ActivityReadCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ActivityReadPayload>
+        }
+        createMany: {
+          args: Prisma.ActivityReadCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ActivityReadCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ActivityReadPayload>[]
+        }
+        delete: {
+          args: Prisma.ActivityReadDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ActivityReadPayload>
+        }
+        update: {
+          args: Prisma.ActivityReadUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ActivityReadPayload>
+        }
+        deleteMany: {
+          args: Prisma.ActivityReadDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ActivityReadUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ActivityReadUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ActivityReadPayload>[]
+        }
+        upsert: {
+          args: Prisma.ActivityReadUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ActivityReadPayload>
+        }
+        aggregate: {
+          args: Prisma.ActivityReadAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateActivityRead>
+        }
+        groupBy: {
+          args: Prisma.ActivityReadGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ActivityReadGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ActivityReadCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ActivityReadCountAggregateOutputType> | number
+        }
+      }
+    }
     Reaction: {
       payload: Prisma.$ReactionPayload<ExtArgs>
       fields: Prisma.ReactionFieldRefs
@@ -1124,6 +1199,15 @@ export const MentionScalarFieldEnum = {
 } as const
 
 export type MentionScalarFieldEnum = (typeof MentionScalarFieldEnum)[keyof typeof MentionScalarFieldEnum]
+
+
+export const ActivityReadScalarFieldEnum = {
+  userId: 'userId',
+  messageId: 'messageId',
+  readAt: 'readAt'
+} as const
+
+export type ActivityReadScalarFieldEnum = (typeof ActivityReadScalarFieldEnum)[keyof typeof ActivityReadScalarFieldEnum]
 
 
 export const ReactionScalarFieldEnum = {
@@ -1393,6 +1477,7 @@ export type GlobalOmitConfig = {
   channelMember?: Prisma.ChannelMemberOmit
   message?: Prisma.MessageOmit
   mention?: Prisma.MentionOmit
+  activityRead?: Prisma.ActivityReadOmit
   reaction?: Prisma.ReactionOmit
   pinnedItem?: Prisma.PinnedItemOmit
 }

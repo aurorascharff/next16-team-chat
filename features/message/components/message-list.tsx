@@ -2,7 +2,7 @@
 
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { EmptyState } from '@/components/ui/empty-state'
-import { messagesQueryOptions } from '@/features/message/hooks/message-query-options'
+import { messagesQueryOptions } from '@/features/message/message-query-options'
 import { MessageRow } from './message-row'
 
 export function MessageList({

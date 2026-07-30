@@ -12,7 +12,7 @@ import {
   useDeferredValue,
 } from 'react'
 import { UserAvatar } from '@/components/ui/user-avatar'
-import { userSearchQueryOptions } from '@/features/user/hooks/user-query-options'
+import { userSearchQueryOptions } from '@/features/user/user-query-options'
 
 const MENTION_TRIGGER = '@'
 

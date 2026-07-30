@@ -187,6 +187,7 @@ export type UserWhereInput = {
   groups?: Prisma.ChannelGroupListRelationFilter
   reactions?: Prisma.ReactionListRelationFilter
   mentions?: Prisma.MentionListRelationFilter
+  activityReads?: Prisma.ActivityReadListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -200,6 +201,7 @@ export type UserOrderByWithRelationInput = {
   groups?: Prisma.ChannelGroupOrderByRelationAggregateInput
   reactions?: Prisma.ReactionOrderByRelationAggregateInput
   mentions?: Prisma.MentionOrderByRelationAggregateInput
+  activityReads?: Prisma.ActivityReadOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -216,6 +218,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   groups?: Prisma.ChannelGroupListRelationFilter
   reactions?: Prisma.ReactionListRelationFilter
   mentions?: Prisma.MentionListRelationFilter
+  activityReads?: Prisma.ActivityReadListRelationFilter
 }, "id" | "handle">
 
 export type UserOrderByWithAggregationInput = {
@@ -251,6 +254,7 @@ export type UserCreateInput = {
   groups?: Prisma.ChannelGroupCreateNestedManyWithoutUserInput
   reactions?: Prisma.ReactionCreateNestedManyWithoutUserInput
   mentions?: Prisma.MentionCreateNestedManyWithoutUserInput
+  activityReads?: Prisma.ActivityReadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -264,6 +268,7 @@ export type UserUncheckedCreateInput = {
   groups?: Prisma.ChannelGroupUncheckedCreateNestedManyWithoutUserInput
   reactions?: Prisma.ReactionUncheckedCreateNestedManyWithoutUserInput
   mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutUserInput
+  activityReads?: Prisma.ActivityReadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -277,6 +282,7 @@ export type UserUpdateInput = {
   groups?: Prisma.ChannelGroupUpdateManyWithoutUserNestedInput
   reactions?: Prisma.ReactionUpdateManyWithoutUserNestedInput
   mentions?: Prisma.MentionUpdateManyWithoutUserNestedInput
+  activityReads?: Prisma.ActivityReadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -290,6 +296,7 @@ export type UserUncheckedUpdateInput = {
   groups?: Prisma.ChannelGroupUncheckedUpdateManyWithoutUserNestedInput
   reactions?: Prisma.ReactionUncheckedUpdateManyWithoutUserNestedInput
   mentions?: Prisma.MentionUncheckedUpdateManyWithoutUserNestedInput
+  activityReads?: Prisma.ActivityReadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -409,6 +416,20 @@ export type UserUpdateOneRequiredWithoutMentionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMentionsInput, Prisma.UserUpdateWithoutMentionsInput>, Prisma.UserUncheckedUpdateWithoutMentionsInput>
 }
 
+export type UserCreateNestedOneWithoutActivityReadsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutActivityReadsInput, Prisma.UserUncheckedCreateWithoutActivityReadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutActivityReadsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutActivityReadsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutActivityReadsInput, Prisma.UserUncheckedCreateWithoutActivityReadsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutActivityReadsInput
+  upsert?: Prisma.UserUpsertWithoutActivityReadsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutActivityReadsInput, Prisma.UserUpdateWithoutActivityReadsInput>, Prisma.UserUncheckedUpdateWithoutActivityReadsInput>
+}
+
 export type UserCreateNestedOneWithoutReactionsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutReactionsInput, Prisma.UserUncheckedCreateWithoutReactionsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutReactionsInput
@@ -433,6 +454,7 @@ export type UserCreateWithoutGroupsInput = {
   memberships?: Prisma.ChannelMemberCreateNestedManyWithoutUserInput
   reactions?: Prisma.ReactionCreateNestedManyWithoutUserInput
   mentions?: Prisma.MentionCreateNestedManyWithoutUserInput
+  activityReads?: Prisma.ActivityReadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutGroupsInput = {
@@ -445,6 +467,7 @@ export type UserUncheckedCreateWithoutGroupsInput = {
   memberships?: Prisma.ChannelMemberUncheckedCreateNestedManyWithoutUserInput
   reactions?: Prisma.ReactionUncheckedCreateNestedManyWithoutUserInput
   mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutUserInput
+  activityReads?: Prisma.ActivityReadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutGroupsInput = {
@@ -473,6 +496,7 @@ export type UserUpdateWithoutGroupsInput = {
   memberships?: Prisma.ChannelMemberUpdateManyWithoutUserNestedInput
   reactions?: Prisma.ReactionUpdateManyWithoutUserNestedInput
   mentions?: Prisma.MentionUpdateManyWithoutUserNestedInput
+  activityReads?: Prisma.ActivityReadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGroupsInput = {
@@ -485,6 +509,7 @@ export type UserUncheckedUpdateWithoutGroupsInput = {
   memberships?: Prisma.ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
   reactions?: Prisma.ReactionUncheckedUpdateManyWithoutUserNestedInput
   mentions?: Prisma.MentionUncheckedUpdateManyWithoutUserNestedInput
+  activityReads?: Prisma.ActivityReadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutMembershipsInput = {
@@ -497,6 +522,7 @@ export type UserCreateWithoutMembershipsInput = {
   groups?: Prisma.ChannelGroupCreateNestedManyWithoutUserInput
   reactions?: Prisma.ReactionCreateNestedManyWithoutUserInput
   mentions?: Prisma.MentionCreateNestedManyWithoutUserInput
+  activityReads?: Prisma.ActivityReadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMembershipsInput = {
@@ -509,6 +535,7 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   groups?: Prisma.ChannelGroupUncheckedCreateNestedManyWithoutUserInput
   reactions?: Prisma.ReactionUncheckedCreateNestedManyWithoutUserInput
   mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutUserInput
+  activityReads?: Prisma.ActivityReadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMembershipsInput = {
@@ -537,6 +564,7 @@ export type UserUpdateWithoutMembershipsInput = {
   groups?: Prisma.ChannelGroupUpdateManyWithoutUserNestedInput
   reactions?: Prisma.ReactionUpdateManyWithoutUserNestedInput
   mentions?: Prisma.MentionUpdateManyWithoutUserNestedInput
+  activityReads?: Prisma.ActivityReadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembershipsInput = {
@@ -549,6 +577,7 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   groups?: Prisma.ChannelGroupUncheckedUpdateManyWithoutUserNestedInput
   reactions?: Prisma.ReactionUncheckedUpdateManyWithoutUserNestedInput
   mentions?: Prisma.MentionUncheckedUpdateManyWithoutUserNestedInput
+  activityReads?: Prisma.ActivityReadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutMessagesInput = {
@@ -561,6 +590,7 @@ export type UserCreateWithoutMessagesInput = {
   groups?: Prisma.ChannelGroupCreateNestedManyWithoutUserInput
   reactions?: Prisma.ReactionCreateNestedManyWithoutUserInput
   mentions?: Prisma.MentionCreateNestedManyWithoutUserInput
+  activityReads?: Prisma.ActivityReadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMessagesInput = {
@@ -573,6 +603,7 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   groups?: Prisma.ChannelGroupUncheckedCreateNestedManyWithoutUserInput
   reactions?: Prisma.ReactionUncheckedCreateNestedManyWithoutUserInput
   mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutUserInput
+  activityReads?: Prisma.ActivityReadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMessagesInput = {
@@ -601,6 +632,7 @@ export type UserUpdateWithoutMessagesInput = {
   groups?: Prisma.ChannelGroupUpdateManyWithoutUserNestedInput
   reactions?: Prisma.ReactionUpdateManyWithoutUserNestedInput
   mentions?: Prisma.MentionUpdateManyWithoutUserNestedInput
+  activityReads?: Prisma.ActivityReadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMessagesInput = {
@@ -613,6 +645,7 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   groups?: Prisma.ChannelGroupUncheckedUpdateManyWithoutUserNestedInput
   reactions?: Prisma.ReactionUncheckedUpdateManyWithoutUserNestedInput
   mentions?: Prisma.MentionUncheckedUpdateManyWithoutUserNestedInput
+  activityReads?: Prisma.ActivityReadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutMentionsInput = {
@@ -625,6 +658,7 @@ export type UserCreateWithoutMentionsInput = {
   memberships?: Prisma.ChannelMemberCreateNestedManyWithoutUserInput
   groups?: Prisma.ChannelGroupCreateNestedManyWithoutUserInput
   reactions?: Prisma.ReactionCreateNestedManyWithoutUserInput
+  activityReads?: Prisma.ActivityReadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMentionsInput = {
@@ -637,6 +671,7 @@ export type UserUncheckedCreateWithoutMentionsInput = {
   memberships?: Prisma.ChannelMemberUncheckedCreateNestedManyWithoutUserInput
   groups?: Prisma.ChannelGroupUncheckedCreateNestedManyWithoutUserInput
   reactions?: Prisma.ReactionUncheckedCreateNestedManyWithoutUserInput
+  activityReads?: Prisma.ActivityReadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMentionsInput = {
@@ -665,6 +700,7 @@ export type UserUpdateWithoutMentionsInput = {
   memberships?: Prisma.ChannelMemberUpdateManyWithoutUserNestedInput
   groups?: Prisma.ChannelGroupUpdateManyWithoutUserNestedInput
   reactions?: Prisma.ReactionUpdateManyWithoutUserNestedInput
+  activityReads?: Prisma.ActivityReadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMentionsInput = {
@@ -677,6 +713,75 @@ export type UserUncheckedUpdateWithoutMentionsInput = {
   memberships?: Prisma.ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
   groups?: Prisma.ChannelGroupUncheckedUpdateManyWithoutUserNestedInput
   reactions?: Prisma.ReactionUncheckedUpdateManyWithoutUserNestedInput
+  activityReads?: Prisma.ActivityReadUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutActivityReadsInput = {
+  id: string
+  handle: string
+  name: string
+  role: string
+  createdAt?: Date | string
+  messages?: Prisma.MessageCreateNestedManyWithoutUserInput
+  memberships?: Prisma.ChannelMemberCreateNestedManyWithoutUserInput
+  groups?: Prisma.ChannelGroupCreateNestedManyWithoutUserInput
+  reactions?: Prisma.ReactionCreateNestedManyWithoutUserInput
+  mentions?: Prisma.MentionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutActivityReadsInput = {
+  id: string
+  handle: string
+  name: string
+  role: string
+  createdAt?: Date | string
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutUserInput
+  memberships?: Prisma.ChannelMemberUncheckedCreateNestedManyWithoutUserInput
+  groups?: Prisma.ChannelGroupUncheckedCreateNestedManyWithoutUserInput
+  reactions?: Prisma.ReactionUncheckedCreateNestedManyWithoutUserInput
+  mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutActivityReadsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutActivityReadsInput, Prisma.UserUncheckedCreateWithoutActivityReadsInput>
+}
+
+export type UserUpsertWithoutActivityReadsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutActivityReadsInput, Prisma.UserUncheckedUpdateWithoutActivityReadsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutActivityReadsInput, Prisma.UserUncheckedCreateWithoutActivityReadsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutActivityReadsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutActivityReadsInput, Prisma.UserUncheckedUpdateWithoutActivityReadsInput>
+}
+
+export type UserUpdateWithoutActivityReadsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  handle?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messages?: Prisma.MessageUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.ChannelMemberUpdateManyWithoutUserNestedInput
+  groups?: Prisma.ChannelGroupUpdateManyWithoutUserNestedInput
+  reactions?: Prisma.ReactionUpdateManyWithoutUserNestedInput
+  mentions?: Prisma.MentionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutActivityReadsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  handle?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
+  groups?: Prisma.ChannelGroupUncheckedUpdateManyWithoutUserNestedInput
+  reactions?: Prisma.ReactionUncheckedUpdateManyWithoutUserNestedInput
+  mentions?: Prisma.MentionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReactionsInput = {
@@ -689,6 +794,7 @@ export type UserCreateWithoutReactionsInput = {
   memberships?: Prisma.ChannelMemberCreateNestedManyWithoutUserInput
   groups?: Prisma.ChannelGroupCreateNestedManyWithoutUserInput
   mentions?: Prisma.MentionCreateNestedManyWithoutUserInput
+  activityReads?: Prisma.ActivityReadCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReactionsInput = {
@@ -701,6 +807,7 @@ export type UserUncheckedCreateWithoutReactionsInput = {
   memberships?: Prisma.ChannelMemberUncheckedCreateNestedManyWithoutUserInput
   groups?: Prisma.ChannelGroupUncheckedCreateNestedManyWithoutUserInput
   mentions?: Prisma.MentionUncheckedCreateNestedManyWithoutUserInput
+  activityReads?: Prisma.ActivityReadUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReactionsInput = {
@@ -729,6 +836,7 @@ export type UserUpdateWithoutReactionsInput = {
   memberships?: Prisma.ChannelMemberUpdateManyWithoutUserNestedInput
   groups?: Prisma.ChannelGroupUpdateManyWithoutUserNestedInput
   mentions?: Prisma.MentionUpdateManyWithoutUserNestedInput
+  activityReads?: Prisma.ActivityReadUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReactionsInput = {
@@ -741,6 +849,7 @@ export type UserUncheckedUpdateWithoutReactionsInput = {
   memberships?: Prisma.ChannelMemberUncheckedUpdateManyWithoutUserNestedInput
   groups?: Prisma.ChannelGroupUncheckedUpdateManyWithoutUserNestedInput
   mentions?: Prisma.MentionUncheckedUpdateManyWithoutUserNestedInput
+  activityReads?: Prisma.ActivityReadUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -754,6 +863,7 @@ export type UserCountOutputType = {
   groups: number
   reactions: number
   mentions: number
+  activityReads: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -762,6 +872,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   groups?: boolean | UserCountOutputTypeCountGroupsArgs
   reactions?: boolean | UserCountOutputTypeCountReactionsArgs
   mentions?: boolean | UserCountOutputTypeCountMentionsArgs
+  activityReads?: boolean | UserCountOutputTypeCountActivityReadsArgs
 }
 
 /**
@@ -809,6 +920,13 @@ export type UserCountOutputTypeCountMentionsArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.MentionWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountActivityReadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ActivityReadWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -821,6 +939,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   groups?: boolean | Prisma.User$groupsArgs<ExtArgs>
   reactions?: boolean | Prisma.User$reactionsArgs<ExtArgs>
   mentions?: boolean | Prisma.User$mentionsArgs<ExtArgs>
+  activityReads?: boolean | Prisma.User$activityReadsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -855,6 +974,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   groups?: boolean | Prisma.User$groupsArgs<ExtArgs>
   reactions?: boolean | Prisma.User$reactionsArgs<ExtArgs>
   mentions?: boolean | Prisma.User$mentionsArgs<ExtArgs>
+  activityReads?: boolean | Prisma.User$activityReadsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -868,6 +988,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     groups: Prisma.$ChannelGroupPayload<ExtArgs>[]
     reactions: Prisma.$ReactionPayload<ExtArgs>[]
     mentions: Prisma.$MentionPayload<ExtArgs>[]
+    activityReads: Prisma.$ActivityReadPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1274,6 +1395,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   groups<T extends Prisma.User$groupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$groupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChannelGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reactions<T extends Prisma.User$reactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   mentions<T extends Prisma.User$mentionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$mentionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MentionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  activityReads<T extends Prisma.User$activityReadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$activityReadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityReadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1818,6 +1940,30 @@ export type User$mentionsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.MentionScalarFieldEnum | Prisma.MentionScalarFieldEnum[]
+}
+
+/**
+ * User.activityReads
+ */
+export type User$activityReadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ActivityRead
+   */
+  select?: Prisma.ActivityReadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ActivityRead
+   */
+  omit?: Prisma.ActivityReadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ActivityReadInclude<ExtArgs> | null
+  where?: Prisma.ActivityReadWhereInput
+  orderBy?: Prisma.ActivityReadOrderByWithRelationInput | Prisma.ActivityReadOrderByWithRelationInput[]
+  cursor?: Prisma.ActivityReadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ActivityReadScalarFieldEnum | Prisma.ActivityReadScalarFieldEnum[]
 }
 
 /**

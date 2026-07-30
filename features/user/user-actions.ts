@@ -19,7 +19,6 @@ export async function switchUser(userId: string) {
 
   updateTag('current-user')
   updateTag('channels')
-  updateTag('mentions')
 
   const channels = await listChannelsForUser(nextUserId)
   return channels[0] ? `/channel/${channels[0].id}` : '/channels'

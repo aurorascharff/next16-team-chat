@@ -72,6 +72,11 @@ export type Message = Prisma.MessageModel
  */
 export type Mention = Prisma.MentionModel
 /**
+ * Model ActivityRead
+ * 
+ */
+export type ActivityRead = Prisma.ActivityReadModel
+/**
  * Model Reaction
  * 
  */

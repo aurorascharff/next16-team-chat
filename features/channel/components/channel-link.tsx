@@ -6,7 +6,7 @@ import { Hash, Lock } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { unreadChannelsQueryOptions } from '@/features/channel/hooks/channel-query-options'
+import { unreadChannelsQueryOptions } from '@/features/channel/channel-query-options'
 import { cn } from '@/lib/utils'
 
 type Props = {

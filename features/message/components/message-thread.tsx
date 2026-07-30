@@ -11,9 +11,9 @@ import {
   getMessagesCached,
   messagesTag,
 } from '@/features/message/message-queries'
-import { messageKeys } from '@/features/message/hooks/message-query-options'
+import { messageKeys } from '@/features/message/message-query-options'
 import { getCurrentUser, getUsers } from '@/features/user/user-queries'
-import { userKeys } from '@/features/user/hooks/user-query-options'
+import { userKeys } from '@/features/user/user-query-options'
 import { cn } from '@/lib/utils'
 import { MessageList } from './message-list'
 

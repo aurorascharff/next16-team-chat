@@ -6,6 +6,7 @@ export async function POST() {
   const channelId = await postBotMessage()
   if (channelId) {
     revalidateTag(messagesTag(channelId), 'max')
+    revalidateTag('messages', 'max')
     revalidateTag('channels', 'max')
   }
   return new Response(null, { status: 204 })

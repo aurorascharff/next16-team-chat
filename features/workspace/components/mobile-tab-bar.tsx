@@ -6,7 +6,7 @@ import { Search } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { unreadMentionsQueryOptions } from '@/features/message/hooks/message-query-options'
+import { unreadActivityQueryOptions } from '@/features/workspace/workspace-query-options'
 import {
   isNavActive,
   PRIMARY_NAV,
@@ -16,8 +16,8 @@ import { cn } from '@/lib/utils'
 export function MobileTabBar() {
   const pathname = usePathname()
   const [mounted, setMounted] = useState(false)
-  const { data: mentions } = useQuery(unreadMentionsQueryOptions())
-  const hasActivity = mounted && Boolean(mentions && mentions.count > 0)
+  const { data: activity } = useQuery(unreadActivityQueryOptions())
+  const hasActivity = mounted && Boolean(activity && activity.count > 0)
 
   useEffect(() => {
     setMounted(true)

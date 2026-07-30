@@ -7,27 +7,6 @@ export const messageKeys = {
   replies: (messageId: string) => ['replies', messageId] as const,
 }
 
-export const mentionKeys = {
-  unread: ['mentions', 'unread'] as const,
-}
-
-export function unreadMentionsQueryOptions() {
-  return queryOptions({
-    queryFn: async (): Promise<{ count: number }> => {
-      const res = await fetch(apiUrl('/api/mentions/unread'))
-
-      if (!res.ok) {
-        throw new Error('Failed to fetch mentions')
-      }
-
-      return res.json()
-    },
-    queryKey: mentionKeys.unread,
-    refetchInterval: 5_000,
-    staleTime: 15_000,
-  })
-}
-
 export function messagesQueryOptions(channelId: string) {
   return queryOptions({
     queryFn: async (): Promise<Message[]> => {

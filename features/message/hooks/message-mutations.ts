@@ -3,19 +3,22 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { reactToMessage, sendMessage } from '@/features/message/message-actions'
-import { messageKeys } from '@/features/message/hooks/message-query-options'
+import { messageKeys } from '@/features/message/message-query-options'
 import type { Message, Reaction } from '@/features/message/types/message'
 
 function applyToggle(reactions: Reaction[] = [], emoji: string): Reaction[] {
   const existing = reactions.find((reaction) => reaction.emoji === emoji)
   if (!existing) {
-    return [...reactions, { count: 1, emoji, reacted: true }]
+    return [...reactions, { count: 1, emoji, reacted: true, users: ['You'] }]
   }
   return reactions
     .map((reaction) => {
       if (reaction.emoji !== emoji) return reaction
       const count = reaction.count + (reaction.reacted ? -1 : 1)
-      return { ...reaction, count, reacted: !reaction.reacted }
+      const users = reaction.reacted
+        ? reaction.users.slice(0, Math.max(0, count))
+        : [...reaction.users, 'You']
+      return { ...reaction, count, reacted: !reaction.reacted, users }
     })
     .filter((reaction) => reaction.count > 0)
 }

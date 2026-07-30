@@ -1,7 +1,10 @@
 'use client'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { channelKeys, type UnreadChannels } from './channel-query-options'
+import {
+  channelKeys,
+  type UnreadChannels,
+} from '@/features/channel/channel-query-options'
 
 export function useMarkChannelRead() {
   const queryClient = useQueryClient()
