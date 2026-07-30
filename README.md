@@ -21,9 +21,7 @@ The architecture follows the [Next.js App Architecture](https://github.com/auror
 - **[Partial Prefetching](https://preview.nextjs.org/docs/app/guides/adopting-partial-prefetching)** prefetches the shared channel shell as links enter the viewport, so navigation commits instantly and the message list streams in behind Suspense.
 - **[Server Functions](https://nextjs.org/docs/app/getting-started/mutating-data)** run mutations on the server and invalidate only the tags they change with [`updateTag`](https://nextjs.org/docs/app/api-reference/functions/updateTag); route handlers use stale-while-revalidate [`revalidateTag`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag) for read-tracking that shouldn't block the current view.
 - **[React Compiler](https://react.dev/learn/react-compiler)** memoizes components and hooks automatically, so the code needs no manual `useMemo` or `useCallback`.
-- **[View Transitions](https://nextjs.org/docs/app/guides/view-transitions)** cross-fade content as it streams in from Suspense, with persistent chrome isolated from the transition.
-- **[Ariakit](https://ariakit.org/)** powers the accessible `@`-mention combobox with an async, server-backed user search.
-- **Async React** keeps the UI interactive during server work with `Suspense`, `useOptimistic`, `useTransition`, `useActionState`, and `use`.
+- **[Async React](https://github.com/rickhanlonii/async-react)** keeps the UI interactive during server work with `Suspense`, `useOptimistic`, `useTransition`, `useActionState`, and `use`.
 
 ## Getting started
 
