@@ -2,7 +2,7 @@
 
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { mentionKeys } from '@/features/message/message-query-options'
+import { mentionKeys } from '@/features/message/hooks/message-query-options'
 import { apiUrl } from '@/lib/utils'
 
 export function MarkMentionsRead() {

@@ -3,7 +3,7 @@
 import { type ReactNode } from 'react'
 import { ResizablePanel } from '@/components/ui/resizable-panel'
 import { ThreadPanel } from './thread-panel'
-import { useThread } from './use-thread'
+import { useThread } from '@/features/message/hooks/use-thread'
 
 export function ChannelDetailPanel({ details }: { details: ReactNode }) {
   const { activeThread } = useThread()

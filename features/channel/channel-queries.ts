@@ -84,7 +84,7 @@ async function listChannels(userId: string) {
 async function listChannelLayout(userId: string) {
   const [groups, channels] = await Promise.all([
     prisma.channelGroup.findMany({
-      orderBy: { name: 'asc' },
+      orderBy: { position: 'asc' },
       where: { userId },
     }),
     listChannels(userId),

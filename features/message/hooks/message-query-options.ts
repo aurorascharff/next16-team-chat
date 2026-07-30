@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query'
 import { apiUrl } from '@/lib/utils'
-import type { Message } from './types/message'
+import type { Message } from '@/features/message/types/message'
 
 export const messageKeys = {
   channel: (channelId: string) => ['messages', channelId] as const,

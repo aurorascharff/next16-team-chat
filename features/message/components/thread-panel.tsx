@@ -8,10 +8,10 @@ import { Skeleton } from '@/components/ui/skeleton'
 import {
   messagesQueryOptions,
   repliesQueryOptions,
-} from '@/features/message/message-query-options'
+} from '@/features/message/hooks/message-query-options'
 import { MessageComposer } from './message-composer'
 import { MessageRow } from './message-row'
-import { useThread } from './use-thread'
+import { useThread } from '@/features/message/hooks/use-thread'
 
 export function ThreadPanel({
   channelId,

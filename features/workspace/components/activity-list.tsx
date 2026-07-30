@@ -5,7 +5,7 @@ import { Fragment } from 'react'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
 import { UserAvatar } from '@/components/ui/user-avatar'
-import { stripMarkdown } from '@/features/message/components/format'
+import { formatInline } from '@/features/message/utils/format'
 import {
   type ActivityItem,
   getActivity,
@@ -73,7 +73,7 @@ export async function ActivityList() {
                   </span>
                 </div>
                 <p className="mt-1.5 line-clamp-2 text-sm text-black dark:text-white">
-                  {stripMarkdown(item.preview)}
+                  {formatInline(item.preview)}
                 </p>
                 {item.context ? (
                   <div className="border-divider dark:border-divider-dark text-muted dark:text-muted-dark mt-2 flex items-start gap-1.5 border-l-2 pl-2.5 text-xs">
@@ -82,7 +82,7 @@ export async function ActivityList() {
                       strokeWidth={2}
                     />
                     <span className="line-clamp-1">
-                      {stripMarkdown(item.context)}
+                      {formatInline(item.context)}
                     </span>
                   </div>
                 ) : null}

@@ -6,8 +6,8 @@ import { useRouter, usePathname } from 'next/navigation'
 import type { Route } from 'next'
 import { useEffect, useRef, useState } from 'react'
 import { channelSearchQueryOptions } from '@/features/channel/channel-query-options'
-import { messagesQueryOptions } from '@/features/message/message-query-options'
-import { stripMarkdown } from '@/features/message/components/format'
+import { messagesQueryOptions } from '@/features/message/hooks/message-query-options'
+import { stripMarkdown } from '@/features/message/utils/format'
 import { cn } from '@/lib/utils'
 
 type Result =

@@ -11,10 +11,26 @@ function HideOnInbox({ children }: { children: ReactNode }) {
   return children
 }
 
+function ShowOnInbox({ children }: { children: ReactNode }) {
+  const pathname = usePathname()
+  if (pathname?.startsWith('/inbox')) {
+    return children
+  }
+  return null
+}
+
 export function SidebarVisibility({ children }: { children: ReactNode }) {
   return (
     <Suspense fallback={children}>
       <HideOnInbox>{children}</HideOnInbox>
+    </Suspense>
+  )
+}
+
+export function InboxOnly({ children }: { children: ReactNode }) {
+  return (
+    <Suspense fallback={null}>
+      <ShowOnInbox>{children}</ShowOnInbox>
     </Suspense>
   )
 }

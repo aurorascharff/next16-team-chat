@@ -5,7 +5,7 @@ import type { Route } from 'next'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { unreadMentionsQueryOptions } from '@/features/message/message-query-options'
+import { unreadMentionsQueryOptions } from '@/features/message/hooks/message-query-options'
 import { isNavActive, PRIMARY_NAV } from '@/features/workspace/primary-nav'
 import { cn } from '@/lib/utils'
 
@@ -22,7 +22,7 @@ export function WorkspaceRail() {
   return (
     <nav
       aria-label="Primary"
-      className="border-divider dark:border-divider-dark bg-elevated dark:bg-elevated-dark sticky top-0 z-30 hidden h-dvh w-18 shrink-0 flex-col items-center gap-1 border-r py-3 md:flex"
+      className="border-divider dark:border-divider-dark bg-elevated dark:bg-elevated-dark flex h-full w-18 shrink-0 flex-col items-center gap-1 border-r pt-3"
     >
       {PRIMARY_NAV.map((item) => {
         const { href, icon: Icon, label } = item

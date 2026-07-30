@@ -22,13 +22,12 @@ export type LayoutAction =
   | { type: 'addGroup'; name: string }
   | { type: 'renameGroup'; from: string; to: string }
   | { type: 'deleteGroup'; name: string }
+  | { type: 'moveGroup'; name: string; direction: 'up' | 'down' }
 
-export function sortGroups(groups: LayoutGroup[]): LayoutGroup[] {
-  return [...groups].sort((a, b) => {
-    if (a.name === UNGROUPED) return 1
-    if (b.name === UNGROUPED) return -1
-    return a.name.localeCompare(b.name)
-  })
+function withUngroupedLast(groups: LayoutGroup[]): LayoutGroup[] {
+  const named = groups.filter((group) => group.name !== UNGROUPED)
+  const ungrouped = groups.find((group) => group.name === UNGROUPED)
+  return ungrouped ? [...named, ungrouped] : named
 }
 
 export function applyLayoutAction(
@@ -60,7 +59,7 @@ export function applyLayoutAction(
     }
     case 'addGroup': {
       if (groups.some((group) => group.name === action.name)) return groups
-      return sortGroups([...groups, { channels: [], name: action.name }])
+      return withUngroupedLast([...groups, { channels: [], name: action.name }])
     }
     case 'renameGroup': {
       const to = action.to.trim()
@@ -72,11 +71,9 @@ export function applyLayoutAction(
       ) {
         return groups
       }
-      return sortGroups(
-        groups.map((group) => {
-          return group.name === action.from ? { ...group, name: to } : group
-        }),
-      )
+      return groups.map((group) => {
+        return group.name === action.from ? { ...group, name: to } : group
+      })
     }
     case 'deleteGroup': {
       const target = groups.find((group) => group.name === action.name)
@@ -92,7 +89,18 @@ export function applyLayoutAction(
             group.name === UNGROUPED ? ungrouped : group,
           )
         : [...remaining, ungrouped]
-      return sortGroups(next)
+      return withUngroupedLast(next)
+    }
+    case 'moveGroup': {
+      if (action.name === UNGROUPED) return groups
+      const movable = groups.filter((group) => group.name !== UNGROUPED)
+      const index = movable.findIndex((group) => group.name === action.name)
+      if (index === -1) return groups
+      const target = action.direction === 'up' ? index - 1 : index + 1
+      if (target < 0 || target >= movable.length) return groups
+      const next = [...movable]
+      ;[next[index], next[target]] = [next[target], next[index]]
+      return withUngroupedLast(next)
     }
     default:
       return groups

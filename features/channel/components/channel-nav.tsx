@@ -1,6 +1,6 @@
 'use client'
 
-import { Pencil, Plus, X } from 'lucide-react'
+import { ChevronDown, ChevronUp, Pencil, Plus, X } from 'lucide-react'
 import {
   startTransition,
   useActionState,
@@ -60,6 +60,14 @@ export function ChannelNav({ groups: initialGroups }: Props) {
     if (!name || name === oldName) return
     runAction({ from: oldName, to: name, type: 'renameGroup' })
   }
+
+  function moveGroup(name: string, direction: 'up' | 'down') {
+    runAction({ direction, name, type: 'moveGroup' })
+  }
+
+  const movableGroups = optimisticGroups.filter(
+    (group) => group.name !== UNGROUPED,
+  )
 
   return (
     <nav
@@ -144,6 +152,45 @@ export function ChannelNav({ groups: initialGroups }: Props) {
                 </p>
                 {removable && (
                   <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover/label:opacity-100">
+                    <button
+                      aria-label={`Move ${group.name} group up`}
+                      className="text-muted dark:text-muted-dark hover:text-accent p-0.5 transition-colors disabled:opacity-30 disabled:hover:text-current"
+                      disabled={
+                        movableGroups.findIndex(
+                          (item) => item.name === group.name,
+                        ) === 0
+                      }
+                      onClick={() => {
+                        return moveGroup(group.name, 'up')
+                      }}
+                      type="button"
+                    >
+                      <ChevronUp
+                        aria-hidden
+                        className="size-3.5"
+                        strokeWidth={2}
+                      />
+                    </button>
+                    <button
+                      aria-label={`Move ${group.name} group down`}
+                      className="text-muted dark:text-muted-dark hover:text-accent p-0.5 transition-colors disabled:opacity-30 disabled:hover:text-current"
+                      disabled={
+                        movableGroups.findIndex(
+                          (item) => item.name === group.name,
+                        ) ===
+                        movableGroups.length - 1
+                      }
+                      onClick={() => {
+                        return moveGroup(group.name, 'down')
+                      }}
+                      type="button"
+                    >
+                      <ChevronDown
+                        aria-hidden
+                        className="size-3.5"
+                        strokeWidth={2}
+                      />
+                    </button>
                     <button
                       aria-label={`Rename ${group.name} group`}
                       className="text-muted dark:text-muted-dark hover:text-accent p-0.5 transition-colors"

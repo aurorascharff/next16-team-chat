@@ -11,13 +11,13 @@ import {
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { UserAvatar } from '@/components/ui/user-avatar'
-import { useSendMessage } from '@/features/message/message-mutations'
+import { useSendMessage } from '@/features/message/hooks/message-mutations'
 import type { Message } from '@/features/message/types/message'
 import { useValidMentions } from '@/features/user/use-valid-mentions'
 import { cn } from '@/lib/utils'
-import { formatMarkdown, formatTime } from './format'
+import { formatMarkdown, formatTime } from '@/features/message/utils/format'
 import { AddReaction, MessageReactions } from './message-reactions'
-import { useThread } from './use-thread'
+import { useThread } from '@/features/message/hooks/use-thread'
 
 export function MessageRow({
   message,

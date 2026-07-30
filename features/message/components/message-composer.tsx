@@ -10,7 +10,7 @@ import {
   useState,
 } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useSendMessage } from '@/features/message/message-mutations'
+import { useSendMessage } from '@/features/message/hooks/message-mutations'
 import type { Message } from '@/features/message/types/message'
 import { MentionCombobox } from './mention-combobox'
 import { MessagePreview } from './message-preview'
