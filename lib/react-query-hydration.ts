@@ -19,8 +19,9 @@ type HydrationOptions = {
 
 async function getHydrationUpdatedAt(tags: string[]) {
   'use cache'
+  // Writes are the version source, so they must invalidate these same tags.
   cacheTag(...tags)
-  cacheLife('seconds')
+  cacheLife('max')
   return Date.now()
 }
 
