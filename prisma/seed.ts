@@ -308,7 +308,6 @@ async function main() {
           },
         },
         status: channel.status,
-        unread: channel.unread ?? 0,
       },
     })
   }

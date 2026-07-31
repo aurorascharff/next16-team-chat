@@ -399,6 +399,14 @@ export type ChannelGroupUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.ChannelGroupScalarWhereInput | Prisma.ChannelGroupScalarWhereInput[]
 }
 
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type ChannelGroupCreateNestedOneWithoutMembersInput = {
   create?: Prisma.XOR<Prisma.ChannelGroupCreateWithoutMembersInput, Prisma.ChannelGroupUncheckedCreateWithoutMembersInput>
   connectOrCreate?: Prisma.ChannelGroupCreateOrConnectWithoutMembersInput

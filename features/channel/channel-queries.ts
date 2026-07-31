@@ -127,26 +127,27 @@ async function getUnreadChannelsForUser(userId: string) {
   cacheTag(channelTags.unread)
   cacheLife('max')
 
-  const memberships = await prisma.channelMember.findMany({
-    select: { channelId: true, lastReadAt: true },
-    where: { userId },
-  })
-  const unreadEntries = await Promise.all(
-    memberships.map(async ({ channelId, lastReadAt }) => {
-      const unread = await prisma.message.count({
-        where: {
-          channelId,
-          createdAt: lastReadAt ? { gt: lastReadAt } : undefined,
-          parentId: null,
-          userId: { not: userId },
-        },
-      })
-      return [channelId, unread] as const
-    }),
-  )
+  const unreadChannels = await prisma.$queryRaw<
+    { channelId: string; unread: bigint }[]
+  >`
+    SELECT message."channelId", COUNT(*) AS unread
+    FROM "Message" AS message
+    INNER JOIN "ChannelMember" AS membership
+      ON membership."channelId" = message."channelId"
+    WHERE membership."userId" = ${userId}
+      AND message."userId" <> ${userId}
+      AND message."parentId" IS NULL
+      AND (
+        membership."lastReadAt" IS NULL
+        OR message."createdAt" > membership."lastReadAt"
+      )
+    GROUP BY message."channelId"
+  `
 
   return Object.fromEntries(
-    unreadEntries.filter(([, unread]) => unread > 0),
+    unreadChannels.map(({ channelId, unread }) => {
+      return [channelId, Number(unread)]
+    }),
   ) as Record<string, number>
 }
 

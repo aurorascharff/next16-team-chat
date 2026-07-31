@@ -28,7 +28,6 @@ model Channel {
   description String
   category    String   @default("Channels")
   isPrivate   Boolean  @default(false)
-  unread      Int      @default(0)
   status      String
   handoff     String
   createdAt   DateTime @default(now())
