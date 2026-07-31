@@ -60,8 +60,8 @@ importers:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       swr:
-        specifier: 2.5.0-beta.0
-        version: 2.5.0-beta.0(react@19.2.4)
+        specifier: 2.5.0-beta.1
+        version: 2.5.0-beta.1(react@19.2.4)
       tailwind-merge:
         specifier: ^3.6.0
         version: 3.6.0
@@ -1634,8 +1634,8 @@ packages:
       babel-plugin-macros:
         optional: true
 
-  swr@2.5.0-beta.0:
-    resolution: {integrity: sha512-Bvts8Jl7pU/aoPwMapwY4Zq/KLU5XgKnbyzI6Uj1GqBuGHgqXemboHYao/QB5cJB9tQ/5hotzyoE0Gpk3miUBg==}
+  swr@2.5.0-beta.1:
+    resolution: {integrity: sha512-wXUkEElUHL0it5lmjMVuwua49mwgMILkonY9QvdlP4d/ywM8UhTtqX8aBTTHUk79OJqfnLjFosIiK+KsSFco4A==}
     peerDependencies:
       react: ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -3047,7 +3047,7 @@ snapshots:
       client-only: 0.0.1
       react: 19.2.4
 
-  swr@2.5.0-beta.0(react@19.2.4):
+  swr@2.5.0-beta.1(react@19.2.4):
     dependencies:
       dequal: 2.0.3
       react: 19.2.4

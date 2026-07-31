@@ -9,29 +9,22 @@ import { getCurrentUser, getUsers } from '@/features/user/user-queries'
 import { MessageList } from './message-list'
 
 export async function MessageThread({ channelId }: { channelId: string }) {
+  const userData = preload(userKeys.all, getUsers)
   const user = await getCurrentUser()
-  const [messages, users, lastReadAt] = await Promise.all([
+  const messageData = preload(messageKeys.channel(channelId), () =>
     getMessagesForUser(channelId, user.id),
-    getUsers(),
-    getLastReadAt(channelId, user.id),
-  ])
-  const messageData = preload(
-    messageKeys.channel(channelId),
-    async () => messages,
   )
-  const userData = preload(userKeys.all, async () => users)
+  const lastReadAt = await getLastReadAt(channelId, user.id)
 
   return (
-    <SWRConfig value={{ cacheData: messageData }}>
-      <SWRConfig value={{ cacheData: userData }}>
-        <MessageList
-          channelId={channelId}
-          currentUserId={user.id}
-          key={channelId}
-          lastReadAt={lastReadAt}
-        />
-        <MarkChannelRead channelId={channelId} />
-      </SWRConfig>
+    <SWRConfig value={{ cacheData: { ...messageData, ...userData } }}>
+      <MessageList
+        channelId={channelId}
+        currentUserId={user.id}
+        key={channelId}
+        lastReadAt={lastReadAt}
+      />
+      <MarkChannelRead channelId={channelId} />
     </SWRConfig>
   )
 }
