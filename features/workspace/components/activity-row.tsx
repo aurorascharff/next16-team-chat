@@ -33,7 +33,7 @@ export function ActivityRow({ item }: { item: ActivityItem }) {
     if (item.read) {
       return
     }
-    markActivityRead.mutate({
+    void markActivityRead({
       itemIds: [item.id],
       optimistic: 'decrement',
     })

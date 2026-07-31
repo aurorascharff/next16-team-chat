@@ -1,41 +1,35 @@
 'use client'
 
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useSWRConfig } from 'swr'
 import { markChannelReadAction } from '@/features/channel/channel-actions'
 import { channelKeys } from '@/features/channel/channel-cache'
-import type { UnreadChannels } from '@/features/channel/channel-query-options'
+import type { UnreadChannels } from '@/features/channel/hooks/use-unread-channels'
+
+function removeChannel(current: UnreadChannels | undefined, channelId: string) {
+  const next = { ...current }
+  delete next[channelId]
+  return next
+}
 
 export function useMarkChannelRead() {
-  const queryClient = useQueryClient()
+  const { mutate } = useSWRConfig()
 
-  return useMutation({
-    mutationFn: async (channelId: string) => {
-      return markChannelReadAction(channelId)
-    },
-    onMutate: async (channelId: string) => {
-      await queryClient.cancelQueries({ queryKey: channelKeys.unread })
-      const previous = queryClient.getQueryData<UnreadChannels>(
-        channelKeys.unread,
-      )
-
-      queryClient.setQueryData<UnreadChannels>(
-        channelKeys.unread,
-        (current = {}) => {
-          const next = { ...current }
-          delete next[channelId]
-          return next
-        },
-      )
-
-      return { previous }
-    },
-    onError: (_error, _channelId, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(channelKeys.unread, context.previous)
-      }
-    },
-    onSuccess: (readAt, channelId) => {
-      queryClient.setQueryData(channelKeys.lastRead(channelId), readAt)
-    },
-  })
+  return async function markChannelRead(channelId: string) {
+    await mutate<UnreadChannels>(
+      channelKeys.unread,
+      async (current) => {
+        const readAt = await markChannelReadAction(channelId)
+        await mutate(channelKeys.lastRead(channelId), readAt, {
+          revalidate: false,
+        })
+        return removeChannel(current, channelId)
+      },
+      {
+        optimisticData: (current) => removeChannel(current, channelId),
+        revalidate: false,
+        rollbackOnError: true,
+        throwOnError: false,
+      },
+    )
+  }
 }

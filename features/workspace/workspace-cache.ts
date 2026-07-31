@@ -1,5 +1,5 @@
 export const activityKeys = {
-  unread: ['activity', 'unread'] as const,
+  unread: '/api/activity/unread',
 }
 
 export const activityTags = {

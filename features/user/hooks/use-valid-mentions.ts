@@ -1,11 +1,10 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { usersQueryOptions } from '@/features/user/user-query-options'
+import { useUsers } from '@/features/user/hooks/use-users'
 
 export function useValidMentions() {
-  const { data: users } = useQuery(usersQueryOptions())
+  const { data: users } = useUsers()
   return useMemo(() => {
     if (!users) return undefined
     return new Set(

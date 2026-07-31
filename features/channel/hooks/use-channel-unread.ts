@@ -1,17 +1,17 @@
 'use client'
 
-import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { useSWRConfig } from 'swr'
 import { channelKeys } from '@/features/channel/channel-cache'
 import {
   type UnreadChannels,
-  unreadChannelsQueryOptions,
-} from '@/features/channel/channel-query-options'
+  useUnreadChannels,
+} from '@/features/channel/hooks/use-unread-channels'
 
 export function useChannelUnread(channelId: string, initialUnread?: number) {
-  const queryClient = useQueryClient()
+  const { mutate } = useSWRConfig()
   const [mounted, setMounted] = useState(false)
-  const { data: unreadMap } = useQuery(unreadChannelsQueryOptions())
+  const { data: unreadMap } = useUnreadChannels()
 
   useEffect(() => {
     setMounted(true)
@@ -21,13 +21,14 @@ export function useChannelUnread(channelId: string, initialUnread?: number) {
 
   return {
     clearUnread() {
-      queryClient.setQueryData<UnreadChannels>(
+      void mutate<UnreadChannels>(
         channelKeys.unread,
         (current = {}) => {
           const next = { ...current }
           delete next[channelId]
           return next
         },
+        { revalidate: false },
       )
     },
     hasUnread: mounted && Boolean(unread),

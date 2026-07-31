@@ -1,11 +1,10 @@
-import { HydrationBoundary } from '@tanstack/react-query'
+import { preload, SWRConfig } from 'swr'
 import { Skeleton } from '@/components/ui/skeleton'
-import { channelKeys, channelTags } from '@/features/channel/channel-cache'
+import { channelKeys } from '@/features/channel/channel-cache'
 import {
   getCurrentChannelLayout,
   getUnreadChannels,
 } from '@/features/channel/channel-queries'
-import { dehydrate } from '@/lib/react-query-hydration'
 import { ChannelNav } from './channel-nav'
 
 export async function ChannelList() {
@@ -21,15 +20,12 @@ export async function ChannelList() {
       }),
     }
   })
+  const unreadData = preload(channelKeys.unread, async () => unread)
 
   return (
-    <HydrationBoundary
-      state={await dehydrate([{ queryKey: channelKeys.unread, data: unread }], {
-        tags: [channelTags.unread],
-      })}
-    >
+    <SWRConfig value={{ cacheData: unreadData }}>
       <ChannelNav groups={groupsWithUnread} key={userId} />
-    </HydrationBoundary>
+    </SWRConfig>
   )
 }
 

@@ -84,7 +84,7 @@ export function MessageRow({
               <button
                 className="text-danger hover:text-danger/80 inline-flex items-center gap-1 font-semibold underline underline-offset-2"
                 onClick={() => {
-                  return sendMessage.mutate(message)
+                  return sendMessage(message)
                 }}
                 type="button"
               >

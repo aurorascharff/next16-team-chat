@@ -1,11 +1,10 @@
 'use client'
 
-import { useSuspenseQuery } from '@tanstack/react-query'
 import type { RefObject } from 'react'
 import { EmptyState } from '@/components/ui/empty-state'
 import { useChannelReadOnEntry } from '@/features/channel/hooks/use-channel-read'
 import { useMessageJump } from '@/features/message/hooks/use-message-jump'
-import { messagesQueryOptions } from '@/features/message/message-query-options'
+import { useSuspenseMessages } from '@/features/message/hooks/use-messages'
 import { MessageJumpButton } from './message-jump-button'
 import { MessageRow } from './message-row'
 
@@ -18,7 +17,7 @@ export function MessageList({
   currentUserId: string
   lastReadAt: string | null
 }) {
-  const { data: messages } = useSuspenseQuery(messagesQueryOptions(channelId))
+  const { data: messages = [] } = useSuspenseMessages(channelId)
   const readAtOnEntry = useChannelReadOnEntry(channelId, lastReadAt)
 
   const unreadMessages = messages.filter((message) => {

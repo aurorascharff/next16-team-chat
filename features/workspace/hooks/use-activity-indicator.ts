@@ -1,17 +1,14 @@
 'use client'
 
-import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { useSWRConfig } from 'swr'
 import { activityKeys } from '@/features/workspace/workspace-cache'
-import { unreadActivityQueryOptions } from '@/features/workspace/workspace-query-options'
+import { useUnreadActivity } from '@/features/workspace/hooks/use-unread-activity'
 
 export function useActivityIndicator(enabled = true) {
-  const queryClient = useQueryClient()
+  const { mutate } = useSWRConfig()
   const [mounted, setMounted] = useState(false)
-  const { data: activity } = useQuery({
-    ...unreadActivityQueryOptions(),
-    enabled,
-  })
+  const { data: activity } = useUnreadActivity(enabled)
 
   useEffect(() => {
     setMounted(true)
@@ -19,7 +16,7 @@ export function useActivityIndicator(enabled = true) {
 
   return {
     clearActivity() {
-      queryClient.setQueryData(activityKeys.unread, { count: 0 })
+      void mutate(activityKeys.unread, { count: 0 }, { revalidate: false })
     },
     hasActivity: mounted && Boolean(activity && activity.count > 0),
   }

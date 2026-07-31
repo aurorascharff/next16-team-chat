@@ -117,7 +117,7 @@ export function MessageComposer({
     setError('')
     setValue('')
     setMode('write')
-    sendMessage.mutate(optimistic)
+    void sendMessage(optimistic)
   }
 
   const toolbarButton =

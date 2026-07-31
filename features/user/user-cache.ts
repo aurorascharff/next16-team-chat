@@ -1,6 +1,6 @@
 export const userKeys = {
-  all: ['users'] as const,
-  search: (query: string) => ['users', 'search', query] as const,
+  all: '/api/users',
+  search: (query: string) => `/api/users?q=${encodeURIComponent(query)}`,
 }
 
 export const userTags = {

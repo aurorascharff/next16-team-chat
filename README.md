@@ -4,7 +4,7 @@
 
 # Next 16 Team Chat "Huddle"
 
-A "Slack"-like team chat demo that pairs [TanStack React Query](https://tanstack.com/query) with [Next.js 16.3 Cache Components](https://preview.nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents) on React 19, Tailwind CSS v4, and Prisma 7.
+A "Slack"-like team chat demo that pairs [SWR](https://swr.vercel.app) with [Next.js 16.3 Cache Components](https://preview.nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents) on React 19, Tailwind CSS v4, and Prisma 7.
 
 [Live demo →](https://next16-team-chat.vercel.app)
 
@@ -17,7 +17,7 @@ The architecture follows the [Next.js App Architecture](https://github.com/auror
 ## Features
 
 - **[Cache Components](https://preview.nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents)** cache each query with `'use cache'`, name the data with `cacheTag`, and set its lifetime with `cacheLife`, so repeated reads come from the cache until a tag is invalidated. Per-user reads use [`'use cache: private'`](https://preview.nextjs.org/docs/app/api-reference/directives/use-cache-private).
-- **[TanStack React Query](https://tanstack.com/query)** owns the live client state for messages, replies, and unread counts. The server seeds its cache through `<HydrationBoundary>`, then the client takes over polling and optimistic mutations, so cached RSC data and live client data share one source of truth.
+- **[SWR](https://swr.vercel.app)** owns the live client state for messages, replies, and unread counts. Server Components seed request-scoped cache data with `preload` and `<SWRConfig>`, then the client takes over polling and optimistic mutations, so cached RSC data and live client data share one source of truth.
 - **[Partial Prefetching](https://preview.nextjs.org/docs/app/guides/adopting-partial-prefetching)** prefetches the shared channel shell as links enter the viewport, so navigation commits instantly and the message list streams in behind Suspense.
 - **[Server Functions](https://nextjs.org/docs/app/getting-started/mutating-data)** run mutations on the server and invalidate only the tags they change with [`updateTag`](https://nextjs.org/docs/app/api-reference/functions/updateTag); route handlers use stale-while-revalidate [`revalidateTag`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag) for read-tracking that shouldn't block the current view.
 - **[React Compiler](https://react.dev/learn/react-compiler)** memoizes components and hooks automatically, so the code needs no manual `useMemo` or `useCallback`.
@@ -51,7 +51,7 @@ The schema is otherwise identical, so the rest of the app behaves the same as pr
 
 - **[Next.js 16.3](https://nextjs.org/)**: App Router, Cache Components, Server Functions
 - **[React 19](https://react.dev/)** with React Compiler: Suspense, View Transitions, `useOptimistic`
-- **[TanStack Query](https://tanstack.com/query)** for client-owned message state
+- **[SWR](https://swr.vercel.app)** for client-owned message state
 - **[TypeScript](https://www.typescriptlang.org/)** and **[Tailwind CSS v4](https://tailwindcss.com/)**
 - **[Prisma 7](https://www.prisma.io/)** on PostgreSQL (Neon)
 - **[Ariakit](https://ariakit.org/)** for the accessible mention combobox

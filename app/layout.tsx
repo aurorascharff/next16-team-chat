@@ -16,7 +16,7 @@ import './globals.css'
 export const metadata: Metadata = {
   applicationName: 'Huddle',
   description:
-    'A Next.js 16 messaging app with Cache Components, Partial Prefetching, and React Query.',
+    'A Next.js 16 messaging app with Cache Components, Partial Prefetching, and SWR.',
   icons: {
     apple: '/logo.svg',
     icon: '/logo.svg',

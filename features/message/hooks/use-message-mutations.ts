@@ -1,7 +1,7 @@
 'use client'
 
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { useSWRConfig } from 'swr'
 import { reactToMessage, sendMessage } from '@/features/message/message-actions'
 import { messageKeys } from '@/features/message/message-cache'
 import type { Message, Reaction } from '@/features/message/types/message'
@@ -27,44 +27,44 @@ function applyReactionToggle(
 }
 
 export function useReactionToggle(message: Message) {
-  const queryClient = useQueryClient()
+  const { mutate } = useSWRConfig()
   const key = message.parentId
     ? messageKeys.replies(message.parentId)
     : messageKeys.channel(message.channelId)
 
-  const { mutate } = useMutation({
-    mutationFn: (emoji: string) => {
-      return reactToMessage({
-        channelId: message.channelId,
-        emoji,
-        messageId: message.id,
-        parentId: message.parentId ?? undefined,
-      })
-    },
-    onError: (_error, _emoji, context) => {
-      if (context?.previous !== undefined) {
-        queryClient.setQueryData(key, context.previous)
-      }
-      toast.error('Could not update reaction. Try again.')
-    },
-    onMutate: async (emoji: string) => {
-      await queryClient.cancelQueries({ queryKey: key })
-      const previous = queryClient.getQueryData<Message[]>(key)
-      queryClient.setQueryData<Message[]>(key, (current = []) =>
-        current.map((item) =>
-          item.id === message.id
-            ? {
-                ...item,
-                reactions: applyReactionToggle(item.reactions, emoji),
-              }
-            : item,
-        ),
+  return function toggleReaction(emoji: string) {
+    function update(current: Message[] = []) {
+      return current.map((item) =>
+        item.id === message.id
+          ? {
+              ...item,
+              reactions: applyReactionToggle(item.reactions, emoji),
+            }
+          : item,
       )
-      return { previous }
-    },
-  })
+    }
 
-  return mutate
+    void mutate<Message[]>(
+      key,
+      async (current) => {
+        await reactToMessage({
+          channelId: message.channelId,
+          emoji,
+          messageId: message.id,
+          parentId: message.parentId ?? undefined,
+        })
+        return update(current)
+      },
+      {
+        optimisticData: update,
+        revalidate: false,
+        rollbackOnError: true,
+        throwOnError: true,
+      },
+    ).catch(() => {
+      toast.error('Could not update reaction. Try again.')
+    })
+  }
 }
 
 export function useSendMessage({
@@ -74,17 +74,15 @@ export function useSendMessage({
   channelId: string
   parentId?: string
 }) {
-  const queryClient = useQueryClient()
+  const { mutate } = useSWRConfig()
   const key = parentId
     ? messageKeys.replies(parentId)
     : messageKeys.channel(channelId)
 
-  return useMutation({
-    mutationFn: (optimistic: Message) => {
-      return sendMessage({ body: optimistic.body, channelId, parentId })
-    },
-    onMutate: (optimistic: Message) => {
-      queryClient.setQueryData<Message[]>(key, (current = []) => {
+  return async function sendOptimisticMessage(optimistic: Message) {
+    await mutate<Message[]>(
+      key,
+      (current = []) => {
         const exists = current.some((message) => message.id === optimistic.id)
         if (exists) {
           return current.map((message) =>
@@ -94,21 +92,31 @@ export function useSendMessage({
           )
         }
         return [...current, optimistic]
+      },
+      { revalidate: false },
+    )
+
+    try {
+      const result = await sendMessage({
+        body: optimistic.body,
+        channelId,
+        parentId,
       })
-    },
-    onSuccess: (result, optimistic) => {
-      queryClient.setQueryData<Message[]>(key, (current = []) =>
-        current.map((message) =>
-          message.id === optimistic.id
-            ? result.ok
-              ? { ...result.message, status: 'sent' }
-              : { ...message, status: 'failed' }
-            : message,
-        ),
+      await mutate<Message[]>(
+        key,
+        (current = []) =>
+          current.map((message) =>
+            message.id === optimistic.id
+              ? result.ok
+                ? { ...result.message, status: 'sent' }
+                : { ...message, status: 'failed' }
+              : message,
+          ),
+        { revalidate: false },
       )
 
       if (result.ok && parentId) {
-        queryClient.setQueryData<Message[]>(
+        await mutate<Message[]>(
           messageKeys.channel(channelId),
           (current = []) =>
             current.map((message) =>
@@ -116,17 +124,20 @@ export function useSendMessage({
                 ? { ...message, replyCount: (message.replyCount ?? 0) + 1 }
                 : message,
             ),
+          { revalidate: false },
         )
       }
-    },
-    onError: (_error, optimistic) => {
-      queryClient.setQueryData<Message[]>(key, (current = []) =>
-        current.map((message) =>
-          message.id === optimistic.id
-            ? { ...message, status: 'failed' }
-            : message,
-        ),
+    } catch {
+      await mutate<Message[]>(
+        key,
+        (current = []) =>
+          current.map((message) =>
+            message.id === optimistic.id
+              ? { ...message, status: 'failed' }
+              : message,
+          ),
+        { revalidate: false },
       )
-    },
-  })
+    }
+  }
 }

@@ -2,7 +2,7 @@
   "name": "next16-team-chat",
   "version": "0.1.0",
   "private": true,
-  "description": "A Next.js 16 team chat app demonstrating Cache Components, Partial Prefetching, and Instant Navigations with React Query.",
+  "description": "A Next.js 16 team chat app demonstrating Cache Components, Partial Prefetching, and Instant Navigations with SWR.",
   "license": "MIT",
   "keywords": [
     "nextjs",
@@ -10,7 +10,7 @@
     "cache-components",
     "partial-prefetching",
     "instant-navigation",
-    "react-query",
+    "swr",
     "team-chat",
     "messaging"
   ],
@@ -34,7 +34,6 @@
     "@prisma/adapter-better-sqlite3": "^7.8.0",
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.8.0",
-    "@tanstack/react-query": "^5.101.2",
     "better-sqlite3": "^12.11.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.4.2",
@@ -48,6 +47,7 @@
     "react-dom": "19.2.4",
     "server-only": "^0.0.1",
     "sonner": "^2.0.7",
+    "swr": "2.5.0-beta.0",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {

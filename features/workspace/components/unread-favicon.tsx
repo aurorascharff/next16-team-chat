@@ -1,9 +1,8 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { unreadChannelsQueryOptions } from '@/features/channel/channel-query-options'
-import { unreadActivityQueryOptions } from '@/features/workspace/workspace-query-options'
+import { useUnreadChannels } from '@/features/channel/hooks/use-unread-channels'
+import { useUnreadActivity } from '@/features/workspace/hooks/use-unread-activity'
 
 const DEFAULT_FAVICON = '/logo.svg'
 
@@ -67,8 +66,8 @@ function createUnreadFavicon() {
 }
 
 export function UnreadFavicon() {
-  const { data: unreadChannels } = useQuery(unreadChannelsQueryOptions())
-  const { data: unreadActivity } = useQuery(unreadActivityQueryOptions())
+  const { data: unreadChannels } = useUnreadChannels()
+  const { data: unreadActivity } = useUnreadActivity()
 
   const hasUnreadChannels = Object.keys(unreadChannels ?? {}).length > 0
   const hasUnreadActivity = Boolean(unreadActivity && unreadActivity.count > 0)

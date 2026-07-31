@@ -1,14 +1,13 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useEffectEvent } from 'react'
 import { useMarkChannelRead } from '@/features/channel/hooks/use-mark-channel-read'
 
 export function MarkChannelRead({ channelId }: { channelId: string }) {
-  const markRead = useMarkChannelRead()
+  const markRead = useEffectEvent(useMarkChannelRead())
 
   useEffect(() => {
-    markRead.mutate(channelId)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    void markRead(channelId)
   }, [channelId])
 
   return null

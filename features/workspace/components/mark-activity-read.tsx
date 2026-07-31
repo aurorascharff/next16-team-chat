@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useEffectEvent, useRef } from 'react'
 import { useMarkActivityRead } from '@/features/workspace/hooks/use-mark-activity-read'
 
 export function MarkActivityRead({ itemIds }: { itemIds: string[] }) {
-  const markRead = useMarkActivityRead()
+  const markRead = useEffectEvent(useMarkActivityRead())
   const lastKey = useRef('')
   const key = itemIds.join(':')
 
@@ -14,11 +14,11 @@ export function MarkActivityRead({ itemIds }: { itemIds: string[] }) {
     }
 
     lastKey.current = key
-    markRead.mutate({
+    void markRead({
       itemIds,
       optimistic: 'clear',
     })
-  }, [itemIds, key, markRead])
+  }, [itemIds, key])
 
   return null
 }

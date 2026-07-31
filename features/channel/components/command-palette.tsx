@@ -1,13 +1,12 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
 import { Hash, Lock, MessageSquare, Search } from 'lucide-react'
 import { useRouter, usePathname } from 'next/navigation'
 import type { Route } from 'next'
 import { useEffect, useRef, useState } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
-import { channelSearchQueryOptions } from '@/features/channel/channel-query-options'
-import { messagesQueryOptions } from '@/features/message/message-query-options'
+import { useChannelSearch } from '@/features/channel/hooks/use-channel-search'
+import { useMessages } from '@/features/message/hooks/use-messages'
 import { stripMarkdown } from '@/features/message/utils/format'
 import { cn } from '@/lib/utils'
 
@@ -37,19 +36,12 @@ export function CommandPalette() {
   const channelId = pathname?.startsWith('/channel/')
     ? pathname.split('/')[2]
     : undefined
-  const channelsQuery = useQuery({
-    ...channelSearchQueryOptions(),
-    enabled: open,
-  })
-  const messagesQuery = useQuery({
-    ...messagesQueryOptions(channelId ?? ''),
-    enabled: open && Boolean(channelId),
-  })
+  const channelsQuery = useChannelSearch(open)
+  const messagesQuery = useMessages(channelId ?? null, open)
   const channels = channelsQuery.data ?? []
   const messages = messagesQuery.data ?? []
   const isPending =
-    channelsQuery.isPending ||
-    (Boolean(channelId) && messagesQuery.isPending)
+    channelsQuery.isLoading || (Boolean(channelId) && messagesQuery.isLoading)
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -174,10 +166,7 @@ export function CommandPalette() {
             Esc
           </kbd>
         </div>
-        <ul
-          aria-busy={isPending}
-          className="max-h-80 overflow-y-auto p-1.5"
-        >
+        <ul aria-busy={isPending} className="max-h-80 overflow-y-auto p-1.5">
           {isPending ? (
             <CommandPaletteResultsFallback />
           ) : results.length === 0 ? (

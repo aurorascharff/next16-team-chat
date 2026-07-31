@@ -1,14 +1,13 @@
 'use client'
 
-import { useSuspenseQuery } from '@tanstack/react-query'
 import { X } from 'lucide-react'
 import { Suspense } from 'react'
 import { Crossfade } from '@/components/ui/crossfade'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
-  messagesQueryOptions,
-  repliesQueryOptions,
-} from '@/features/message/message-query-options'
+  useSuspenseMessages,
+  useSuspenseReplies,
+} from '@/features/message/hooks/use-messages'
 import { MessageComposer } from './message-composer'
 import { MessageRow } from './message-row'
 import { useThread } from '@/features/message/hooks/use-thread'
@@ -66,8 +65,8 @@ function ThreadBody({
   channelId: string
   messageId: string
 }) {
-  const { data: messages } = useSuspenseQuery(messagesQueryOptions(channelId))
-  const { data: replies } = useSuspenseQuery(repliesQueryOptions(messageId))
+  const { data: messages = [] } = useSuspenseMessages(channelId)
+  const { data: replies = [] } = useSuspenseReplies(messageId)
   const parent = messages.find((message) => {
     return message.id === messageId
   })

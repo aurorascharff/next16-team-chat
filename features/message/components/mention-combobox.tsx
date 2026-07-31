@@ -1,7 +1,6 @@
 'use client'
 
 import * as Ariakit from '@ariakit/react'
-import { useSuspenseQuery } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import {
   Component,
@@ -12,7 +11,7 @@ import {
   useDeferredValue,
 } from 'react'
 import { UserAvatar } from '@/components/ui/user-avatar'
-import { userSearchQueryOptions } from '@/features/user/user-query-options'
+import { useUserSearch } from '@/features/user/hooks/use-users'
 
 const MENTION_TRIGGER = '@'
 
@@ -169,7 +168,7 @@ function MentionResults({
   onSelect: (handle: string) => void
   query: string
 }) {
-  const { data: users } = useSuspenseQuery(userSearchQueryOptions(query))
+  const { data: users = [] } = useUserSearch(query)
 
   if (users.length === 0) {
     return (

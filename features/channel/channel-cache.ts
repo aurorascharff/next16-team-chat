@@ -1,8 +1,7 @@
 export const channelKeys = {
-  all: ['channels', 'all'] as const,
-  lastRead: (channelId: string) =>
-    ['channels', channelId, 'last-read'] as const,
-  unread: ['channels', 'unread'] as const,
+  all: '/api/channels',
+  lastRead: (channelId: string) => `/api/channels/${channelId}/last-read`,
+  unread: '/api/channels/unread',
 }
 
 export const channelTags = {
