@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 
 export function UserSwitcher({ currentUserId }: { currentUserId: string }) {
   const router = useRouter()
-  const { mutate } = useSWRConfig()
+  const { unload } = useSWRConfig()
   const [isPending, startTransition] = useTransition()
   const nextUserId = currentUserId === 'ada' ? 'grace' : 'ada'
 
@@ -23,7 +23,7 @@ export function UserSwitcher({ currentUserId }: { currentUserId: string }) {
       onClick={() => {
         startTransition(async () => {
           const destination = await switchUser(nextUserId)
-          await mutate(() => true, undefined, { revalidate: false })
+          unload({ revalidate: false })
           router.push(destination as Route)
         })
       }}
