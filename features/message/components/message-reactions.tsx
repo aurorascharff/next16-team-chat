@@ -54,7 +54,7 @@ export function MessageReactions({ message }: { message: Message }) {
           >
             <span>{reaction.emoji}</span>
             {reaction.count}
-            <span className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-1.5 hidden w-max max-w-[calc(100vw-2rem)] -translate-x-1/2 whitespace-nowrap rounded-md bg-zinc-950 px-2 py-1 text-center text-[0.6875rem] leading-snug font-medium text-white shadow-lg group-hover/reaction:block group-focus-visible/reaction:block dark:bg-white dark:text-zinc-950">
+            <span className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-1.5 hidden w-max max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-md bg-zinc-950 px-2 py-1 text-center text-[0.6875rem] leading-snug font-medium whitespace-nowrap text-white shadow-lg group-hover/reaction:block group-focus-visible/reaction:block dark:bg-white dark:text-zinc-950">
               {label}
             </span>
           </button>
