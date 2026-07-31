@@ -162,3 +162,14 @@ body:has([data-user-switching]) nav[aria-label='Channels'] {
 ::view-transition-new(mobile-nav) {
   animation: none;
 }
+
+::view-transition-group(activity-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(activity-header) {
+  display: none;
+}
+::view-transition-new(activity-header) {
+  animation: none;
+}
