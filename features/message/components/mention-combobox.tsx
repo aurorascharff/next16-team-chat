@@ -135,7 +135,7 @@ export function MentionCombobox({
       />
       <Ariakit.ComboboxPopover
         className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark z-30 w-56 overflow-hidden rounded-lg border shadow-lg"
-        gutter={4}
+        gutter={44}
         hidden={!open}
         store={combobox}
         style={{ viewTransitionName: 'none' }}

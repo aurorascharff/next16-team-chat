@@ -5,11 +5,8 @@ import { Search } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useActivityIndicator } from '@/features/workspace/hooks/use-activity-indicator'
-import {
-  isNavActive,
-  PRIMARY_NAV,
-} from '@/features/workspace/utils/primary-nav'
 import { cn } from '@/lib/utils'
+import { isNavActive, PRIMARY_NAV } from './workspace-rail'
 
 export function MobileTabBar() {
   const pathname = usePathname()

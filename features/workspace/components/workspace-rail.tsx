@@ -1,17 +1,44 @@
 'use client'
 
 import type { Route } from 'next'
+import { AtSign, House, type LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Suspense } from 'react'
 import { useActivityIndicator } from '@/features/workspace/hooks/use-activity-indicator'
-import {
-  isNavActive,
-  PRIMARY_NAV,
-} from '@/features/workspace/utils/primary-nav'
 import { cn } from '@/lib/utils'
 
-type PrimaryNavItem = (typeof PRIMARY_NAV)[number]
+type PrimaryNavItem = {
+  href: string
+  icon: LucideIcon
+  label: string
+  match: string[]
+  showActivityDot?: boolean
+}
+
+export const PRIMARY_NAV: PrimaryNavItem[] = [
+  {
+    href: '/',
+    icon: House,
+    label: 'Home',
+    match: ['/', '/channel', '/channels'],
+  },
+  {
+    href: '/activity',
+    icon: AtSign,
+    label: 'Activity',
+    match: ['/activity'],
+    showActivityDot: true,
+  },
+]
+
+export function isNavActive(item: PrimaryNavItem, pathname: string | null) {
+  if (!pathname) return false
+  return item.match.some((prefix) => {
+    if (prefix === '/') return pathname === '/'
+    return pathname === prefix || pathname.startsWith(`${prefix}/`)
+  })
+}
 
 export function WorkspaceRail() {
   return (
