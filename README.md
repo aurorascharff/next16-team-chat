@@ -16,17 +16,19 @@ A "Slack"-like team chat demo built with [Next.js 16.3 Cache Components](https:/
 
 The architecture follows the [Next.js App Architecture](https://github.com/aurorascharff/skills/tree/main/skills/nextjs-app-architecture) skill and the [Component Architecture for React Server Components](https://aurorascharff.no/posts/component-architecture-for-react-server-components/) blog post.
 
-## Client data patterns
+## Client data
 
-- **Server seeded:** `MessageThread` fetches messages in a Server Component and seeds the client cache. [TanStack Query](https://github.com/aurorascharff/next16-messaging/blob/main/features/message/components/message-thread.tsx) · [SWR](https://github.com/aurorascharff/next16-messaging/blob/swr/features/message/components/message-thread.tsx)
-- **Suspense query:** Mentions and replies fetch after interaction inside a local Suspense boundary. [TanStack mentions](https://github.com/aurorascharff/next16-messaging/blob/main/features/message/components/mention-combobox.tsx) · [SWR mentions](https://github.com/aurorascharff/next16-messaging/blob/swr/features/message/components/mention-combobox.tsx) · [TanStack replies](https://github.com/aurorascharff/next16-messaging/blob/main/features/message/components/thread-panel.tsx) · [SWR replies](https://github.com/aurorascharff/next16-messaging/blob/swr/features/message/components/thread-panel.tsx)
-- **On demand:** `CommandPalette` fetches when it opens and renders its own pending state. [TanStack Query](https://github.com/aurorascharff/next16-messaging/blob/main/features/channel/components/command-palette.tsx) · [SWR](https://github.com/aurorascharff/next16-messaging/blob/swr/features/channel/components/command-palette.tsx)
+Both implementations demonstrate three client data patterns:
+
+- **Server seeded:** Channel messages, user data, and unread state are rendered on the server and seed the client cache.
+- **Suspense queries:** The `@mention` user autocomplete searches as you type, while thread replies load from the selected message. Each renders inside a local Suspense boundary.
+- **On demand:** The command palette fetches channels and messages when it opens and renders its own pending state.
 
 ## Features
 
-- **[Cache Components](https://preview.nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents)** cache each query with `'use cache'`, name the data with `cacheTag`, and set its lifetime with `cacheLife`, so repeated reads come from the cache until a tag is invalidated. Per-user reads use [`'use cache: private'`](https://preview.nextjs.org/docs/app/api-reference/directives/use-cache-private).
-- **[Partial Prefetching](https://preview.nextjs.org/docs/app/guides/adopting-partial-prefetching)** prefetches the shared channel shell as links enter the viewport, so navigation commits instantly and the message list streams in behind Suspense.
-- **[Server Functions](https://nextjs.org/docs/app/getting-started/mutating-data)** run mutations on the server and invalidate only the tags they change with [`updateTag`](https://nextjs.org/docs/app/api-reference/functions/updateTag); route handlers use stale-while-revalidate [`revalidateTag`](https://nextjs.org/docs/app/api-reference/functions/revalidateTag) for read-tracking that shouldn't block the current view.
+- **[Cache Components](https://preview.nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents)** cache server reads with `'use cache'`, `cacheTag`, and `cacheLife`. Per-user reads use [`'use cache: private'`](https://preview.nextjs.org/docs/app/api-reference/directives/use-cache-private).
+- **[Partial Prefetching](https://preview.nextjs.org/docs/app/guides/adopting-partial-prefetching)** reuses one App Shell per route. Channel links set `prefetch={true}` on hover, focus, or touch to opt into [runtime prefetching](https://preview.nextjs.org/docs/app/guides/runtime-prefetching).
+- **[Server Functions](https://nextjs.org/docs/app/getting-started/mutating-data)** run mutations and invalidate only the affected cache tags with [`updateTag`](https://nextjs.org/docs/app/api-reference/functions/updateTag).
 - **[React Compiler](https://react.dev/learn/react-compiler)** memoizes components and hooks automatically, so the code needs no manual `useMemo` or `useCallback`.
 - **[Async React](https://github.com/rickhanlonii/async-react)** keeps the UI interactive during server work with `Suspense`, `useOptimistic`, `useTransition`, `useActionState`, and `use`.
 
