@@ -2,7 +2,7 @@
   "name": "next16-team-chat",
   "version": "0.1.0",
   "private": true,
-  "description": "A Next.js 16 team chat app demonstrating Cache Components, Partial Prefetching, and Instant Navigations with SWR.",
+  "description": "A Next.js 16 team chat app demonstrating Cache Components, Partial Prefetching, and Instant Navigations with TanStack Query or SWR.",
   "license": "MIT",
   "keywords": [
     "nextjs",
@@ -10,6 +10,8 @@
     "cache-components",
     "partial-prefetching",
     "instant-navigation",
+    "tanstack-query",
+    "react-query",
     "swr",
     "team-chat",
     "messaging"

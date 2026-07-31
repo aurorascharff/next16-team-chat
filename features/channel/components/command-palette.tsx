@@ -1,12 +1,18 @@
 'use client'
 
 import { Hash, Lock, MessageSquare, Search } from 'lucide-react'
-import { useRouter, usePathname } from 'next/navigation'
 import type { Route } from 'next'
-import { useEffect, useRef, useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import {
+  type Ref,
+  Suspense,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useChannelSearch } from '@/features/channel/hooks/use-channel-search'
-import { useMessages } from '@/features/message/hooks/use-messages'
+import { useCommandPaletteResults } from '@/features/channel/hooks/use-command-palette-results'
 import { stripMarkdown } from '@/features/message/utils/format'
 import { cn } from '@/lib/utils'
 
@@ -26,30 +32,26 @@ type Result =
       body: string
     }
 
+type CommandPaletteResultsHandle = {
+  activate: () => void
+  move: (delta: number) => void
+}
+
 export function CommandPalette() {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
-  const [activeIndex, setActiveIndex] = useState(0)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const resultsRef = useRef<CommandPaletteResultsHandle>(null)
   const router = useRouter()
   const pathname = usePathname()
   const channelId = pathname?.startsWith('/channel/')
     ? pathname.split('/')[2]
     : undefined
-  const channelsQuery = useChannelSearch(open)
-  const messagesQuery = useMessages(channelId ?? null, open)
-  const channels = channelsQuery.data ?? []
-  const messages = messagesQuery.data ?? []
-  const isPending =
-    channelsQuery.isLoading || (Boolean(channelId) && messagesQuery.isLoading)
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault()
-        setOpen((current) => {
-          return !current
-        })
+        setOpen((current) => !current)
       }
     }
 
@@ -66,42 +68,8 @@ export function CommandPalette() {
   }, [])
 
   useEffect(() => {
-    if (open) {
-      setQuery('')
-      setActiveIndex(0)
-    }
+    if (open) setQuery('')
   }, [open])
-
-  const term = query.trim().toLowerCase()
-  const channelResults: Result[] = (
-    term
-      ? channels.filter((channel) => {
-          return (
-            channel.name.toLowerCase().includes(term) ||
-            channel.group.toLowerCase().includes(term)
-          )
-        })
-      : channels
-  ).map((channel) => {
-    return { type: 'channel', ...channel }
-  })
-  const messageResults: Result[] = term
-    ? messages
-        .filter((message) => {
-          return message.body.toLowerCase().includes(term)
-        })
-        .slice(0, 8)
-        .map((message) => {
-          return {
-            author: message.userName,
-            body: message.body,
-            channelId: message.channelId,
-            id: message.id,
-            type: 'message',
-          }
-        })
-    : []
-  const results: Result[] = [...channelResults, ...messageResults]
 
   if (!open) return null
 
@@ -114,15 +82,11 @@ export function CommandPalette() {
   return (
     <div
       className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 px-4 pt-[12vh] backdrop-blur-sm"
-      onClick={() => {
-        return setOpen(false)
-      }}
+      onClick={() => setOpen(false)}
     >
       <div
         className="bg-surface dark:bg-surface-dark border-divider dark:border-divider-dark w-full max-w-lg overflow-hidden rounded-xl border shadow-2xl"
-        onClick={(event) => {
-          return event.stopPropagation()
-        }}
+        onClick={(event) => event.stopPropagation()}
       >
         <div className="border-divider dark:border-divider-dark flex items-center gap-2.5 border-b px-4">
           <Search
@@ -133,32 +97,22 @@ export function CommandPalette() {
           <input
             autoFocus
             className="h-12 w-full bg-transparent text-sm outline-none"
-            onChange={(event) => {
-              setQuery(event.target.value)
-              setActiveIndex(0)
-            }}
+            onChange={(event) => setQuery(event.target.value)}
             onKeyDown={(event) => {
               if (event.key === 'Escape') setOpen(false)
               if (event.key === 'ArrowDown') {
                 event.preventDefault()
-                setActiveIndex((index) => {
-                  return Math.min(index + 1, results.length - 1)
-                })
+                resultsRef.current?.move(1)
               }
               if (event.key === 'ArrowUp') {
                 event.preventDefault()
-                setActiveIndex((index) => {
-                  return Math.max(index - 1, 0)
-                })
+                resultsRef.current?.move(-1)
               }
-              if (event.key === 'Enter' && results[activeIndex]) {
-                activate(results[activeIndex])
-              }
+              if (event.key === 'Enter') resultsRef.current?.activate()
             }}
             placeholder={
               channelId ? 'Search channels and messages…' : 'Search channels…'
             }
-            ref={inputRef}
             type="text"
             value={query}
           />
@@ -166,76 +120,140 @@ export function CommandPalette() {
             Esc
           </kbd>
         </div>
-        <ul aria-busy={isPending} className="max-h-80 overflow-y-auto p-1.5">
-          {isPending ? (
-            <CommandPaletteResultsFallback />
-          ) : results.length === 0 ? (
-            <li className="text-muted dark:text-muted-dark px-3 py-6 text-center text-sm">
-              No results
-            </li>
-          ) : (
-            results.map((result, index) => {
-              const isActive = index === activeIndex
-              const key =
-                result.type === 'channel' ? `c-${result.id}` : `m-${result.id}`
-              return (
-                <li key={key}>
-                  <button
-                    className={cn(
-                      'flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-colors',
-                      isActive
-                        ? 'bg-accent-fade text-accent'
-                        : 'hover:bg-card dark:hover:bg-card-dark',
-                    )}
-                    onClick={() => {
-                      return activate(result)
-                    }}
-                    onMouseEnter={() => {
-                      return setActiveIndex(index)
-                    }}
-                    type="button"
-                  >
-                    {result.type === 'channel' ? (
-                      <>
-                        {result.isPrivate ? (
-                          <Lock
-                            aria-hidden
-                            className="size-4 shrink-0"
-                            strokeWidth={2}
-                          />
-                        ) : (
-                          <Hash
-                            aria-hidden
-                            className="size-4 shrink-0"
-                            strokeWidth={2}
-                          />
-                        )}
-                        <span className="flex-1 truncate">{result.name}</span>
-                        <span className="text-muted dark:text-muted-dark text-xs">
-                          {result.group}
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <MessageSquare
-                          aria-hidden
-                          className="size-4 shrink-0"
-                          strokeWidth={2}
-                        />
-                        <span className="min-w-0 flex-1 truncate">
-                          <span className="font-medium">{result.author}:</span>{' '}
-                          {stripMarkdown(result.body)}
-                        </span>
-                      </>
-                    )}
-                  </button>
-                </li>
-              )
-            })
-          )}
-        </ul>
+        <Suspense
+          fallback={
+            <ul aria-busy className="max-h-80 overflow-y-auto p-1.5">
+              <CommandPaletteResultsFallback />
+            </ul>
+          }
+        >
+          <CommandPaletteResults
+            channelId={channelId}
+            key={`${channelId}:${query}`}
+            onActivate={activate}
+            query={query}
+            ref={resultsRef}
+          />
+        </Suspense>
       </div>
     </div>
+  )
+}
+
+function CommandPaletteResults({
+  channelId,
+  onActivate,
+  query,
+  ref,
+}: {
+  channelId?: string
+  onActivate: (result: Result) => void
+  query: string
+  ref: Ref<CommandPaletteResultsHandle>
+}) {
+  const { data } = useCommandPaletteResults(channelId)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const term = query.trim().toLowerCase()
+  const channelResults: Result[] = (
+    term
+      ? data.channels.filter((channel) => {
+          return (
+            channel.name.toLowerCase().includes(term) ||
+            channel.group.toLowerCase().includes(term)
+          )
+        })
+      : data.channels
+  ).map((channel) => ({ type: 'channel', ...channel }))
+  const messageResults: Result[] = term
+    ? data.messages
+        .filter((message) => message.body.toLowerCase().includes(term))
+        .slice(0, 8)
+        .map((message) => ({
+          author: message.userName,
+          body: message.body,
+          channelId: message.channelId,
+          id: message.id,
+          type: 'message',
+        }))
+    : []
+  const results = [...channelResults, ...messageResults]
+
+  useImperativeHandle(ref, () => ({
+    activate() {
+      const result = results[activeIndex]
+      if (result) onActivate(result)
+    },
+    move(delta) {
+      setActiveIndex((index) => {
+        return Math.max(0, Math.min(index + delta, results.length - 1))
+      })
+    },
+  }))
+
+  return (
+    <ul className="max-h-80 overflow-y-auto p-1.5">
+      {results.length === 0 ? (
+        <li className="text-muted dark:text-muted-dark px-3 py-6 text-center text-sm">
+          No results
+        </li>
+      ) : (
+        results.map((result, index) => {
+          const isActive = index === activeIndex
+          const key =
+            result.type === 'channel' ? `c-${result.id}` : `m-${result.id}`
+
+          return (
+            <li key={key}>
+              <button
+                className={cn(
+                  'flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-colors',
+                  isActive
+                    ? 'bg-accent-fade text-accent'
+                    : 'hover:bg-card dark:hover:bg-card-dark',
+                )}
+                onClick={() => onActivate(result)}
+                onMouseEnter={() => setActiveIndex(index)}
+                type="button"
+              >
+                {result.type === 'channel' ? (
+                  <>
+                    {result.isPrivate ? (
+                      <Lock
+                        aria-hidden
+                        className="size-4 shrink-0"
+                        strokeWidth={2}
+                      />
+                    ) : (
+                      <Hash
+                        aria-hidden
+                        className="size-4 shrink-0"
+                        strokeWidth={2}
+                      />
+                    )}
+                    <span className="flex-1 truncate">{result.name}</span>
+                    <span className="text-muted dark:text-muted-dark text-xs">
+                      {result.group}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <MessageSquare
+                      aria-hidden
+                      className="size-4 shrink-0"
+                      strokeWidth={2}
+                    />
+                    <span className="min-w-0 flex-1 truncate">
+                      <span className="font-medium">{result.author}:</span>{' '}
+                      {stripMarkdown(result.body)}
+                    </span>
+                  </>
+                )}
+              </button>
+            </li>
+          )
+        })
+      )}
+    </ul>
   )
 }
 
