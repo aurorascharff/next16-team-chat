@@ -5,6 +5,7 @@ import { Hash, Lock, MessageSquare, Search } from 'lucide-react'
 import { useRouter, usePathname } from 'next/navigation'
 import type { Route } from 'next'
 import { useEffect, useRef, useState } from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
 import { channelSearchQueryOptions } from '@/features/channel/channel-query-options'
 import { messagesQueryOptions } from '@/features/message/message-query-options'
 import { stripMarkdown } from '@/features/message/utils/format'
@@ -36,14 +37,19 @@ export function CommandPalette() {
   const channelId = pathname?.startsWith('/channel/')
     ? pathname.split('/')[2]
     : undefined
-  const { data: channels = [] } = useQuery({
+  const channelsQuery = useQuery({
     ...channelSearchQueryOptions(),
     enabled: open,
   })
-  const { data: messages = [] } = useQuery({
+  const messagesQuery = useQuery({
     ...messagesQueryOptions(channelId ?? ''),
     enabled: open && Boolean(channelId),
   })
+  const channels = channelsQuery.data ?? []
+  const messages = messagesQuery.data ?? []
+  const isPending =
+    channelsQuery.isPending ||
+    (Boolean(channelId) && messagesQuery.isPending)
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -168,8 +174,13 @@ export function CommandPalette() {
             Esc
           </kbd>
         </div>
-        <ul className="max-h-80 overflow-y-auto p-1.5">
-          {results.length === 0 ? (
+        <ul
+          aria-busy={isPending}
+          className="max-h-80 overflow-y-auto p-1.5"
+        >
+          {isPending ? (
+            <CommandPaletteResultsFallback />
+          ) : results.length === 0 ? (
             <li className="text-muted dark:text-muted-dark px-3 py-6 text-center text-sm">
               No results
             </li>
@@ -237,4 +248,19 @@ export function CommandPalette() {
       </div>
     </div>
   )
+}
+
+function CommandPaletteResultsFallback() {
+  return Array.from({ length: 4 }).map((_, index) => {
+    return (
+      <li
+        aria-hidden
+        className="flex h-9 items-center gap-2.5 px-3 opacity-45"
+        key={index}
+      >
+        <Skeleton className="size-4 shrink-0 rounded" />
+        <Skeleton className="h-3 w-full max-w-48 rounded" />
+      </li>
+    )
+  })
 }
