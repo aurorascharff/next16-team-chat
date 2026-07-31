@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { channelLayoutReducer } from '@/features/channel/channel-layout-actions'
+import { channelLayoutReducer } from '@/features/channel/channel-actions'
 import {
   applyLayoutAction,
   type LayoutAction,
