@@ -32,7 +32,7 @@ export function ChannelLink({ channel }: Props) {
     <Link
       aria-current={active ? 'page' : undefined}
       className={cn(
-        'flex min-h-8 shrink-0 items-center gap-2 rounded-lg px-2.5 text-sm transition-colors',
+        'flex min-h-8 shrink-0 items-center gap-2 rounded-lg px-2.5 text-sm',
         active
           ? 'bg-accent-fade text-accent font-medium'
           : hasUnread && !active
