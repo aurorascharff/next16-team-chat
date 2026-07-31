@@ -8,6 +8,8 @@ A "Slack"-like team chat demo that pairs [TanStack React Query](https://tanstack
 
 [Live demo →](https://next16-team-chat.vercel.app)
 
+[SWR branch →](https://github.com/aurorascharff/next16-messaging/tree/swr) · [SWR demo →](https://next16-team-chat-git-swr-aurora-scharffs-projects.vercel.app/)
+
 </div>
 
 ---
