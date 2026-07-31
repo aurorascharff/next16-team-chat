@@ -33,7 +33,6 @@ type ChannelRow = {
   name: string
   description: string
   isPrivate: boolean
-  unread: number
   members?: unknown[]
 }
 
@@ -48,7 +47,6 @@ function toChannelSummary(
     isPrivate: channel.isPrivate,
     memberCount: channel.members?.length ?? 0,
     name: channel.name,
-    unread: channel.unread || undefined,
   }
 }
 
@@ -120,19 +118,35 @@ export async function listChannelsForUser(userId: string) {
 }
 
 export async function getUnreadChannels() {
+  const user = await getCurrentUser()
+  return getUnreadChannelsForUser(user.id)
+}
+
+async function getUnreadChannelsForUser(userId: string) {
   'use cache'
   cacheTag(channelTags.unread)
   cacheLife('max')
 
-  const channels = await prisma.channel.findMany({
-    select: { id: true, unread: true },
-    where: { unread: { gt: 0 } },
+  const memberships = await prisma.channelMember.findMany({
+    select: { channelId: true, lastReadAt: true },
+    where: { userId },
   })
+  const unreadEntries = await Promise.all(
+    memberships.map(async ({ channelId, lastReadAt }) => {
+      const unread = await prisma.message.count({
+        where: {
+          channelId,
+          createdAt: lastReadAt ? { gt: lastReadAt } : undefined,
+          parentId: null,
+          userId: { not: userId },
+        },
+      })
+      return [channelId, unread] as const
+    }),
+  )
 
   return Object.fromEntries(
-    channels.map((channel) => {
-      return [channel.id, channel.unread]
-    }),
+    unreadEntries.filter(([, unread]) => unread > 0),
   ) as Record<string, number>
 }
 
@@ -210,12 +224,18 @@ export async function markChannelRead(channelId: string, userId: string) {
     }
 
     const readAt = new Date()
-    const channelUpdate = await tx.channel.updateMany({
-      data: { unread: 0 },
-      where: { id: channelId, unread: { gt: 0 } },
+    const unread = await tx.message.count({
+      where: {
+        channelId,
+        createdAt: member.lastReadAt
+          ? { gt: member.lastReadAt, lte: readAt }
+          : { lte: readAt },
+        parentId: null,
+        userId: { not: userId },
+      },
     })
 
-    if (channelUpdate.count === 0) {
+    if (unread === 0) {
       return {
         changed: false,
         readAt: member.lastReadAt?.toISOString() ?? null,

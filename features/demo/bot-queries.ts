@@ -70,9 +70,5 @@ export async function postBotMessage() {
   const body = lines[Math.floor(Math.random() * lines.length)]
 
   await addMessage({ body, channelId: channel.id, userId: 'bot' })
-  await prisma.channel.update({
-    data: { unread: { increment: 1 } },
-    where: { id: channel.id },
-  })
   return channel.id
 }

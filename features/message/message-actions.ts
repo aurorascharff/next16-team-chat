@@ -1,6 +1,7 @@
 'use server'
 
 import { updateTag } from 'next/cache'
+import { channelTags } from '@/features/channel/channel-cache'
 import { verifyAuth } from '@/features/user/user-queries'
 import { messageTags } from './message-cache'
 import {
@@ -56,6 +57,7 @@ export async function sendMessage({
   }
   updateTag(messageTags.channel(channelId))
   updateTag(messageTags.all)
+  updateTag(channelTags.unread)
 
   return { message, ok: true }
 }

@@ -13,6 +13,14 @@ export async function ChannelList() {
     getCurrentChannelLayout(),
     getUnreadChannels(),
   ])
+  const groupsWithUnread = groups.map((group) => {
+    return {
+      ...group,
+      channels: group.channels.map((channel) => {
+        return { ...channel, unread: unread[channel.id] }
+      }),
+    }
+  })
 
   return (
     <HydrationBoundary
@@ -20,7 +28,7 @@ export async function ChannelList() {
         tags: [channelTags.unread],
       })}
     >
-      <ChannelNav groups={groups} key={userId} />
+      <ChannelNav groups={groupsWithUnread} key={userId} />
     </HydrationBoundary>
   )
 }
