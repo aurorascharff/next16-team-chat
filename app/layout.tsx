@@ -2,14 +2,19 @@ import type { Metadata } from 'next'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import { Suspense } from 'react'
+import { preload, SWRConfig } from 'swr'
 import { Toaster } from '@/components/ui/toaster'
+import { channelKeys } from '@/features/channel/channel-cache'
 import { CommandPalette } from '@/features/channel/components/command-palette'
+import { getUnreadChannels } from '@/features/channel/channel-queries'
 import { BotDriver } from '@/features/demo/components/bot-driver'
 import {
   MobileTabBar,
   MobileTabBarSkeleton,
 } from '@/features/workspace/components/mobile-tab-bar'
 import { UnreadFavicon } from '@/features/workspace/components/unread-favicon'
+import { activityKeys } from '@/features/workspace/workspace-cache'
+import { getUnreadActivity } from '@/features/workspace/workspace-queries'
 import { Providers } from './providers'
 import './globals.css'
 
@@ -35,6 +40,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const unreadChannels = preload(channelKeys.unread, getUnreadChannels)
+  const unreadActivity = preload(activityKeys.unread, getUnreadActivity)
+
   return (
     <html
       className={`${GeistSans.variable} ${GeistMono.variable}`}
@@ -43,16 +51,22 @@ export default function RootLayout({
     >
       <body>
         <Providers>
-          {children}
-          <Suspense fallback={<MobileTabBarSkeleton />}>
-            <MobileTabBar />
-          </Suspense>
-          <Suspense fallback={null}>
-            <CommandPalette />
-          </Suspense>
-          <UnreadFavicon />
-          <BotDriver />
-          <Toaster />
+          <SWRConfig
+            value={{
+              cacheData: { ...unreadChannels, ...unreadActivity },
+            }}
+          >
+            {children}
+            <Suspense fallback={<MobileTabBarSkeleton />}>
+              <MobileTabBar />
+            </Suspense>
+            <Suspense fallback={null}>
+              <CommandPalette />
+            </Suspense>
+            <UnreadFavicon />
+            <BotDriver />
+            <Toaster />
+          </SWRConfig>
         </Providers>
       </body>
     </html>

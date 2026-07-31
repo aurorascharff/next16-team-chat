@@ -136,6 +136,11 @@ export async function getUnreadActivityCount(userId: string) {
   return items.filter((item) => !item.read).length
 }
 
+export async function getUnreadActivity() {
+  const user = await getCurrentUser()
+  return { count: await getUnreadActivityCount(user.id) }
+}
+
 export async function markActivityItemsRead(userId: string, itemIds: string[]) {
   if (itemIds.length === 0) {
     return false

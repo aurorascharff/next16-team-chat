@@ -1,6 +1,4 @@
-import { preload, SWRConfig } from 'swr'
 import { Skeleton } from '@/components/ui/skeleton'
-import { channelKeys } from '@/features/channel/channel-cache'
 import {
   getCurrentChannelLayout,
   getUnreadChannels,
@@ -20,13 +18,7 @@ export async function ChannelList() {
       }),
     }
   })
-  const unreadData = preload(channelKeys.unread, async () => unread)
-
-  return (
-    <SWRConfig value={{ cacheData: unreadData }}>
-      <ChannelNav groups={groupsWithUnread} key={userId} />
-    </SWRConfig>
-  )
+  return <ChannelNav groups={groupsWithUnread} key={userId} />
 }
 
 export function ChannelListSkeleton() {
