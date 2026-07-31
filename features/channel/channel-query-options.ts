@@ -11,6 +11,8 @@ export type ChannelSearchItem = {
 
 export const channelKeys = {
   all: ['channels', 'all'] as const,
+  lastRead: (channelId: string) =>
+    ['channels', channelId, 'last-read'] as const,
   unread: ['channels', 'unread'] as const,
 }
 
@@ -26,7 +28,6 @@ export function channelSearchQueryOptions() {
       return res.json()
     },
     queryKey: channelKeys.all,
-    staleTime: 30_000,
   })
 }
 

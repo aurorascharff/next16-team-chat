@@ -1,24 +1,16 @@
 'use client'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import {
-  channelKeys,
-  type UnreadChannels,
-} from '@/features/channel/channel-query-options'
+import { markChannelReadAction } from '@/features/channel/channel-actions'
+import { channelKeys } from '@/features/channel/channel-query-options'
+import type { UnreadChannels } from '@/features/channel/channel-query-options'
 
 export function useMarkChannelRead() {
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async (channelId: string) => {
-      const res = await fetch(`/api/channels/${channelId}/read`, {
-        keepalive: true,
-        method: 'POST',
-      })
-
-      if (!res.ok) {
-        throw new Error('Failed to mark channel read')
-      }
+      return markChannelReadAction(channelId)
     },
     onMutate: async (channelId: string) => {
       await queryClient.cancelQueries({ queryKey: channelKeys.unread })
@@ -41,6 +33,9 @@ export function useMarkChannelRead() {
       if (context?.previous) {
         queryClient.setQueryData(channelKeys.unread, context.previous)
       }
+    },
+    onSuccess: (readAt, channelId) => {
+      queryClient.setQueryData(channelKeys.lastRead(channelId), readAt)
     },
   })
 }

@@ -6,7 +6,10 @@ import { reactToMessage, sendMessage } from '@/features/message/message-actions'
 import { messageKeys } from '@/features/message/message-query-options'
 import type { Message, Reaction } from '@/features/message/types/message'
 
-function applyToggle(reactions: Reaction[] = [], emoji: string): Reaction[] {
+function applyReactionToggle(
+  reactions: Reaction[] = [],
+  emoji: string,
+): Reaction[] {
   const existing = reactions.find((reaction) => reaction.emoji === emoji)
   if (!existing) {
     return [...reactions, { count: 1, emoji, reacted: true, users: ['You'] }]
@@ -50,7 +53,10 @@ export function useReactionToggle(message: Message) {
       queryClient.setQueryData<Message[]>(key, (current = []) =>
         current.map((item) =>
           item.id === message.id
-            ? { ...item, reactions: applyToggle(item.reactions, emoji) }
+            ? {
+                ...item,
+                reactions: applyReactionToggle(item.reactions, emoji),
+              }
             : item,
         ),
       )

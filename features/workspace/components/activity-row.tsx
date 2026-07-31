@@ -10,7 +10,7 @@ import {
   formatRelativeTime,
   formatTime,
 } from '@/features/message/utils/format'
-import { useMarkActivityRead } from '@/features/workspace/hooks/workspace-mutations'
+import { useMarkActivityRead } from '@/features/workspace/hooks/use-mark-activity-read'
 import type { ActivityItem } from '@/features/workspace/workspace-queries'
 import { cn } from '@/lib/utils'
 

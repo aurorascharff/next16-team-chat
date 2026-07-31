@@ -2,7 +2,7 @@
 
 import { SmilePlus } from 'lucide-react'
 import { useState } from 'react'
-import { useReactionToggle } from '@/features/message/hooks/message-mutations'
+import { useReactionToggle } from '@/features/message/hooks/use-message-mutations'
 import type { Message, Reaction } from '@/features/message/types/message'
 import { cn } from '@/lib/utils'
 

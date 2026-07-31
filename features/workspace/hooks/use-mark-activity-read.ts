@@ -16,13 +16,6 @@ export function useMarkActivityRead() {
     mutationFn: async ({ itemIds }: MarkActivityReadInput) => {
       await markActivityReadAction(itemIds)
     },
-    onError: (_error, _input, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(activityKeys.unread, context.previous)
-      } else {
-        queryClient.invalidateQueries({ queryKey: activityKeys.unread })
-      }
-    },
     onMutate: async ({ itemIds, optimistic }: MarkActivityReadInput) => {
       await queryClient.cancelQueries({ queryKey: activityKeys.unread })
       const previous = queryClient.getQueryData<{ count: number }>(
@@ -46,6 +39,13 @@ export function useMarkActivityRead() {
       )
 
       return { previous }
+    },
+    onError: (_error, _input, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(activityKeys.unread, context.previous)
+      } else {
+        queryClient.invalidateQueries({ queryKey: activityKeys.unread })
+      }
     },
   })
 }

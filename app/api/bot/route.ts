@@ -6,7 +6,7 @@ import { messagesTag } from '@/features/message/message-queries'
 export async function POST() {
   const channelId = await postBotMessage()
   if (channelId) {
-    revalidateTag(messagesTag(channelId), 'max')
+    revalidateTag(messagesTag(channelId), { expire: 0 })
     revalidateTag('messages', 'max')
     revalidateTag(channelTag(channelId), 'max')
     revalidateTag('channels:unread', { expire: 0 })

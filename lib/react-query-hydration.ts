@@ -1,13 +1,12 @@
 import 'server-only'
 
-import { cacheLife } from 'next/cache'
+import { cacheLife, cacheTag } from 'next/cache'
 import {
   defaultShouldDehydrateQuery,
   QueryClient,
   type DehydratedState,
   type QueryKey,
 } from '@tanstack/react-query'
-import { QUERY_STALE_SECONDS } from './query-cache-policy'
 
 type HydratedQuery = {
   queryKey: QueryKey
@@ -15,22 +14,21 @@ type HydratedQuery = {
 }
 
 type HydrationOptions = {
-  stale?: number
+  tags: string[]
 }
 
-async function getHydrationUpdatedAt(stale: number) {
+async function getHydrationUpdatedAt(tags: string[]) {
   'use cache'
-  cacheLife({ stale })
+  cacheTag(...tags)
+  cacheLife('seconds')
   return Date.now()
 }
 
 export async function dehydrate(
   queries: HydratedQuery[],
-  options: HydrationOptions = {},
+  options: HydrationOptions,
 ): Promise<DehydratedState> {
-  const updatedAt = await getHydrationUpdatedAt(
-    options.stale ?? QUERY_STALE_SECONDS,
-  )
+  const updatedAt = await getHydrationUpdatedAt(options.tags)
 
   const queryClient = new QueryClient()
 

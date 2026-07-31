@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { useSendMessage } from '@/features/message/hooks/message-mutations'
+import { useSendMessage } from '@/features/message/hooks/use-message-mutations'
 import type { Message } from '@/features/message/types/message'
 import { MentionCombobox } from './mention-combobox'
 import { MessagePreview } from './message-preview'

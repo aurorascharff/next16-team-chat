@@ -1,18 +1,19 @@
 'use client'
 
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import { Crossfade } from '@/components/ui/crossfade'
 import type { ActivityItem } from '@/features/workspace/workspace-queries'
+import { useVisitSnapshot } from '@/lib/use-visit-snapshot'
 import { ActivityRow } from './activity-row'
 import { MarkActivityRead } from './mark-activity-read'
 
 export function ActivityListView({ items }: { items: ActivityItem[] }) {
-  const [initialItems] = useState(items)
-  const firstReadIndex = initialItems.findIndex((item) => item.read)
+  const itemsOnEntry = useVisitSnapshot(items)
+  const firstReadIndex = itemsOnEntry.findIndex((item) => item.read)
   const hasDivider =
-    initialItems.some((item) => !item.read) && firstReadIndex > 0
-  const firstReadId = hasDivider ? initialItems[firstReadIndex]?.id : undefined
-  const unreadIds = initialItems
+    itemsOnEntry.some((item) => !item.read) && firstReadIndex > 0
+  const firstReadId = hasDivider ? itemsOnEntry[firstReadIndex]?.id : undefined
+  const unreadIds = itemsOnEntry
     .filter((item) => {
       return !item.read
     })
@@ -25,7 +26,7 @@ export function ActivityListView({ items }: { items: ActivityItem[] }) {
       <MarkActivityRead itemIds={unreadIds} />
       <Crossfade>
         <div className="flex flex-col p-3">
-          {initialItems.map((item) => {
+          {itemsOnEntry.map((item) => {
             return (
               <Fragment key={item.id}>
                 {item.id === firstReadId ? <ActivityDivider /> : null}

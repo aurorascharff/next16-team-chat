@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { useMarkActivityRead } from '@/features/workspace/hooks/workspace-mutations'
+import { useMarkActivityRead } from '@/features/workspace/hooks/use-mark-activity-read'
 
 export function MarkActivityRead({ itemIds }: { itemIds: string[] }) {
   const markRead = useMarkActivityRead()

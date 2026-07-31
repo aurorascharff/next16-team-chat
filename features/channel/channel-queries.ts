@@ -203,17 +203,21 @@ export async function searchChannels(userId: string) {
 }
 
 export async function markChannelRead(channelId: string, userId: string) {
+  const readAt = new Date()
   const channelUpdate = await prisma.channel.updateMany({
     data: { unread: 0 },
     where: { id: channelId, unread: { gt: 0 } },
   })
 
   const memberUpdate = await prisma.channelMember.updateMany({
-    data: { lastReadAt: new Date() },
+    data: { lastReadAt: readAt },
     where: { channelId, userId },
   })
 
-  return channelUpdate.count > 0 || memberUpdate.count > 0
+  return {
+    changed: channelUpdate.count > 0 || memberUpdate.count > 0,
+    readAt: readAt.toISOString(),
+  }
 }
 
 export function lastReadTag(channelId: string, userId: string) {

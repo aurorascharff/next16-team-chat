@@ -1,11 +1,10 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
 import type { Route } from 'next'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Suspense, useEffect, useState } from 'react'
-import { unreadActivityQueryOptions } from '@/features/workspace/workspace-query-options'
+import { Suspense } from 'react'
+import { useActivityIndicator } from '@/features/workspace/hooks/use-activity-indicator'
 import {
   isNavActive,
   PRIMARY_NAV,
@@ -37,21 +36,20 @@ function NavLink({ item }: { item: PrimaryNavItem }) {
 
 function NavLinkInner({ item }: { item: PrimaryNavItem }) {
   const pathname = usePathname()
-  const [mounted, setMounted] = useState(false)
-  const { data: activity } = useQuery({
-    ...unreadActivityQueryOptions(),
-    enabled: Boolean(item.showActivityDot),
-  })
+  const { clearActivity, hasActivity } = useActivityIndicator(
+    Boolean(item.showActivityDot),
+  )
   const isActive = isNavActive(item, pathname)
-  const hasActivity =
-    item.showActivityDot && mounted && Boolean(activity && activity.count > 0)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   return (
-    <NavLinkShell hasActivity={hasActivity} isActive={isActive} item={item} />
+    <NavLinkShell
+      hasActivity={hasActivity}
+      isActive={isActive}
+      item={item}
+      onNavigate={() => {
+        if (item.showActivityDot) clearActivity()
+      }}
+    />
   )
 }
 
@@ -59,10 +57,12 @@ function NavLinkShell({
   hasActivity = false,
   isActive = false,
   item,
+  onNavigate,
 }: {
   hasActivity?: boolean
   isActive?: boolean
   item: PrimaryNavItem
+  onNavigate?: () => void
 }) {
   const { href, icon: Icon, label } = item
   const showDot = item.showActivityDot && hasActivity && !isActive
@@ -77,6 +77,7 @@ function NavLinkShell({
           : 'text-muted dark:text-muted-dark hover:text-black dark:hover:text-white',
       )}
       href={href as Route}
+      onClick={onNavigate}
       prefetch={true}
       suppressHydrationWarning
     >

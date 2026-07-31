@@ -1,5 +1,4 @@
 import { queryOptions } from '@tanstack/react-query'
-import { QUERY_STALE_TIME } from '@/lib/query-cache-policy'
 import { apiUrl } from '@/lib/utils'
 
 export const activityKeys = {
@@ -19,6 +18,5 @@ export function unreadActivityQueryOptions() {
     },
     queryKey: activityKeys.unread,
     refetchInterval: 5_000,
-    staleTime: QUERY_STALE_TIME,
   })
 }

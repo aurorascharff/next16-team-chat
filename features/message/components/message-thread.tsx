@@ -1,8 +1,12 @@
 import { HydrationBoundary } from '@tanstack/react-query'
 import { Skeleton } from '@/components/ui/skeleton'
 import { MarkChannelRead } from '@/features/channel/components/mark-channel-read'
-import { getLastReadAt } from '@/features/channel/channel-queries'
-import { getMessagesForUser } from '@/features/message/message-queries'
+import { getLastReadAt, lastReadTag } from '@/features/channel/channel-queries'
+import { channelKeys } from '@/features/channel/channel-query-options'
+import {
+  getMessagesForUser,
+  messagesTag,
+} from '@/features/message/message-queries'
 import { messageKeys } from '@/features/message/message-query-options'
 import { getCurrentUser, getUsers } from '@/features/user/user-queries'
 import { userKeys } from '@/features/user/user-query-options'
@@ -19,10 +23,20 @@ export async function MessageThread({ channelId }: { channelId: string }) {
 
   return (
     <HydrationBoundary
-      state={await dehydrate([
-        { queryKey: messageKeys.channel(channelId), data: messages },
-        { queryKey: userKeys.all, data: users },
-      ])}
+      state={await dehydrate(
+        [
+          { queryKey: channelKeys.lastRead(channelId), data: lastReadAt },
+          { queryKey: messageKeys.channel(channelId), data: messages },
+          { queryKey: userKeys.all, data: users },
+        ],
+        {
+          tags: [
+            lastReadTag(channelId, user.id),
+            messagesTag(channelId),
+            'users',
+          ],
+        },
+      )}
     >
       <MessageList
         channelId={channelId}

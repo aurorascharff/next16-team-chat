@@ -11,7 +11,7 @@ import {
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { UserAvatar } from '@/components/ui/user-avatar'
-import { useSendMessage } from '@/features/message/hooks/message-mutations'
+import { useSendMessage } from '@/features/message/hooks/use-message-mutations'
 import type { Message } from '@/features/message/types/message'
 import { useValidMentions } from '@/features/user/hooks/use-valid-mentions'
 import { cn } from '@/lib/utils'

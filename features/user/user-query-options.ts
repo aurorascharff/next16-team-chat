@@ -29,6 +29,5 @@ export function userSearchQueryOptions(query: string) {
       return res.json()
     },
     queryKey: userKeys.search(query),
-    staleTime: 60_000,
   })
 }

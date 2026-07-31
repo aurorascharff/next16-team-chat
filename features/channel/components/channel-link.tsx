@@ -1,12 +1,11 @@
 'use client'
 
 import type { Route } from 'next'
-import { useQuery } from '@tanstack/react-query'
 import { Hash, Lock } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { unreadChannelsQueryOptions } from '@/features/channel/channel-query-options'
+import { useState } from 'react'
+import { useChannelUnread } from '@/features/channel/hooks/use-channel-unread'
 import { cn } from '@/lib/utils'
 
 type Props = {
@@ -23,15 +22,11 @@ export function ChannelLink({ channel }: Props) {
   const href = `/channel/${channel.id}` as Route
   const active = pathname === href
   const Icon = channel.isPrivate ? Lock : Hash
-  const [mounted, setMounted] = useState(false)
-  const { data: unreadMap } = useQuery(unreadChannelsQueryOptions())
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const unread = unreadMap ? unreadMap[channel.id] : channel.unread
-  const hasUnread = mounted && Boolean(unread) && !active
+  const [prefetch, setPrefetch] = useState(false)
+  const { clearUnread, hasUnread } = useChannelUnread(
+    channel.id,
+    channel.unread,
+  )
 
   return (
     <Link
@@ -40,11 +35,16 @@ export function ChannelLink({ channel }: Props) {
         'flex min-h-8 shrink-0 items-center gap-2 rounded-lg px-2.5 text-sm transition-colors',
         active
           ? 'bg-accent-fade text-accent font-medium'
-          : hasUnread
+          : hasUnread && !active
             ? 'hover:bg-card dark:hover:bg-card-dark font-semibold text-black dark:text-white'
             : 'text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark font-medium hover:text-black dark:hover:text-white',
       )}
       href={href}
+      onFocus={() => setPrefetch(true)}
+      onClick={clearUnread}
+      onMouseEnter={() => setPrefetch(true)}
+      onTouchStart={() => setPrefetch(true)}
+      prefetch={prefetch}
     >
       <Icon aria-hidden className="size-4 shrink-0" strokeWidth={2} />
       <span className="min-w-0 flex-1 truncate">{channel.name}</span>

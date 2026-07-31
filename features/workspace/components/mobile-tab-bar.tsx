@@ -1,12 +1,10 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
 import type { Route } from 'next'
 import { Search } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { unreadActivityQueryOptions } from '@/features/workspace/workspace-query-options'
+import { useActivityIndicator } from '@/features/workspace/hooks/use-activity-indicator'
 import {
   isNavActive,
   PRIMARY_NAV,
@@ -15,15 +13,15 @@ import { cn } from '@/lib/utils'
 
 export function MobileTabBar() {
   const pathname = usePathname()
-  const [mounted, setMounted] = useState(false)
-  const { data: activity } = useQuery(unreadActivityQueryOptions())
-  const hasActivity = mounted && Boolean(activity && activity.count > 0)
+  const { clearActivity, hasActivity } = useActivityIndicator()
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  return <MobileTabBarShell hasActivity={hasActivity} pathname={pathname} />
+  return (
+    <MobileTabBarShell
+      hasActivity={hasActivity}
+      pathname={pathname}
+      onActivityNavigate={clearActivity}
+    />
+  )
 }
 
 export function MobileTabBarSkeleton() {
@@ -32,9 +30,11 @@ export function MobileTabBarSkeleton() {
 
 function MobileTabBarShell({
   hasActivity,
+  onActivityNavigate,
   pathname,
 }: {
   hasActivity: boolean
+  onActivityNavigate?: () => void
   pathname: string | null
 }) {
   return (
@@ -59,6 +59,7 @@ function MobileTabBarShell({
             )}
             href={href as Route}
             key={href}
+            onClick={item.showActivityDot ? onActivityNavigate : undefined}
             prefetch={true}
           >
             <span className="relative">
