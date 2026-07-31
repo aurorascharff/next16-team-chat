@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { markChannelReadAction } from '@/features/channel/channel-actions'
-import { channelKeys } from '@/features/channel/channel-query-options'
+import { channelKeys } from '@/features/channel/channel-cache'
 import type { UnreadChannels } from '@/features/channel/channel-query-options'
 
 export function useMarkChannelRead() {

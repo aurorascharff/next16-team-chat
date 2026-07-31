@@ -2,10 +2,8 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
-import {
-  activityKeys,
-  unreadActivityQueryOptions,
-} from '@/features/workspace/workspace-query-options'
+import { activityKeys } from '@/features/workspace/workspace-cache'
+import { unreadActivityQueryOptions } from '@/features/workspace/workspace-query-options'
 
 export function useActivityIndicator(enabled = true) {
   const queryClient = useQueryClient()

@@ -1,8 +1,8 @@
 'use server'
 
 import { updateTag } from 'next/cache'
+import { channelTags } from '@/features/channel/channel-cache'
 import {
-  lastReadTag,
   markChannelRead,
   reorderChannels,
 } from '@/features/channel/channel-queries'
@@ -21,7 +21,7 @@ export async function channelLayoutReducer(
   const user = await verifyAuth()
   const next = applyLayoutAction(groups, action)
   await reorderChannels(user.id, toLayoutPayload(next))
-  updateTag(`channels:${user.id}`)
+  updateTag(channelTags.user(user.id))
   return next
 }
 
@@ -30,8 +30,8 @@ export async function markChannelReadAction(channelId: string) {
   const result = await markChannelRead(channelId, user.id)
 
   if (result.changed) {
-    updateTag(lastReadTag(channelId, user.id))
-    updateTag('channels:unread')
+    updateTag(channelTags.lastRead(channelId, user.id))
+    updateTag(channelTags.unread)
   }
 
   return result.readAt

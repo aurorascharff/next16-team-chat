@@ -19,7 +19,7 @@ type HydrationOptions = {
 
 async function getHydrationUpdatedAt(tags: string[]) {
   'use cache'
-  // Writes are the version source, so they must invalidate these same tags.
+  // The seeded reads stay stable until writes invalidate these same tags.
   cacheTag(...tags)
   cacheLife('max')
   return Date.now()

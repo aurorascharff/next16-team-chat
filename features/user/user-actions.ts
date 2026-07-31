@@ -2,7 +2,9 @@
 
 import { updateTag } from 'next/cache'
 import { cookies } from 'next/headers'
+import { channelTags } from '@/features/channel/channel-cache'
 import { listChannelsForUser } from '@/features/channel/channel-queries'
+import { userTags } from './user-cache'
 import { getUsers, SESSION_COOKIE } from './user-queries'
 
 export async function switchUser(userId: string) {
@@ -17,8 +19,8 @@ export async function switchUser(userId: string) {
     sameSite: 'lax',
   })
 
-  updateTag('current-user')
-  updateTag('channels')
+  updateTag(userTags.current)
+  updateTag(channelTags.all)
 
   const channels = await listChannelsForUser(nextUserId)
   return channels[0] ? `/channel/${channels[0].id}` : '/channels'

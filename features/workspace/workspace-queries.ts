@@ -2,7 +2,10 @@ import 'server-only'
 
 import { cacheLife, cacheTag } from 'next/cache'
 import { getCurrentUser } from '@/features/user/user-queries'
+import { channelTags } from '@/features/channel/channel-cache'
+import { messageTags } from '@/features/message/message-cache'
 import { prisma } from '@/lib/db'
+import { activityTags } from './workspace-cache'
 
 export type ActivityItem = {
   id: string
@@ -16,10 +19,6 @@ export type ActivityItem = {
   read: boolean
   kind: 'reply-to-you' | 'reply-in-thread' | 'mention'
   createdAt: string
-}
-
-export function activityTag(userId: string) {
-  return `activity:${userId}`
 }
 
 async function listActivityRaw(userId: string) {
@@ -101,10 +100,10 @@ async function listActivityRaw(userId: string) {
 async function listActivity(userId: string): Promise<ActivityItem[]> {
   'use cache'
   cacheTag(
-    'messages',
-    'channels',
-    activityTag(userId),
-    `activity-reads:${userId}`,
+    messageTags.all,
+    channelTags.all,
+    activityTags.items(userId),
+    activityTags.reads(userId),
   )
   cacheLife({ stale: 30, revalidate: 30 })
 

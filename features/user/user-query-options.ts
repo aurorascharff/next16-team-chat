@@ -1,11 +1,7 @@
 import { queryOptions } from '@tanstack/react-query'
 import type { User } from '@/features/user/types/user'
 import { apiUrl } from '@/lib/utils'
-
-export const userKeys = {
-  all: ['users'] as const,
-  search: (query: string) => ['users', 'search', query] as const,
-}
+import { userKeys } from './user-cache'
 
 export function usersQueryOptions() {
   return queryOptions({

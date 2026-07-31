@@ -2,11 +2,10 @@
 
 import { updateTag } from 'next/cache'
 import { verifyAuth } from '@/features/user/user-queries'
+import { messageTags } from './message-cache'
 import {
   addMessage,
-  messagesTag,
   replyAsBotIfMentioned,
-  repliesTag,
   toggleReaction,
 } from './message-queries'
 
@@ -50,13 +49,13 @@ export async function sendMessage({
   })
 
   if (parentId) {
-    updateTag(repliesTag(parentId))
+    updateTag(messageTags.replies(parentId))
   }
   if (botThread) {
-    updateTag(repliesTag(botThread))
+    updateTag(messageTags.replies(botThread))
   }
-  updateTag(messagesTag(channelId))
-  updateTag('messages')
+  updateTag(messageTags.channel(channelId))
+  updateTag(messageTags.all)
 
   return { message, ok: true }
 }
@@ -76,7 +75,7 @@ export async function reactToMessage({
   await toggleReaction({ emoji, messageId, userId: user.id })
 
   if (parentId) {
-    updateTag(repliesTag(parentId))
+    updateTag(messageTags.replies(parentId))
   }
-  updateTag(messagesTag(channelId))
+  updateTag(messageTags.channel(channelId))
 }

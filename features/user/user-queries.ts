@@ -4,13 +4,14 @@ import { cacheLife, cacheTag } from 'next/cache'
 import { cookies } from 'next/headers'
 import type { User } from '@/features/user/types/user'
 import { prisma } from '@/lib/db'
+import { userTags } from './user-cache'
 
 export const SESSION_COOKIE = 'message-demo-user'
 
 export async function getUsers(): Promise<User[]> {
   'use cache'
-  cacheTag('users')
-  cacheLife('hours')
+  cacheTag(userTags.all)
+  cacheLife('max')
   return prisma.user.findMany({
     orderBy: { name: 'asc' },
     select: { handle: true, id: true, name: true, role: true },
@@ -19,7 +20,7 @@ export async function getUsers(): Promise<User[]> {
 
 export async function searchUsers(query: string): Promise<User[]> {
   'use cache'
-  cacheTag('users')
+  cacheTag(userTags.all)
   cacheLife('hours')
   return prisma.user.findMany({
     orderBy: { name: 'asc' },
@@ -38,7 +39,7 @@ export async function searchUsers(query: string): Promise<User[]> {
 
 export async function getCurrentUser(): Promise<User> {
   'use cache: private'
-  cacheTag('current-user')
+  cacheTag(userTags.current)
   cacheLife({ stale: 60 })
   const cookieStore = await cookies()
   const userId = cookieStore.get(SESSION_COOKIE)?.value

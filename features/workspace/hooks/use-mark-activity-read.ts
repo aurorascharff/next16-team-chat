@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { markActivityReadAction } from '@/features/workspace/workspace-actions'
-import { activityKeys } from '@/features/workspace/workspace-query-options'
+import { activityKeys } from '@/features/workspace/workspace-cache'
 
 type MarkActivityReadInput = {
   itemIds: string[]

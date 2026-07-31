@@ -1,4 +1,5 @@
 import { queryOptions } from '@tanstack/react-query'
+import { channelKeys } from './channel-cache'
 
 export type UnreadChannels = Record<string, number>
 
@@ -7,13 +8,6 @@ export type ChannelSearchItem = {
   name: string
   group: string
   isPrivate: boolean
-}
-
-export const channelKeys = {
-  all: ['channels', 'all'] as const,
-  lastRead: (channelId: string) =>
-    ['channels', channelId, 'last-read'] as const,
-  unread: ['channels', 'unread'] as const,
 }
 
 export function channelSearchQueryOptions() {

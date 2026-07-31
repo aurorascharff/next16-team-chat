@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { reactToMessage, sendMessage } from '@/features/message/message-actions'
-import { messageKeys } from '@/features/message/message-query-options'
+import { messageKeys } from '@/features/message/message-cache'
 import type { Message, Reaction } from '@/features/message/types/message'
 
 function applyReactionToggle(

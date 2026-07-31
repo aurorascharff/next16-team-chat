@@ -1,9 +1,6 @@
 import { queryOptions } from '@tanstack/react-query'
 import { apiUrl } from '@/lib/utils'
-
-export const activityKeys = {
-  unread: ['activity', 'unread'] as const,
-}
+import { activityKeys } from './workspace-cache'
 
 export function unreadActivityQueryOptions() {
   return queryOptions({

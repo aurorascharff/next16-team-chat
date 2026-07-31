@@ -1,7 +1,7 @@
 'use client'
 
 import { skipToken, useQuery } from '@tanstack/react-query'
-import { channelKeys } from '@/features/channel/channel-query-options'
+import { channelKeys } from '@/features/channel/channel-cache'
 import { useVisitSnapshot } from '@/lib/use-visit-snapshot'
 
 export function useChannelReadOnEntry(

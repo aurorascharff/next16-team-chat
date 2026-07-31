@@ -2,8 +2,8 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { channelKeys } from '@/features/channel/channel-cache'
 import {
-  channelKeys,
   type UnreadChannels,
   unreadChannelsQueryOptions,
 } from '@/features/channel/channel-query-options'

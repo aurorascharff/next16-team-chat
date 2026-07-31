@@ -6,6 +6,7 @@ import { isSlowMode } from '@/features/demo/slow-mode'
 import { getCurrentUser } from '@/features/user/user-queries'
 import { prisma } from '@/lib/db'
 import { delay } from '@/lib/utils'
+import { channelTags } from './channel-cache'
 
 export const UNGROUPED = 'Channels'
 
@@ -105,10 +106,6 @@ async function listChannelLayout(userId: string) {
   return layout
 }
 
-export function channelTag(channelId: string) {
-  return `channel:${channelId}`
-}
-
 export async function getCurrentChannelLayout() {
   const [user, slow] = await Promise.all([getCurrentUser(), isSlowMode()])
   const groups = await getChannelLayoutCached(user.id, slow)
@@ -117,15 +114,15 @@ export async function getCurrentChannelLayout() {
 
 export async function listChannelsForUser(userId: string) {
   'use cache'
-  cacheTag('channels', `channels:${userId}`)
+  cacheTag(channelTags.all, channelTags.user(userId))
   cacheLife('hours')
   return listChannels(userId)
 }
 
 export async function getUnreadChannels() {
   'use cache'
-  cacheTag('channels:unread')
-  cacheLife({ stale: 30, revalidate: 30 })
+  cacheTag(channelTags.unread)
+  cacheLife('max')
 
   const channels = await prisma.channel.findMany({
     select: { id: true, unread: true },
@@ -141,7 +138,7 @@ export async function getUnreadChannels() {
 
 async function getChannelLayoutCached(userId: string, slow: boolean) {
   'use cache'
-  cacheTag('channels', `channels:${userId}`)
+  cacheTag(channelTags.all, channelTags.user(userId))
   cacheLife('hours')
   await delay(400, slow)
   return listChannelLayout(userId)
@@ -165,7 +162,7 @@ export async function getChannelDetails(channelId: string) {
 
 async function getChannelDetailsCached(channelId: string, slow: boolean) {
   'use cache'
-  cacheTag('channels', channelTag(channelId))
+  cacheTag(channelTags.all, channelTags.detail(channelId))
   cacheLife('hours')
   await delay(900, slow)
   const channel = await loadChannelDetail(channelId)
@@ -237,14 +234,10 @@ export async function markChannelRead(channelId: string, userId: string) {
   })
 }
 
-export function lastReadTag(channelId: string, userId: string) {
-  return `last-read:${channelId}:${userId}`
-}
-
 export async function getLastReadAt(channelId: string, userId: string) {
   'use cache'
-  cacheTag(lastReadTag(channelId, userId))
-  cacheLife({ stale: 60 })
+  cacheTag(channelTags.lastRead(channelId, userId))
+  cacheLife('max')
 
   const member = await prisma.channelMember.findUnique({
     select: { lastReadAt: true },
