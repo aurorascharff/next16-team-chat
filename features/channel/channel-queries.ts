@@ -203,21 +203,38 @@ export async function searchChannels(userId: string) {
 }
 
 export async function markChannelRead(channelId: string, userId: string) {
-  const readAt = new Date()
-  const channelUpdate = await prisma.channel.updateMany({
-    data: { unread: 0 },
-    where: { id: channelId, unread: { gt: 0 } },
-  })
+  return prisma.$transaction(async (tx) => {
+    const member = await tx.channelMember.findUnique({
+      select: { lastReadAt: true },
+      where: { channelId_userId: { channelId, userId } },
+    })
+    if (!member) {
+      throw new Error('Channel membership not found')
+    }
 
-  const memberUpdate = await prisma.channelMember.updateMany({
-    data: { lastReadAt: readAt },
-    where: { channelId, userId },
-  })
+    const readAt = new Date()
+    const channelUpdate = await tx.channel.updateMany({
+      data: { unread: 0 },
+      where: { id: channelId, unread: { gt: 0 } },
+    })
 
-  return {
-    changed: channelUpdate.count > 0 || memberUpdate.count > 0,
-    readAt: readAt.toISOString(),
-  }
+    if (channelUpdate.count === 0) {
+      return {
+        changed: false,
+        readAt: member.lastReadAt?.toISOString() ?? null,
+      }
+    }
+
+    await tx.channelMember.update({
+      data: { lastReadAt: readAt },
+      where: { channelId_userId: { channelId, userId } },
+    })
+
+    return {
+      changed: true,
+      readAt: readAt.toISOString(),
+    }
+  })
 }
 
 export function lastReadTag(channelId: string, userId: string) {

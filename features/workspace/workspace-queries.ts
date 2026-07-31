@@ -139,13 +139,15 @@ export async function getUnreadActivityCount(userId: string) {
 
 export async function markActivityItemsRead(userId: string, itemIds: string[]) {
   if (itemIds.length === 0) {
-    return
+    return false
   }
 
-  await prisma.activityRead.createMany({
+  const result = await prisma.activityRead.createMany({
     data: itemIds.map((itemId) => {
       return { messageId: itemId, userId }
     }),
     skipDuplicates: true,
   })
+
+  return result.count > 0
 }
