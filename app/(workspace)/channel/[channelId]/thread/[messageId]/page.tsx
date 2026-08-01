@@ -1,6 +1,7 @@
 import { Hash } from 'lucide-react'
 import { Suspense } from 'react'
 import { Crossfade } from '@/components/ui/crossfade'
+import { ErrorBoundary } from '@/components/ui/error-boundary'
 import { getChannel } from '@/features/channel/channel-queries'
 import { Thread, ThreadSkeleton } from '@/features/message/components/thread'
 import { ThreadPanel } from '@/features/message/components/thread-panel'
@@ -30,13 +31,15 @@ export default function ThreadPage({
           </Suspense>
         }
       >
-        <Suspense fallback={<ThreadSkeleton />}>
-          {params.then(({ channelId, messageId }) => (
-            <Crossfade>
-              <Thread channelId={channelId} messageId={messageId} />
-            </Crossfade>
-          ))}
-        </Suspense>
+        <ErrorBoundary title="Replies didn’t load">
+          <Suspense fallback={<ThreadSkeleton />}>
+            {params.then(({ channelId, messageId }) => (
+              <Crossfade>
+                <Thread channelId={channelId} messageId={messageId} />
+              </Crossfade>
+            ))}
+          </Suspense>
+        </ErrorBoundary>
       </ThreadPanel>
     </div>
   )

@@ -1,4 +1,5 @@
 import { Suspense } from 'react'
+import { EmptyState } from '@/components/ui/empty-state'
 import {
   ChannelList,
   ChannelListSkeleton,
@@ -14,11 +15,19 @@ export const metadata: Metadata = {
 
 export default function ChannelsPage() {
   return (
-    <div className="flex min-h-0 flex-col gap-4 p-3 md:hidden">
-      <WorkspaceNav />
-      <Suspense fallback={<ChannelListSkeleton />}>
-        <ChannelList />
-      </Suspense>
-    </div>
+    <>
+      <div className="flex min-h-0 flex-col gap-4 p-3 md:hidden">
+        <WorkspaceNav />
+        <Suspense fallback={<ChannelListSkeleton />}>
+          <ChannelList />
+        </Suspense>
+      </div>
+      <div className="hidden h-full items-center justify-center md:flex">
+        <EmptyState
+          body="Choose a channel from the sidebar to view its messages."
+          title="Select a channel"
+        />
+      </div>
+    </>
   )
 }

@@ -4,13 +4,12 @@ import * as Ariakit from '@ariakit/react'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import {
-  Component,
   KeyboardEvent,
-  ReactNode,
   RefObject,
   Suspense,
   useDeferredValue,
 } from 'react'
+import { ErrorBoundary } from '@/components/ui/error-boundary'
 import { UserAvatar } from '@/components/ui/user-avatar'
 import { userSearchQueryOptions } from '@/features/user/user-query-options'
 
@@ -58,6 +57,7 @@ export function MentionCombobox({
   className,
   id,
   maxLength,
+  onFocus,
   onKeyDown,
   onValueChange,
   placeholder,
@@ -67,6 +67,7 @@ export function MentionCombobox({
   className?: string
   id?: string
   maxLength?: number
+  onFocus?: () => void
   onKeyDown?: (event: KeyboardEvent<HTMLTextAreaElement>) => void
   onValueChange: (value: string, caretOffset?: number) => void
   placeholder?: string
@@ -118,6 +119,7 @@ export function MentionCombobox({
         render={
           <textarea
             onChange={onChange}
+            onFocus={onFocus}
             onKeyDown={handleKeyDown}
             onPointerDown={combobox.hide}
             onScroll={combobox.render}
@@ -141,13 +143,7 @@ export function MentionCombobox({
         style={{ viewTransitionName: 'none' }}
         unmountOnHide
       >
-        <MentionResultsBoundary
-          fallback={
-            <div className="text-muted dark:text-muted-dark px-2.5 py-2 text-xs">
-              Couldn’t load people.
-            </div>
-          }
-        >
+        <ErrorBoundary compact title="Couldn’t load people">
           <Suspense fallback={<MentionResultsFallback />}>
             <div className={isStale ? 'opacity-60 transition-opacity' : ''}>
               <MentionResults
@@ -156,7 +152,7 @@ export function MentionCombobox({
               />
             </div>
           </Suspense>
-        </MentionResultsBoundary>
+        </ErrorBoundary>
       </Ariakit.ComboboxPopover>
     </>
   )
@@ -209,19 +205,4 @@ function MentionResultsFallback() {
       Loading people…
     </div>
   )
-}
-
-class MentionResultsBoundary extends Component<
-  { children: ReactNode; fallback: ReactNode },
-  { hasError: boolean }
-> {
-  state = { hasError: false }
-
-  static getDerivedStateFromError() {
-    return { hasError: true }
-  }
-
-  render() {
-    return this.state.hasError ? this.props.fallback : this.props.children
-  }
 }

@@ -12,6 +12,7 @@ import {
 import { useSendMessage } from '@/features/message/hooks/use-message-mutations'
 import type { Message } from '@/features/message/types/message'
 import { getMessageTargetFromLocation } from '@/features/message/utils/message-route'
+import { cn } from '@/lib/utils'
 import { MentionCombobox } from './mention-combobox'
 import { MessagePreview } from './message-preview'
 
@@ -31,6 +32,7 @@ export function MessageComposer({
   const optimisticIdRef = useRef(0)
   const sendMessage = useSendMessage()
   const [error, setError] = useState('')
+  const [expanded, setExpanded] = useState(false)
   const [mode, setMode] = useState<'write' | 'preview'>('write')
   const [value, setValue] = useState('')
   const [writeHeight, setWriteHeight] = useState(0)
@@ -126,6 +128,7 @@ export function MessageComposer({
     setError('')
     setValue('')
     setMode('write')
+    setExpanded(false)
     sendMessage.mutate({ ...target, message: optimistic })
   }
 
@@ -134,14 +137,17 @@ export function MessageComposer({
 
   return (
     <form
-      className="border-divider dark:border-divider-dark bg-surface/90 dark:bg-surface-dark/90 sticky bottom-0 flex flex-col gap-2 border-t px-5 py-3 backdrop-blur-lg"
+      className="border-divider dark:border-divider-dark bg-surface/90 dark:bg-surface-dark/90 sticky bottom-0 flex flex-col gap-2 border-t px-3 py-2 backdrop-blur-lg md:px-5 md:py-3"
       onSubmit={onSubmit}
       ref={formRef}
     >
-      <div className="border-divider dark:border-divider-dark bg-elevated dark:bg-elevated-dark focus-within:border-accent focus-within:ring-accent/20 flex flex-col overflow-hidden rounded-xl border shadow-sm transition-colors focus-within:ring-2">
+      <div className="border-divider dark:border-divider-dark bg-elevated dark:bg-elevated-dark focus-within:border-accent focus-within:ring-accent/20 relative flex flex-col overflow-hidden rounded-xl border shadow-sm transition-colors focus-within:ring-2">
         <div
           aria-label="Formatting"
-          className="border-divider dark:border-divider-dark flex items-center gap-0.5 border-b p-1.5"
+          className={cn(
+            'border-divider dark:border-divider-dark items-center gap-0.5 border-b p-1.5 md:flex',
+            expanded ? 'flex' : 'hidden',
+          )}
         >
           <button
             aria-label="Bold"
@@ -202,10 +208,16 @@ export function MessageComposer({
           className={
             mode === 'preview'
               ? 'hidden'
-              : 'min-h-20 w-full resize-none bg-transparent px-3.5 py-3 text-sm leading-relaxed outline-none'
+              : cn(
+                  'w-full resize-none bg-transparent px-3.5 text-sm leading-relaxed outline-none md:min-h-20 md:py-3 md:pr-3.5',
+                  expanded
+                    ? 'min-h-20 py-3'
+                    : 'h-11 min-h-11 py-2.5 pr-20 md:h-auto',
+                )
           }
           id={fieldId}
           maxLength={MAX_LENGTH}
+          onFocus={() => setExpanded(true)}
           onKeyDown={onKeyDown}
           onValueChange={onValueChange}
           placeholder={
@@ -223,7 +235,14 @@ export function MessageComposer({
             <MessagePreview body={value.trim()} />
           </div>
         ) : null}
-        <div className="border-divider dark:border-divider-dark flex items-center justify-end border-t p-1.5">
+        <div
+          className={cn(
+            'border-divider dark:border-divider-dark items-center justify-end md:static md:flex md:border-t md:p-1.5',
+            expanded
+              ? 'flex border-t p-1.5'
+              : 'absolute right-1.5 bottom-1.5 flex',
+          )}
+        >
           <button
             className="bg-accent hover:bg-accent-hover flex min-h-8 items-center justify-center rounded-lg px-3.5 text-[0.8125rem] font-semibold text-white transition-colors"
             type="submit"
@@ -241,7 +260,7 @@ export function MessageComposerFallback() {
   return (
     <div
       aria-hidden
-      className="border-divider dark:border-divider-dark bg-surface/90 dark:bg-surface-dark/90 sticky bottom-0 h-[12.8125rem] shrink-0 border-t backdrop-blur-lg"
+      className="border-divider dark:border-divider-dark bg-surface/90 dark:bg-surface-dark/90 sticky bottom-0 h-[4.8125rem] shrink-0 border-t backdrop-blur-lg md:h-[12.8125rem]"
     />
   )
 }
