@@ -8,6 +8,10 @@ out/
 # production
 build/
 
+# Playwright
+playwright-report/
+test-results/
+
 # local env files
 .env*
 !.env.sample

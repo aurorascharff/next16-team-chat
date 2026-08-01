@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import {
   type Ref,
   Suspense,
+  useDeferredValue,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -33,7 +34,7 @@ type Result =
       body: string
     }
 
-type CommandPaletteResultsHandle = {
+type WorkspaceSearchResultsHandle = {
   activate: () => void
   move: (delta: number) => void
 }
@@ -83,7 +84,7 @@ export function CommandPalette() {
         className="bg-surface dark:bg-surface-dark border-divider dark:border-divider-dark w-full max-w-lg overflow-hidden rounded-xl border shadow-2xl"
         onClick={(event) => event.stopPropagation()}
       >
-        <SearchContent
+        <WorkspaceSearch
           onActivate={activate}
           onDismiss={() => setOpen(false)}
           showShortcut
@@ -93,7 +94,7 @@ export function CommandPalette() {
   )
 }
 
-export function MobileSearchView() {
+export function MobileSearch() {
   const router = useRouter()
 
   function activate(result: Result) {
@@ -103,12 +104,12 @@ export function MobileSearchView() {
 
   return (
     <section className="flex h-[calc(100dvh-3.5rem)] flex-col px-3 pt-3 md:hidden">
-      <SearchContent onActivate={activate} />
+      <WorkspaceSearch onActivate={activate} />
     </section>
   )
 }
 
-function SearchContent({
+function WorkspaceSearch({
   onActivate,
   onDismiss,
   showShortcut = false,
@@ -118,7 +119,14 @@ function SearchContent({
   showShortcut?: boolean
 }) {
   const [query, setQuery] = useState('')
-  const resultsRef = useRef<CommandPaletteResultsHandle>(null)
+  const deferredQuery = useDeferredValue(query)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const resultsRef = useRef<WorkspaceSearchResultsHandle>(null)
+  const isStale = query !== deferredQuery
+
+  useEffect(() => {
+    inputRef.current?.focus()
+  }, [])
 
   return (
     <>
@@ -129,7 +137,6 @@ function SearchContent({
           strokeWidth={2}
         />
         <input
-          autoFocus
           className="h-12 w-full bg-transparent text-sm outline-none"
           onChange={(event) => setQuery(event.target.value)}
           onKeyDown={(event) => {
@@ -145,6 +152,7 @@ function SearchContent({
             if (event.key === 'Enter') resultsRef.current?.activate()
           }}
           placeholder="Search channels and messages…"
+          ref={inputRef}
           type="text"
           value={query}
         />
@@ -155,62 +163,82 @@ function SearchContent({
         ) : null}
       </div>
       <ErrorBoundary title="Search is unavailable">
-        <Suspense
-          fallback={
-            <ul
-              aria-busy
-              className="min-h-0 flex-1 overflow-y-auto p-1.5 md:max-h-80"
-            >
-              <CommandPaletteResultsFallback />
-            </ul>
-          }
-        >
-          <CommandPaletteResults
-            key={query}
-            onActivate={onActivate}
-            query={query}
-            ref={resultsRef}
-          />
-        </Suspense>
+        <WorkspaceSearchResults
+          isStale={isStale}
+          onActivate={onActivate}
+          query={deferredQuery}
+          ref={resultsRef}
+        />
       </ErrorBoundary>
     </>
   )
 }
 
-function CommandPaletteResults({
+function WorkspaceSearchResults({
   onActivate,
   query,
   ref,
+  isStale,
 }: {
+  isStale: boolean
   onActivate: (result: Result) => void
   query: string
-  ref: Ref<CommandPaletteResultsHandle>
+  ref: Ref<WorkspaceSearchResultsHandle>
 }) {
-  const { data } = useCommandPaletteResults()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) return <WorkspaceSearchResultsFallbackList />
+
+  return (
+    <Suspense fallback={<WorkspaceSearchResultsFallbackList />}>
+      <WorkspaceSearchResultList
+        isStale={isStale}
+        key={query}
+        onActivate={onActivate}
+        query={query}
+        ref={ref}
+      />
+    </Suspense>
+  )
+}
+
+function WorkspaceSearchResultsFallbackList() {
+  return (
+    <ul aria-busy className="min-h-0 flex-1 overflow-y-auto p-1.5 md:max-h-80">
+      <WorkspaceSearchResultsFallback />
+    </ul>
+  )
+}
+
+function WorkspaceSearchResultList({
+  onActivate,
+  query,
+  ref,
+  isStale,
+}: {
+  isStale: boolean
+  onActivate: (result: Result) => void
+  query: string
+  ref: Ref<WorkspaceSearchResultsHandle>
+}) {
+  const { data } = useCommandPaletteResults(query)
   const [activeIndex, setActiveIndex] = useState(0)
-  const term = query.trim().toLowerCase()
-  const channelResults: Result[] = (
-    term
-      ? data.channels.filter((channel) => {
-          return (
-            channel.name.toLowerCase().includes(term) ||
-            channel.group.toLowerCase().includes(term)
-          )
-        })
-      : data.channels
-  ).map((channel) => ({ type: 'channel', ...channel }))
-  const messageResults: Result[] = term
-    ? data.messages
-        .filter((message) => message.body.toLowerCase().includes(term))
-        .slice(0, 8)
-        .map((message) => ({
-          author: message.userName,
-          body: message.body,
-          channelId: message.channelId,
-          id: message.id,
-          type: 'message',
-        }))
-    : []
+  const channelResults: Result[] = data.channels.map((channel) => {
+    return { type: 'channel', ...channel }
+  })
+  const messageResults: Result[] = data.messages.map((message) => {
+    return {
+      author: message.userName,
+      body: message.body,
+      channelId: message.channelId,
+      id: message.id,
+      type: 'message',
+    }
+  })
   const results = [...channelResults, ...messageResults]
 
   useImperativeHandle(ref, () => ({
@@ -226,7 +254,13 @@ function CommandPaletteResults({
   }))
 
   return (
-    <ul className="min-h-0 flex-1 overflow-y-auto p-1.5 md:max-h-80">
+    <ul
+      aria-busy={isStale}
+      className={cn(
+        'min-h-0 flex-1 overflow-y-auto p-1.5 md:max-h-80',
+        isStale && 'opacity-60',
+      )}
+    >
       {results.length === 0 ? (
         <li className="text-muted dark:text-muted-dark px-3 py-6 text-center text-sm">
           No results
@@ -292,7 +326,7 @@ function CommandPaletteResults({
   )
 }
 
-function CommandPaletteResultsFallback() {
+function WorkspaceSearchResultsFallback() {
   return Array.from({ length: 4 }).map((_, index) => {
     return (
       <li

@@ -1,7 +1,11 @@
 export const channelKeys = {
   all: '/api/channels',
-  commandPalette: (messagesKey: string) =>
-    ['command-palette', '/api/channels', messagesKey] as const,
+  commandPalette: (query: string, messagesKey: string) =>
+    [
+      'command-palette',
+      `/api/channels?q=${encodeURIComponent(query)}`,
+      messagesKey,
+    ] as const,
   lastRead: (channelId: string) => `/api/channels/${channelId}/last-read`,
   unread: '/api/channels/unread',
 }
