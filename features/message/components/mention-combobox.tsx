@@ -138,6 +138,7 @@ export function MentionCombobox({
         className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark z-30 w-56 overflow-hidden rounded-lg border shadow-lg"
         gutter={44}
         hidden={!open}
+        portal
         store={combobox}
         style={{ viewTransitionName: 'none' }}
         unmountOnHide
