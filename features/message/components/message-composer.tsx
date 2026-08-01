@@ -1,6 +1,7 @@
 'use client'
 
 import { Eye, PenLine } from 'lucide-react'
+import { toast } from 'sonner'
 import {
   KeyboardEvent,
   SyntheticEvent,
@@ -21,14 +22,16 @@ export function MessageComposer({
   parentId,
   placeholder,
 }: {
-  channelId: string
+  channelId?: string
   parentId?: string
   placeholder?: string
 }) {
   const formRef = useRef<HTMLFormElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const optimisticIdRef = useRef(0)
-  const sendMessage = useSendMessage({ channelId, parentId })
+  const sendMessage = useSendMessage(
+    channelId ? { channelId, parentId } : undefined,
+  )
   const [error, setError] = useState('')
   const [mode, setMode] = useState<'write' | 'preview'>('write')
   const [value, setValue] = useState('')
@@ -93,6 +96,12 @@ export function MessageComposer({
   function onSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     const body = value.trim()
+    const targetChannelId = channelId ?? getChannelIdFromLocation()
+
+    if (!targetChannelId) {
+      toast.error('The channel is still loading. Try sending again.')
+      return
+    }
 
     if (!body) {
       setError('Write a message first.')
@@ -106,9 +115,9 @@ export function MessageComposer({
 
     const optimistic: Message = {
       body,
-      channelId,
+      channelId: targetChannelId,
       createdAt: new Date().toISOString(),
-      id: `optimistic-${channelId}-${optimisticIdRef.current++}`,
+      id: `optimistic-${targetChannelId}-${optimisticIdRef.current++}`,
       parentId: parentId ?? null,
       status: 'sending',
       userId: 'current',
@@ -117,7 +126,10 @@ export function MessageComposer({
     setError('')
     setValue('')
     setMode('write')
-    void sendMessage(optimistic)
+    void sendMessage(optimistic, {
+      channelId: targetChannelId,
+      parentId,
+    })
   }
 
   const toolbarButton =
@@ -199,7 +211,7 @@ export function MessageComposer({
           maxLength={MAX_LENGTH}
           onKeyDown={onKeyDown}
           onValueChange={onValueChange}
-          placeholder={placeholder ?? `Message #${channelId}`}
+          placeholder={placeholder ?? 'Message channel'}
           textareaRef={textareaRef}
           value={value}
         />
@@ -225,11 +237,6 @@ export function MessageComposer({
   )
 }
 
-export function MessageComposerFallback() {
-  return (
-    <div
-      aria-hidden
-      className="border-divider dark:border-divider-dark bg-surface/90 dark:bg-surface-dark/90 sticky bottom-0 h-[12.8125rem] shrink-0 border-t backdrop-blur-lg"
-    />
-  )
+function getChannelIdFromLocation() {
+  return window.location.pathname.match(/^\/channel\/([^/]+)/)?.[1]
 }

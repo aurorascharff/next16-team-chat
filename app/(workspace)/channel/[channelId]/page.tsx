@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { Crossfade } from '@/components/ui/crossfade'
+import { ResizablePanel } from '@/components/ui/resizable-panel'
 import {
   ChannelHeader,
   ChannelHeaderSkeleton,
@@ -8,11 +9,7 @@ import {
   ChannelDetails,
   ChannelDetailsSkeleton,
 } from '@/features/channel/components/channel-details'
-import { ChannelDetailPanel } from '@/features/message/components/channel-detail-panel'
-import {
-  MessageComposer,
-  MessageComposerFallback,
-} from '@/features/message/components/message-composer'
+import { MessageComposer } from '@/features/message/components/message-composer'
 import {
   MessageThread,
   MessageThreadSkeleton,
@@ -55,23 +52,17 @@ export default function ChannelPage({
               ))}
             </Crossfade>
           </Suspense>
-          <Suspense fallback={<MessageComposerFallback />}>
-            {params.then(({ channelId }) => (
-              <MessageComposer channelId={channelId} />
-            ))}
-          </Suspense>
+          <MessageComposer />
         </div>
-        <ChannelDetailPanel
-          details={
-            <Suspense fallback={<ChannelDetailsSkeleton />}>
-              <Crossfade>
-                {params.then(({ channelId }) => (
-                  <ChannelDetails channelId={channelId} />
-                ))}
-              </Crossfade>
-            </Suspense>
-          }
-        />
+        <ResizablePanel>
+          <Suspense fallback={<ChannelDetailsSkeleton />}>
+            <Crossfade>
+              {params.then(({ channelId }) => (
+                <ChannelDetails channelId={channelId} />
+              ))}
+            </Crossfade>
+          </Suspense>
+        </ResizablePanel>
       </div>
     </div>
   )

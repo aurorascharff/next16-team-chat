@@ -6,9 +6,9 @@ import type { Route } from 'next'
 import { useEffect, useState } from 'react'
 import { UserAvatar } from '@/components/ui/user-avatar'
 import {
-  formatInline,
   formatRelativeTime,
   formatTime,
+  stripMarkdown,
 } from '@/features/message/utils/format'
 import { useMarkActivityRead } from '@/features/workspace/hooks/use-mark-activity-read'
 import type { ActivityItem } from '@/features/workspace/workspace-queries'
@@ -27,7 +27,8 @@ export function ActivityRow({ item }: { item: ActivityItem }) {
   const markActivityRead = useMarkActivityRead()
   const action = ACTION[item.kind]
   const ActionIcon = action.icon
-  const href = `/channel/${item.channelId}?thread=${item.messageId}` as Route
+  const href =
+    `/channel/${item.channelId}/thread/${item.messageId}` as Route
 
   function markRead() {
     if (item.read) {
@@ -65,13 +66,13 @@ export function ActivityRow({ item }: { item: ActivityItem }) {
             <RelativeTime value={item.createdAt} />
           </time>
         </div>
-        <p className="mt-1.5 line-clamp-2 text-sm text-black dark:text-white">
-          {formatInline(item.preview)}
+        <p className="border-divider dark:border-divider-dark mt-2 line-clamp-2 border-l-2 pl-3 text-sm leading-relaxed text-black/75 dark:text-white/75">
+          {stripMarkdown(item.preview)}
         </p>
         {item.context ? (
           <div className="border-divider dark:border-divider-dark text-muted dark:text-muted-dark mt-2 flex items-start gap-1.5 border-l-2 pl-2.5 text-xs">
             <CornerUpLeft className="mt-0.5 size-3 shrink-0" strokeWidth={2} />
-            <span className="line-clamp-1">{formatInline(item.context)}</span>
+            <span className="line-clamp-1">{stripMarkdown(item.context)}</span>
           </div>
         ) : null}
       </div>

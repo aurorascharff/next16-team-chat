@@ -67,19 +67,23 @@ export function useReactionToggle(message: Message) {
   }
 }
 
-export function useSendMessage({
-  channelId,
-  parentId,
-}: {
+type SendMessageTarget = {
   channelId: string
   parentId?: string
-}) {
-  const { mutate } = useSWRConfig()
-  const key = parentId
-    ? messageKeys.replies(parentId)
-    : messageKeys.channel(channelId)
+}
 
-  return async function sendOptimisticMessage(optimistic: Message) {
+export function useSendMessage(defaultTarget?: SendMessageTarget) {
+  const { mutate } = useSWRConfig()
+
+  return async function sendOptimisticMessage(
+    optimistic: Message,
+    target = defaultTarget,
+  ) {
+    if (!target) return
+    const { channelId, parentId } = target
+    const key = parentId
+      ? messageKeys.replies(parentId)
+      : messageKeys.channel(channelId)
     await mutate<Message[]>(
       key,
       (current = []) => {

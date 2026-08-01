@@ -1,32 +1,20 @@
 'use client'
 
-import { useParams, useSearchParams } from 'next/navigation'
-
-type ActiveThread = { channelId: string; messageId: string } | null
+import type { Route } from 'next'
+import { useRouter } from 'next/navigation'
 
 export function useThread() {
-  const searchParams = useSearchParams()
-  const { channelId } = useParams<{ channelId: string }>()
-  const messageId = searchParams.get('thread')
+  const router = useRouter()
 
-  const activeThread: ActiveThread = messageId ? { channelId, messageId } : null
-
-  function openThread(_channelId: string, nextMessageId: string) {
-    const params = new URLSearchParams(searchParams)
-    params.set('thread', nextMessageId)
-    window.history.replaceState(null, '', `?${params}`)
-  }
-
-  function closeThread() {
-    const params = new URLSearchParams(searchParams)
-    params.delete('thread')
-    const query = params.toString()
-    window.history.replaceState(
-      null,
-      '',
-      query ? `?${query}` : location.pathname,
+  function openThread(nextChannelId: string, nextMessageId: string) {
+    router.push(
+      `/channel/${nextChannelId}/thread/${nextMessageId}` as Route,
     )
   }
 
-  return { activeThread, closeThread, openThread }
+  function closeThread() {
+    router.back()
+  }
+
+  return { closeThread, openThread }
 }

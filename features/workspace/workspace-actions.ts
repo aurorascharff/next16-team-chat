@@ -7,8 +7,8 @@ import { markActivityItemsRead } from './workspace-queries'
 
 export async function markActivityReadAction(itemIds: string[]) {
   const user = await verifyAuth()
-  const changed = await markActivityItemsRead(user.id, itemIds)
-  if (changed) {
+  await markActivityItemsRead(user.id, itemIds)
+  if (itemIds.length > 0) {
     updateTag(activityTags.reads(user.id))
   }
 }
