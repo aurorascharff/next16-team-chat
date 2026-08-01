@@ -216,7 +216,7 @@ export async function searchChannels(userId: string) {
 
 export async function getChannelSearchResults() {
   const user = await getCurrentUser()
-  const channels = await searchChannels(user.id)
+  const channels = await listChannelsForUser(user.id)
 
   return {
     channels: channels.map((channel) => {
