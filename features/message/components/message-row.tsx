@@ -9,9 +9,9 @@ import {
   TriangleAlert,
 } from 'lucide-react'
 import type { Route } from 'next'
-import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { HoverPrefetchLink } from '@/components/ui/hover-prefetch-link'
 import { UserAvatar } from '@/components/ui/user-avatar'
 import { useSendMessage } from '@/features/message/hooks/use-message-mutations'
 import type { Message } from '@/features/message/types/message'
@@ -110,27 +110,27 @@ export function MessageRow({
           </div>
         ) : null}
         {!sending && !failed && showThreadAffordance && replyCount > 0 ? (
-          <Link
+          <HoverPrefetchLink
             className="text-accent hover:bg-accent-fade border-accent/20 hover:border-accent/30 -mx-1 mt-1.5 inline-flex w-fit items-center gap-2 rounded-md border border-transparent px-2 py-1.5 text-xs font-semibold transition-colors"
             href={threadHref}
           >
             <MessageSquare aria-hidden className="size-3.5" strokeWidth={2} />
             {replyCount} {replyCount === 1 ? 'reply' : 'replies'}
-          </Link>
+          </HoverPrefetchLink>
         ) : null}
       </div>
       {!sending && !failed ? (
         <div className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark absolute top-2 right-4 flex items-center gap-0.5 rounded-lg border p-0.5 opacity-0 shadow-sm transition-opacity group-hover:opacity-100">
           <AddReaction message={message} />
           {showThreadAffordance ? (
-            <Link
+            <HoverPrefetchLink
               aria-label="Reply in thread"
               className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark hover:text-accent flex size-7 items-center justify-center rounded-md transition-colors"
               href={threadHref}
               title="Reply in thread"
             >
               <MessageSquare aria-hidden className="size-3.5" strokeWidth={2} />
-            </Link>
+            </HoverPrefetchLink>
           ) : null}
           <button
             aria-label="Copy link to message"
