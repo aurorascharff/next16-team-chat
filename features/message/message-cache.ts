@@ -1,6 +1,7 @@
 export const messageKeys = {
   channel: (channelId: string) => `/api/channels/${channelId}/messages`,
   replies: (messageId: string) => `/api/messages/${messageId}/replies`,
+  workspaceSearch: '/api/messages/search',
 }
 
 export const messageTags = {

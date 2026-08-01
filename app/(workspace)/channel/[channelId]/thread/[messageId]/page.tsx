@@ -1,20 +1,43 @@
+import { Hash } from 'lucide-react'
 import { Suspense } from 'react'
-import { ResizablePanel } from '@/components/ui/resizable-panel'
+import { Crossfade } from '@/components/ui/crossfade'
+import { getChannel } from '@/features/channel/channel-queries'
 import { Thread, ThreadSkeleton } from '@/features/message/components/thread'
+import { ThreadPanel } from '@/features/message/components/thread-panel'
 
 export default function ThreadPage({
   params,
 }: PageProps<'/channel/[channelId]/thread/[messageId]'>) {
   return (
-    <ResizablePanel
-      className="max-lg:fixed max-lg:inset-x-0 max-lg:top-0 max-lg:bottom-14 max-lg:z-30 max-lg:bg-white dark:max-lg:bg-black"
-      mobile
-    >
-      <Suspense fallback={<ThreadSkeleton />}>
-        {params.then(({ channelId, messageId }) => (
-          <Thread channelId={channelId} messageId={messageId} />
-        ))}
-      </Suspense>
-    </ResizablePanel>
+    <div className="h-full" data-thread-panel>
+      <ThreadPanel
+        subtitle={
+          <Suspense fallback={null}>
+            {params.then(async ({ channelId }) => {
+              const channel = await getChannel(channelId)
+              return (
+                <span className="text-muted dark:text-muted-dark flex min-w-0 items-center gap-1 text-sm font-normal">
+                  <span>in</span>
+                  <Hash
+                    aria-hidden
+                    className="size-3.5 shrink-0"
+                    strokeWidth={2}
+                  />
+                  <span className="truncate">{channel.name}</span>
+                </span>
+              )
+            })}
+          </Suspense>
+        }
+      >
+        <Suspense fallback={<ThreadSkeleton />}>
+          {params.then(({ channelId, messageId }) => (
+            <Crossfade>
+              <Thread channelId={channelId} messageId={messageId} />
+            </Crossfade>
+          ))}
+        </Suspense>
+      </ThreadPanel>
+    </div>
   )
 }

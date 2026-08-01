@@ -12,6 +12,7 @@ import {
 } from 'react'
 import { useSendMessage } from '@/features/message/hooks/use-message-mutations'
 import type { Message } from '@/features/message/types/message'
+import { getMessageTargetFromLocation } from '@/features/message/utils/message-route'
 import { MentionCombobox } from './mention-combobox'
 import { MessagePreview } from './message-preview'
 
@@ -96,9 +97,11 @@ export function MessageComposer({
   function onSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     const body = value.trim()
-    const targetChannelId = channelId ?? getChannelIdFromLocation()
+    const target = channelId
+      ? { channelId, parentId }
+      : getMessageTargetFromLocation()
 
-    if (!targetChannelId) {
+    if (!target) {
       toast.error('The channel is still loading. Try sending again.')
       return
     }
@@ -115,10 +118,10 @@ export function MessageComposer({
 
     const optimistic: Message = {
       body,
-      channelId: targetChannelId,
+      channelId: target.channelId,
       createdAt: new Date().toISOString(),
-      id: `optimistic-${targetChannelId}-${optimisticIdRef.current++}`,
-      parentId: parentId ?? null,
+      id: `optimistic-${target.channelId}-${optimisticIdRef.current++}`,
+      parentId: target.parentId ?? null,
       status: 'sending',
       userId: 'current',
       userName: 'You',
@@ -126,10 +129,7 @@ export function MessageComposer({
     setError('')
     setValue('')
     setMode('write')
-    void sendMessage(optimistic, {
-      channelId: targetChannelId,
-      parentId,
-    })
+    void sendMessage(optimistic, target)
   }
 
   const toolbarButton =
@@ -237,6 +237,11 @@ export function MessageComposer({
   )
 }
 
-function getChannelIdFromLocation() {
-  return window.location.pathname.match(/^\/channel\/([^/]+)/)?.[1]
+export function MessageComposerFallback() {
+  return (
+    <div
+      aria-hidden
+      className="border-divider dark:border-divider-dark bg-surface/90 dark:bg-surface-dark/90 sticky bottom-0 h-[12.8125rem] shrink-0 border-t backdrop-blur-lg"
+    />
+  )
 }

@@ -10,11 +10,9 @@ const DEFAULT_WIDTH = 320
 export function ResizablePanel({
   children,
   className,
-  mobile = false,
 }: {
   children: ReactNode
   className?: string
-  mobile?: boolean
 }) {
   const [width, setWidth] = useState(DEFAULT_WIDTH)
   const [dragging, setDragging] = useState(false)
@@ -46,8 +44,7 @@ export function ResizablePanel({
   return (
     <div
       className={cn(
-        'relative shrink-0 lg:block lg:w-[var(--panel-width)]',
-        mobile ? 'block w-full' : 'hidden',
+        'relative hidden shrink-0 lg:block lg:w-[var(--panel-width)]',
         className,
       )}
       ref={panelRef}

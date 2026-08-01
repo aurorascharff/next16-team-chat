@@ -7,17 +7,13 @@ import { messageKeys } from '@/features/message/message-cache'
 import type { Message } from '@/features/message/types/message'
 import { fetchJson } from '@/lib/fetch-json'
 
-export function useCommandPaletteResults(channelId?: string) {
-  const messagesKey = channelId ? messageKeys.channel(channelId) : null
-
+export function useCommandPaletteResults() {
   return useSWR(
-    channelKeys.commandPalette(messagesKey),
+    channelKeys.commandPalette(messageKeys.workspaceSearch),
     async ([, channelsUrl, messagesUrl]) => {
       const [channels, messages] = await Promise.all([
         fetchJson<ChannelSearchItem[]>(channelsUrl),
-        messagesUrl
-          ? fetchJson<Message[]>(messagesUrl)
-          : Promise.resolve([] as Message[]),
+        fetchJson<Message[]>(messagesUrl),
       ])
 
       return { channels, messages }

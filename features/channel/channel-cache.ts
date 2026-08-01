@@ -1,6 +1,6 @@
 export const channelKeys = {
   all: '/api/channels',
-  commandPalette: (messagesKey: string | null) =>
+  commandPalette: (messagesKey: string) =>
     ['command-palette', '/api/channels', messagesKey] as const,
   lastRead: (channelId: string) => `/api/channels/${channelId}/last-read`,
   unread: '/api/channels/unread',

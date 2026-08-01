@@ -41,10 +41,6 @@ export function CommandPalette() {
   const [open, setOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
-  const channelId = pathname?.startsWith('/channel/')
-    ? pathname.split('/')[2]
-    : undefined
-
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
@@ -87,7 +83,6 @@ export function CommandPalette() {
         onClick={(event) => event.stopPropagation()}
       >
         <SearchContent
-          channelId={channelId}
           onActivate={activate}
           onDismiss={() => setOpen(false)}
           showShortcut
@@ -106,19 +101,17 @@ export function MobileSearchView() {
   }
 
   return (
-    <section className="flex h-[calc(100dvh-3.5rem)] flex-col md:hidden">
+    <section className="flex h-[calc(100dvh-3.5rem)] flex-col px-3 pt-3 md:hidden">
       <SearchContent onActivate={activate} />
     </section>
   )
 }
 
 function SearchContent({
-  channelId,
   onActivate,
   onDismiss,
   showShortcut = false,
 }: {
-  channelId?: string
   onActivate: (result: Result) => void
   onDismiss?: () => void
   showShortcut?: boolean
@@ -150,9 +143,7 @@ function SearchContent({
             }
             if (event.key === 'Enter') resultsRef.current?.activate()
           }}
-          placeholder={
-            channelId ? 'Search channels and messages…' : 'Search channels…'
-          }
+          placeholder="Search channels and messages…"
           type="text"
           value={query}
         />
@@ -173,8 +164,7 @@ function SearchContent({
         }
       >
         <CommandPaletteResults
-          channelId={channelId}
-          key={`${channelId}:${query}`}
+          key={query}
           onActivate={onActivate}
           query={query}
           ref={resultsRef}
@@ -185,17 +175,15 @@ function SearchContent({
 }
 
 function CommandPaletteResults({
-  channelId,
   onActivate,
   query,
   ref,
 }: {
-  channelId?: string
   onActivate: (result: Result) => void
   query: string
   ref: Ref<CommandPaletteResultsHandle>
 }) {
-  const { data } = useCommandPaletteResults(channelId)
+  const { data } = useCommandPaletteResults()
   const [activeIndex, setActiveIndex] = useState(0)
   const term = query.trim().toLowerCase()
   const channelResults: Result[] = (
