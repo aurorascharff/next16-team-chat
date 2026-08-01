@@ -6,10 +6,7 @@ import {
   ChannelHeader,
   ChannelHeaderSkeleton,
 } from '@/features/channel/components/channel-header'
-import {
-  MessageComposer,
-  MessageComposerFallback,
-} from '@/features/message/components/message-composer'
+import { MessageComposer } from '@/features/message/components/message-composer'
 import {
   MessageThread,
   MessageThreadSkeleton,
@@ -37,11 +34,7 @@ export default function ChannelLayout({
               ))}
             </Crossfade>
           </Suspense>
-          <Suspense fallback={<MessageComposerFallback />}>
-            {params.then(({ channelId }) => (
-              <MessageComposer channelId={channelId} />
-            ))}
-          </Suspense>
+          <MessageComposer />
         </div>
         <ResizablePanel className="channel-route-panel">
           {children}
