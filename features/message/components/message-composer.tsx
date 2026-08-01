@@ -22,10 +22,12 @@ export function MessageComposer({
   channelId,
   parentId,
   placeholder,
+  scrollIntoViewOnSend = false,
 }: {
   channelId?: string
   parentId?: string
   placeholder?: string
+  scrollIntoViewOnSend?: boolean
 }) {
   const formRef = useRef<HTMLFormElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -130,6 +132,16 @@ export function MessageComposer({
     setMode('write')
     setExpanded(false)
     sendMessage.mutate({ ...target, message: optimistic })
+    if (scrollIntoViewOnSend) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const scroller = formRef.current?.closest<HTMLElement>(
+            '[data-message-scroll]',
+          )
+          scroller?.scrollTo({ behavior: 'smooth', top: scroller.scrollHeight })
+        })
+      })
+    }
   }
 
   const toolbarButton =
@@ -137,7 +149,7 @@ export function MessageComposer({
 
   return (
     <form
-      className="border-divider dark:border-divider-dark bg-surface/90 dark:bg-surface-dark/90 sticky bottom-0 flex flex-col gap-2 border-t px-3 py-2 backdrop-blur-lg md:px-5 md:py-3"
+      className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark flex flex-col gap-2 border-t px-3 py-2 md:px-5 md:py-3"
       onSubmit={onSubmit}
       ref={formRef}
     >

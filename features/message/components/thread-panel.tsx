@@ -45,10 +45,17 @@ export function ThreadPanel({
           <X aria-hidden className="size-4" strokeWidth={2} />
         </button>
       </header>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain py-2">
-        {children}
+      <div
+        className="min-h-0 flex-1 overflow-y-auto overscroll-contain pt-2"
+        data-message-scroll
+      >
+        <div className="flex min-h-full flex-col">
+          {children}
+          <div className="mt-auto">
+            <MessageComposer placeholder="Reply…" scrollIntoViewOnSend />
+          </div>
+        </div>
       </div>
-      <MessageComposer placeholder="Reply…" />
     </aside>
   )
 }
