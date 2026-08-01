@@ -75,6 +75,24 @@ async function listMessages(channelId: string, currentUserId?: string) {
   return recent.map((message) => toMessage(message, currentUserId)).reverse()
 }
 
+export async function getWorkspaceSearchMessages() {
+  const user = await getCurrentUser()
+  const messages = await prisma.message.findMany({
+    include: messageInclude,
+    orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+    take: 100,
+    where: {
+      channel: { members: { some: { userId: user.id } } },
+      createdAt: {
+        gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      },
+      parentId: null,
+    },
+  })
+
+  return messages.map((message) => toMessage(message, user.id))
+}
+
 async function listReplies(parentId: string, currentUserId?: string) {
   const replies = await prisma.message.findMany({
     include: messageInclude,

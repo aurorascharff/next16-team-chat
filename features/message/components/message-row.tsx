@@ -29,10 +29,7 @@ export function MessageRow({
   const { openThread } = useThread()
   const validMentions = useValidMentions()
   const searchParams = useSearchParams()
-  const sendMessage = useSendMessage({
-    channelId: message.channelId,
-    parentId: message.parentId ?? undefined,
-  })
+  const sendMessage = useSendMessage()
   const articleRef = useRef<HTMLElement>(null)
   const [copied, setCopied] = useState(false)
   const sending = message.status === 'sending'
@@ -84,7 +81,11 @@ export function MessageRow({
               <button
                 className="text-danger hover:text-danger/80 inline-flex items-center gap-1 font-semibold underline underline-offset-2"
                 onClick={() => {
-                  return sendMessage.mutate(message)
+                  return sendMessage.mutate({
+                    channelId: message.channelId,
+                    message,
+                    parentId: message.parentId ?? undefined,
+                  })
                 }}
                 type="button"
               >

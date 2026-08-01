@@ -67,43 +67,44 @@ export function useReactionToggle(message: Message) {
   return mutate
 }
 
-export function useSendMessage({
-  channelId,
-  parentId,
-}: {
+type SendMessageVariables = {
   channelId: string
+  message: Message
   parentId?: string
-}) {
+}
+
+export function useSendMessage() {
   const queryClient = useQueryClient()
-  const key = parentId
-    ? messageKeys.replies(parentId)
-    : messageKeys.channel(channelId)
 
   return useMutation({
-    mutationFn: (optimistic: Message) => {
-      return sendMessage({ body: optimistic.body, channelId, parentId })
+    mutationFn: ({ channelId, message, parentId }: SendMessageVariables) => {
+      return sendMessage({ body: message.body, channelId, parentId })
     },
-    onMutate: (optimistic: Message) => {
+    onMutate: ({ channelId, message, parentId }) => {
+      const key = parentId
+        ? messageKeys.replies(parentId)
+        : messageKeys.channel(channelId)
       queryClient.setQueryData<Message[]>(key, (current = []) => {
-        const exists = current.some((message) => message.id === optimistic.id)
+        const exists = current.some((item) => item.id === message.id)
         if (exists) {
-          return current.map((message) =>
-            message.id === optimistic.id
-              ? { ...message, status: 'sending' }
-              : message,
+          return current.map((item) =>
+            item.id === message.id ? { ...item, status: 'sending' } : item,
           )
         }
-        return [...current, optimistic]
+        return [...current, message]
       })
     },
-    onSuccess: (result, optimistic) => {
+    onSuccess: (result, { channelId, message, parentId }) => {
+      const key = parentId
+        ? messageKeys.replies(parentId)
+        : messageKeys.channel(channelId)
       queryClient.setQueryData<Message[]>(key, (current = []) =>
-        current.map((message) =>
-          message.id === optimistic.id
+        current.map((item) =>
+          item.id === message.id
             ? result.ok
               ? { ...result.message, status: 'sent' }
-              : { ...message, status: 'failed' }
-            : message,
+              : { ...item, status: 'failed' }
+            : item,
         ),
       )
 
@@ -119,12 +120,13 @@ export function useSendMessage({
         )
       }
     },
-    onError: (_error, optimistic) => {
+    onError: (_error, { channelId, message, parentId }) => {
+      const key = parentId
+        ? messageKeys.replies(parentId)
+        : messageKeys.channel(channelId)
       queryClient.setQueryData<Message[]>(key, (current = []) =>
-        current.map((message) =>
-          message.id === optimistic.id
-            ? { ...message, status: 'failed' }
-            : message,
+        current.map((item) =>
+          item.id === message.id ? { ...item, status: 'failed' } : item,
         ),
       )
     },

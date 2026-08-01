@@ -1,6 +1,5 @@
 import { Suspense } from 'react'
 import { Crossfade } from '@/components/ui/crossfade'
-import { ResizablePanel } from '@/components/ui/resizable-panel'
 import {
   ChannelDetails,
   ChannelDetailsSkeleton,
@@ -26,14 +25,12 @@ export default function ChannelPage({
   params,
 }: PageProps<'/channel/[channelId]'>) {
   return (
-    <ResizablePanel>
-      <Suspense fallback={<ChannelDetailsSkeleton />}>
-        <Crossfade>
-          {params.then(({ channelId }) => (
-            <ChannelDetails channelId={channelId} />
-          ))}
-        </Crossfade>
-      </Suspense>
-    </ResizablePanel>
+    <Suspense fallback={<ChannelDetailsSkeleton />}>
+      <Crossfade>
+        {params.then(({ channelId }) => (
+          <ChannelDetails channelId={channelId} />
+        ))}
+      </Crossfade>
+    </Suspense>
   )
 }

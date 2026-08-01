@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Suspense } from 'react'
 import { Crossfade } from '@/components/ui/crossfade'
+import { ResizablePanel } from '@/components/ui/resizable-panel'
 import {
   ChannelHeader,
   ChannelHeaderSkeleton,
@@ -42,7 +43,9 @@ export default function ChannelLayout({
             ))}
           </Suspense>
         </div>
-        {children}
+        <ResizablePanel className="channel-route-panel">
+          {children}
+        </ResizablePanel>
       </div>
     </div>
   )

@@ -1,5 +1,5 @@
 import { ArrowLeft, Hash } from 'lucide-react'
-import Link from 'next/link'
+import { BackButton } from '@/components/ui/back-button'
 import { GitHubLink } from '@/components/ui/github-link'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -12,14 +12,7 @@ export async function ChannelHeader({ channelId }: { channelId: string }) {
   return (
     <header className="border-divider dark:border-divider-dark bg-surface/80 dark:bg-surface-dark/80 sticky top-0 z-10 flex items-center justify-between gap-3 border-b px-5 py-3 backdrop-blur-lg max-md:items-start">
       <div className="flex min-w-0 items-start gap-2">
-        <Link
-          aria-label="Back to channels"
-          className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark -ml-1.5 flex size-8 shrink-0 items-center justify-center rounded-lg transition-colors hover:text-black md:hidden dark:hover:text-white"
-          href="/channels"
-          prefetch={true}
-        >
-          <ArrowLeft aria-hidden className="size-5" strokeWidth={2} />
-        </Link>
+        <BackButton className="-ml-1.5 md:hidden" />
         <div className="min-w-0">
           <h1 className="flex items-center gap-1.5">
             <Hash

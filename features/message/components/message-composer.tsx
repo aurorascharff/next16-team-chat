@@ -11,6 +11,7 @@ import {
 } from 'react'
 import { useSendMessage } from '@/features/message/hooks/use-message-mutations'
 import type { Message } from '@/features/message/types/message'
+import { getMessageTargetFromLocation } from '@/features/message/utils/message-route'
 import { MentionCombobox } from './mention-combobox'
 import { MessagePreview } from './message-preview'
 
@@ -21,14 +22,14 @@ export function MessageComposer({
   parentId,
   placeholder,
 }: {
-  channelId: string
+  channelId?: string
   parentId?: string
   placeholder?: string
 }) {
   const formRef = useRef<HTMLFormElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const optimisticIdRef = useRef(0)
-  const sendMessage = useSendMessage({ channelId, parentId })
+  const sendMessage = useSendMessage()
   const [error, setError] = useState('')
   const [mode, setMode] = useState<'write' | 'preview'>('write')
   const [value, setValue] = useState('')
@@ -93,6 +94,14 @@ export function MessageComposer({
   function onSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     const body = value.trim()
+    const target = channelId
+      ? { channelId, parentId }
+      : getMessageTargetFromLocation()
+
+    if (!target) {
+      setError('Open a channel before sending a message.')
+      return
+    }
 
     if (!body) {
       setError('Write a message first.')
@@ -106,10 +115,10 @@ export function MessageComposer({
 
     const optimistic: Message = {
       body,
-      channelId,
+      channelId: target.channelId,
       createdAt: new Date().toISOString(),
-      id: `optimistic-${channelId}-${optimisticIdRef.current++}`,
-      parentId: parentId ?? null,
+      id: `optimistic-${target.channelId}-${optimisticIdRef.current++}`,
+      parentId: target.parentId ?? null,
       status: 'sending',
       userId: 'current',
       userName: 'You',
@@ -117,7 +126,7 @@ export function MessageComposer({
     setError('')
     setValue('')
     setMode('write')
-    sendMessage.mutate(optimistic)
+    sendMessage.mutate({ ...target, message: optimistic })
   }
 
   const toolbarButton =
@@ -199,7 +208,10 @@ export function MessageComposer({
           maxLength={MAX_LENGTH}
           onKeyDown={onKeyDown}
           onValueChange={onValueChange}
-          placeholder={placeholder ?? `Message #${channelId}`}
+          placeholder={
+            placeholder ??
+            (channelId ? `Message #${channelId}` : 'Message channel')
+          }
           textareaRef={textareaRef}
           value={value}
         />
