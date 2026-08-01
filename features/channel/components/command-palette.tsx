@@ -163,7 +163,7 @@ function WorkspaceSearch({
         ) : null}
       </div>
       <ErrorBoundary title="Search is unavailable">
-        <WorkspaceSearchResults
+        <ClientSearchResults
           isStale={isStale}
           onActivate={onActivate}
           query={deferredQuery}
@@ -174,7 +174,7 @@ function WorkspaceSearch({
   )
 }
 
-function WorkspaceSearchResults({
+function ClientSearchResults({
   onActivate,
   query,
   ref,
@@ -195,7 +195,7 @@ function WorkspaceSearchResults({
 
   return (
     <Suspense fallback={<WorkspaceSearchResultsFallbackList />}>
-      <WorkspaceSearchResultList
+      <WorkspaceSearchResults
         isStale={isStale}
         key={query}
         onActivate={onActivate}
@@ -214,7 +214,7 @@ function WorkspaceSearchResultsFallbackList() {
   )
 }
 
-function WorkspaceSearchResultList({
+function WorkspaceSearchResults({
   onActivate,
   query,
   ref,
