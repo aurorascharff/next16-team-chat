@@ -5,6 +5,7 @@ import { Suspense } from 'react'
 import { Toaster } from '@/components/ui/toaster'
 import { CommandPalette } from '@/features/channel/components/command-palette'
 import { BotDriver } from '@/features/demo/components/bot-driver'
+import { OfflineIndicator } from '@/features/demo/components/offline-indicator'
 import {
   MobileTabBar,
   MobileTabBarSkeleton,
@@ -52,6 +53,7 @@ export default function RootLayout({
           </Suspense>
           <UnreadFavicon />
           <BotDriver />
+          <OfflineIndicator />
           <Toaster />
         </Providers>
       </body>

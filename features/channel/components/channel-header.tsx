@@ -4,6 +4,7 @@ import { GitHubLink } from '@/components/ui/github-link'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { Skeleton } from '@/components/ui/skeleton'
 import { SlowModeControl } from '@/features/demo/components/slow-mode-control'
+import { OfflineToggle } from '@/features/demo/components/offline-toggle'
 import { getChannel } from '@/features/channel/channel-queries'
 
 export async function ChannelHeader({ channelId }: { channelId: string }) {
@@ -35,6 +36,7 @@ export async function ChannelHeader({ channelId }: { channelId: string }) {
           <span className="max-md:hidden">
             <SlowModeControl />
           </span>
+          <OfflineToggle />
           <span className="max-md:hidden">
             <ThemeToggle />
           </span>
