@@ -1,5 +1,8 @@
 import { Suspense } from 'react'
-import { Thread, ThreadSkeleton } from '@/features/message/components/thread'
+import {
+  Thread,
+  ThreadSkeleton,
+} from '@/features/message/components/thread'
 
 export default function ThreadPage({
   params,

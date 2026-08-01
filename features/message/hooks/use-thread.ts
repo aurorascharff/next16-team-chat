@@ -7,7 +7,9 @@ export function useThread() {
   const router = useRouter()
 
   function openThread(nextChannelId: string, nextMessageId: string) {
-    router.push(`/channel/${nextChannelId}/thread/${nextMessageId}` as Route)
+    router.push(
+      `/channel/${nextChannelId}/thread/${nextMessageId}` as Route,
+    )
   }
 
   function closeThread() {

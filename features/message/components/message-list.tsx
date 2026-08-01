@@ -51,7 +51,7 @@ export function MessageList({
   const showNewMessages =
     !messageJump.isAtEnd && messageJump.newMessageCount > 0
   const showUnreadMessages =
-    messageJump.isAtEnd && unreadCount > 0 && !messageJump.isUnreadMarkerVisible
+    unreadCount > 0 && messageJump.unreadMarkerPosition === 'above'
 
   return (
     <section aria-label="Messages" className="relative flex min-h-0 flex-1">

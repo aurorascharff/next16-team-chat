@@ -21,5 +21,7 @@ export async function DesktopFirstChannelRedirect() {
     return null
   }
 
-  return <DesktopChannelRedirect href={`/channel/${first.id}` as Route} />
+  return (
+    <DesktopChannelRedirect href={`/channel/${first.id}` as Route} />
+  )
 }
