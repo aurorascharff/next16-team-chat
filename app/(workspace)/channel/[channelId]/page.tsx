@@ -2,21 +2,9 @@ import { Suspense } from 'react'
 import { Crossfade } from '@/components/ui/crossfade'
 import { ResizablePanel } from '@/components/ui/resizable-panel'
 import {
-  ChannelHeader,
-  ChannelHeaderSkeleton,
-} from '@/features/channel/components/channel-header'
-import {
   ChannelDetails,
   ChannelDetailsSkeleton,
 } from '@/features/channel/components/channel-details'
-import {
-  MessageComposer,
-  MessageComposerFallback,
-} from '@/features/message/components/message-composer'
-import {
-  MessageThread,
-  MessageThreadSkeleton,
-} from '@/features/message/components/message-thread'
 import { getChannel } from '@/features/channel/channel-queries'
 import type { Metadata } from 'next'
 
@@ -38,39 +26,14 @@ export default function ChannelPage({
   params,
 }: PageProps<'/channel/[channelId]'>) {
   return (
-    <div className="grid h-dvh grid-rows-[auto_minmax(0,1fr)] max-md:h-[calc(100dvh-3.5rem)]">
-      <Suspense fallback={<ChannelHeaderSkeleton />}>
-        {params.then(({ channelId }) => (
-          <Crossfade>
-            <ChannelHeader channelId={channelId} />
-          </Crossfade>
-        ))}
+    <ResizablePanel>
+      <Suspense fallback={<ChannelDetailsSkeleton />}>
+        <Crossfade>
+          {params.then(({ channelId }) => (
+            <ChannelDetails channelId={channelId} />
+          ))}
+        </Crossfade>
       </Suspense>
-      <div className="flex min-h-0 lg:grid lg:grid-cols-[minmax(0,1fr)_auto]">
-        <div className="grid min-h-0 min-w-0 flex-1 grid-rows-[minmax(0,1fr)_auto]">
-          <Suspense fallback={<MessageThreadSkeleton />}>
-            <Crossfade>
-              {params.then(({ channelId }) => (
-                <MessageThread channelId={channelId} />
-              ))}
-            </Crossfade>
-          </Suspense>
-          <Suspense fallback={<MessageComposerFallback />}>
-            {params.then(({ channelId }) => (
-              <MessageComposer channelId={channelId} />
-            ))}
-          </Suspense>
-        </div>
-        <ResizablePanel>
-          <Suspense fallback={<ChannelDetailsSkeleton />}>
-            <Crossfade>
-              {params.then(({ channelId }) => (
-                <ChannelDetails channelId={channelId} />
-              ))}
-            </Crossfade>
-          </Suspense>
-        </ResizablePanel>
-      </div>
-    </div>
+    </ResizablePanel>
   )
 }

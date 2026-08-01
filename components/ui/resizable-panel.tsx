@@ -1,13 +1,21 @@
 'use client'
 
-import { useRef, useState, type ReactNode } from 'react'
+import { useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 const MIN_WIDTH = 280
 const MAX_WIDTH = 560
 const DEFAULT_WIDTH = 320
 
-export function ResizablePanel({ children }: { children: ReactNode }) {
+export function ResizablePanel({
+  children,
+  className,
+  mobile = false,
+}: {
+  children: ReactNode
+  className?: string
+  mobile?: boolean
+}) {
   const [width, setWidth] = useState(DEFAULT_WIDTH)
   const [dragging, setDragging] = useState(false)
   const panelRef = useRef<HTMLDivElement>(null)
@@ -37,9 +45,13 @@ export function ResizablePanel({ children }: { children: ReactNode }) {
 
   return (
     <div
-      className="relative hidden shrink-0 lg:block"
+      className={cn(
+        'relative shrink-0 lg:block lg:w-[var(--panel-width)]',
+        mobile ? 'block w-full' : 'hidden',
+        className,
+      )}
       ref={panelRef}
-      style={{ width }}
+      style={{ '--panel-width': `${width}px` } as CSSProperties}
     >
       <button
         aria-label="Resize panel"
