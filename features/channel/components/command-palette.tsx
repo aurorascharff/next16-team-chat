@@ -241,7 +241,7 @@ function CommandPaletteResults({
             <li key={key}>
               <button
                 className={cn(
-                  'flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-colors',
+                  'flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm',
                   isActive
                     ? 'bg-accent-fade text-accent'
                     : 'hover:bg-card dark:hover:bg-card-dark',

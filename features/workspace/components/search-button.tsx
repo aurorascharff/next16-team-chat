@@ -5,7 +5,7 @@ import { Search } from 'lucide-react'
 export function SearchButton() {
   return (
     <button
-      className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark text-muted dark:text-muted-dark flex h-9 w-full items-center gap-2.5 rounded-lg border px-3 text-sm transition-colors hover:text-black dark:hover:text-white"
+      className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark text-muted dark:text-muted-dark flex h-9 w-full items-center gap-2.5 rounded-lg border px-3 text-sm hover:text-black dark:hover:text-white"
       onClick={() => {
         window.dispatchEvent(new Event('open-command-palette'))
       }}

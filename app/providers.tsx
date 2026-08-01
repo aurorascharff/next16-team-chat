@@ -7,7 +7,12 @@ import { SWRConfig } from 'swr'
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <SWRConfig value={{}}>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        disableTransitionOnChange
+        enableSystem
+      >
         {children}
       </ThemeProvider>
     </SWRConfig>

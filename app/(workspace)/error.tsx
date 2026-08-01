@@ -27,7 +27,7 @@ export default function WorkspaceError({
         We couldn’t load this part of the workspace. Try again.
       </p>
       <button
-        className="border-divider dark:border-divider-dark bg-elevated hover:bg-card dark:bg-elevated-dark dark:hover:bg-card-dark mt-1 flex min-h-9 items-center justify-center rounded-lg border px-3.5 text-[0.8125rem] font-semibold transition-colors"
+        className="border-divider dark:border-divider-dark bg-elevated hover:bg-card dark:bg-elevated-dark dark:hover:bg-card-dark mt-1 flex min-h-9 items-center justify-center rounded-lg border px-3.5 text-[0.8125rem] font-semibold"
         onClick={retry}
         type="button"
       >

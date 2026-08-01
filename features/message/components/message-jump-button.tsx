@@ -30,7 +30,7 @@ export function MessageJumpButton({
     >
       <div className="border-accent/30 bg-surface/95 dark:bg-elevated-dark/95 flex h-8 items-stretch overflow-hidden rounded-md border shadow-sm backdrop-blur">
         <button
-          className="text-accent hover:bg-accent-fade pointer-events-auto flex items-center gap-2 px-2.5 text-xs font-semibold transition-colors"
+          className="text-accent hover:bg-accent-fade pointer-events-auto flex items-center gap-2 px-2.5 text-xs font-semibold"
           onClick={() => {
             onJump()
           }}
@@ -42,7 +42,7 @@ export function MessageJumpButton({
         {onDismiss ? (
           <button
             aria-label="Dismiss new message indicator"
-            className="border-accent/20 text-muted dark:text-muted-dark hover:bg-accent-fade hover:text-accent pointer-events-auto flex w-8 items-center justify-center border-l transition-colors"
+            className="border-accent/20 text-muted dark:text-muted-dark hover:bg-accent-fade hover:text-accent pointer-events-auto flex w-8 items-center justify-center border-l"
             onClick={() => {
               onDismiss()
             }}

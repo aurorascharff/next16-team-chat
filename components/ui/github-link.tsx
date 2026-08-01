@@ -4,7 +4,7 @@ export function GitHubLink() {
   return (
     <a
       aria-label="View source on GitHub"
-      className="text-muted dark:text-muted-dark flex size-7 items-center justify-center rounded-full transition-colors hover:text-black dark:hover:text-white"
+      className="text-muted dark:text-muted-dark flex size-7 items-center justify-center rounded-full hover:text-black dark:hover:text-white"
       href={REPO_URL}
       rel="noreferrer"
       target="_blank"

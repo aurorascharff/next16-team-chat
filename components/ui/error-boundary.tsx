@@ -24,7 +24,7 @@ function ErrorFallback(
         {title ?? 'Something went wrong'}
       </p>
       <button
-        className="border-divider dark:border-divider-dark bg-elevated hover:bg-card dark:bg-elevated-dark dark:hover:bg-card-dark flex min-h-8 items-center justify-center rounded-lg border px-3 text-xs font-semibold transition-colors"
+        className="border-divider dark:border-divider-dark bg-elevated hover:bg-card dark:bg-elevated-dark dark:hover:bg-card-dark flex min-h-8 items-center justify-center rounded-lg border px-3 text-xs font-semibold"
         onClick={retry}
         type="button"
       >

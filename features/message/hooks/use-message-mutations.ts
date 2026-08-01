@@ -131,6 +131,15 @@ export function useSendMessage(defaultTarget?: SendMessageTarget) {
           { revalidate: false },
         )
       }
+
+      if (result.ok && /@huddlebot\b/i.test(optimistic.body)) {
+        const threadParent = parentId ?? result.message.id
+        await mutate(
+          messageKeys.botTyping(threadParent),
+          { startedAt: new Date().toISOString() },
+          { revalidate: false },
+        )
+      }
     } catch {
       await mutate<Message[]>(
         key,

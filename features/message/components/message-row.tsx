@@ -62,7 +62,7 @@ export function MessageRow({
   return (
     <article
       className={cn(
-        'group relative flex gap-3 px-5 py-1.5 transition-colors',
+        'group relative flex gap-3 px-5 py-1.5',
         sending ? 'opacity-70' : 'hover:bg-card dark:hover:bg-card-dark',
       )}
       id={`message-${message.id}`}
@@ -110,7 +110,7 @@ export function MessageRow({
         ) : null}
         {!sending && !failed && showThreadAffordance && replyCount > 0 ? (
           <Link
-            className="text-accent hover:bg-accent-fade border-accent/20 hover:border-accent/30 -mx-1 mt-1.5 flex items-center gap-2 rounded-md border border-transparent px-2 py-1.5 text-xs font-semibold transition-colors"
+            className="text-accent hover:bg-accent-fade border-accent/20 hover:border-accent/30 -mx-1 mt-1.5 inline-flex w-fit items-center gap-2 rounded-md border border-transparent px-2 py-1.5 text-xs font-semibold transition-colors"
             href={threadHref}
           >
             <MessageSquare aria-hidden className="size-3.5" strokeWidth={2} />

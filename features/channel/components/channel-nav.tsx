@@ -80,7 +80,7 @@ export function ChannelNav({ groups: initialGroups }: Props) {
         return (
           <div
             className={cn(
-              'flex flex-col gap-0.5 rounded-lg transition-colors',
+              'flex flex-col gap-0.5 rounded-lg',
               overGroup === group.name && 'bg-accent/5 dark:bg-accent/10',
             )}
             key={group.name}
@@ -132,7 +132,7 @@ export function ChannelNav({ groups: initialGroups }: Props) {
             ) : (
               <div
                 className={cn(
-                  'group/label flex min-h-6 items-center justify-between rounded px-2.5 py-1 transition-colors',
+                  'group/label flex min-h-6 items-center justify-between rounded px-2.5 py-1',
                 )}
               >
                 <p
@@ -154,7 +154,7 @@ export function ChannelNav({ groups: initialGroups }: Props) {
                   <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover/label:opacity-100">
                     <button
                       aria-label={`Move ${group.name} group up`}
-                      className="text-muted dark:text-muted-dark hover:text-accent p-0.5 transition-colors disabled:opacity-30 disabled:hover:text-current"
+                      className="text-muted dark:text-muted-dark hover:text-accent p-0.5 disabled:opacity-30 disabled:hover:text-current"
                       disabled={
                         movableGroups.findIndex(
                           (item) => item.name === group.name,
@@ -173,7 +173,7 @@ export function ChannelNav({ groups: initialGroups }: Props) {
                     </button>
                     <button
                       aria-label={`Move ${group.name} group down`}
-                      className="text-muted dark:text-muted-dark hover:text-accent p-0.5 transition-colors disabled:opacity-30 disabled:hover:text-current"
+                      className="text-muted dark:text-muted-dark hover:text-accent p-0.5 disabled:opacity-30 disabled:hover:text-current"
                       disabled={
                         movableGroups.findIndex(
                           (item) => item.name === group.name,
@@ -193,7 +193,7 @@ export function ChannelNav({ groups: initialGroups }: Props) {
                     </button>
                     <button
                       aria-label={`Rename ${group.name} group`}
-                      className="text-muted dark:text-muted-dark hover:text-accent p-0.5 transition-colors"
+                      className="text-muted dark:text-muted-dark hover:text-accent p-0.5"
                       onClick={() => {
                         return setEditingName(group.name)
                       }}
@@ -203,7 +203,7 @@ export function ChannelNav({ groups: initialGroups }: Props) {
                     </button>
                     <button
                       aria-label={`Delete ${group.name} group`}
-                      className="text-muted dark:text-muted-dark p-0.5 transition-colors hover:text-black dark:hover:text-white"
+                      className="text-muted dark:text-muted-dark p-0.5 hover:text-black dark:hover:text-white"
                       onClick={() => {
                         return deleteGroup(group.name)
                       }}
@@ -275,7 +275,7 @@ export function ChannelNav({ groups: initialGroups }: Props) {
         )
       })}
       <button
-        className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex min-h-8 shrink-0 items-center gap-2 rounded-lg px-2.5 text-sm font-medium transition-colors hover:text-black dark:hover:text-white"
+        className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex min-h-8 shrink-0 items-center gap-2 rounded-lg px-2.5 text-sm font-medium hover:text-black dark:hover:text-white"
         onClick={addGroup}
         type="button"
       >
