@@ -27,8 +27,7 @@ export function ActivityRow({ item }: { item: ActivityItem }) {
   const markActivityRead = useMarkActivityRead()
   const action = ACTION[item.kind]
   const ActionIcon = action.icon
-  const href =
-    `/channel/${item.channelId}/thread/${item.messageId}` as Route
+  const href = `/channel/${item.channelId}/thread/${item.messageId}` as Route
 
   function markRead() {
     if (item.read) {

@@ -180,7 +180,10 @@ function SearchContent({
       </div>
       <Suspense
         fallback={
-          <ul aria-busy className="min-h-0 flex-1 overflow-y-auto p-1.5 md:max-h-80">
+          <ul
+            aria-busy
+            className="min-h-0 flex-1 overflow-y-auto p-1.5 md:max-h-80"
+          >
             <CommandPaletteResultsFallback />
           </ul>
         }

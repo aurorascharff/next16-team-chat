@@ -63,17 +63,11 @@ function NavLink({ item }: { item: PrimaryNavItem }) {
 
 function NavLinkInner({ item }: { item: PrimaryNavItem }) {
   const pathname = usePathname()
-  const { hasActivity } = useActivityIndicator(
-    Boolean(item.showActivityDot),
-  )
+  const { hasActivity } = useActivityIndicator(Boolean(item.showActivityDot))
   const isActive = isNavActive(item, pathname)
 
   return (
-    <NavLinkShell
-      hasActivity={hasActivity}
-      isActive={isActive}
-      item={item}
-    />
+    <NavLinkShell hasActivity={hasActivity} isActive={isActive} item={item} />
   )
 }
 
