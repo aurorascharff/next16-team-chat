@@ -111,7 +111,7 @@ async function listReplies(parentId: string, currentUserId?: string) {
   return replies.map((reply) => toMessage(reply, currentUserId))
 }
 
-function parseMentions(body: string, users: User[]): string[] {
+export function parseMentions(body: string, users: User[]): string[] {
   const tokens = body.match(/@([A-Za-z][\w-]*)/g)
   if (!tokens) return []
 
@@ -177,44 +177,6 @@ export async function addMessage({
   }
 
   return toMessage(message)
-}
-
-const BOT_REPLIES = [
-  'On it — pulling the latest from the repo now.',
-  'Checked the pipeline: build is green and tests pass.',
-  'Summarized the thread above. Nothing blocking so far.',
-  'Looked into it — no new failures since the last deploy.',
-  'Here’s the status: the PR is up and awaiting review.',
-]
-
-export async function replyAsBotIfMentioned({
-  authorId,
-  body,
-  channelId,
-  messageId,
-  parentId,
-}: {
-  authorId: string
-  body: string
-  channelId: string
-  messageId: string
-  parentId?: string
-}): Promise<string | null> {
-  if (authorId === 'bot') return null
-  const users = await getUsers()
-  if (!parseMentions(body, users).includes('bot')) return null
-
-  const threadParent = parentId ?? messageId
-  const reply = BOT_REPLIES[Math.floor(Math.random() * BOT_REPLIES.length)]
-
-  await addMessage({
-    body: reply,
-    channelId,
-    parentId: threadParent,
-    userId: 'bot',
-  })
-
-  return threadParent
 }
 
 export async function toggleReaction({

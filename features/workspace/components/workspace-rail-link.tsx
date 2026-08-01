@@ -48,7 +48,7 @@ export function WorkspaceRailLinkShell({
     <Link
       aria-current={isActive ? 'page' : undefined}
       className={cn(
-        'flex w-full flex-col items-center gap-1 rounded-lg py-1.5 text-[0.625rem] font-medium transition-colors',
+        'flex w-full flex-col items-center gap-1 rounded-lg py-1.5 text-[0.625rem] font-medium',
         isActive
           ? 'text-accent'
           : 'text-muted dark:text-muted-dark hover:text-black dark:hover:text-white',
@@ -58,7 +58,7 @@ export function WorkspaceRailLinkShell({
     >
       <span
         className={cn(
-          'relative flex size-9 items-center justify-center rounded-xl transition-colors',
+          'relative flex size-9 items-center justify-center rounded-xl',
           isActive ? 'bg-accent-fade' : 'hover:bg-card dark:hover:bg-card-dark',
         )}
       >

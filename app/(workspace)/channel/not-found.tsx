@@ -9,7 +9,7 @@ export default function ChannelNotFound() {
         title="Channel not found"
       >
         <Link
-          className="bg-accent hover:bg-accent-hover flex min-h-9 items-center justify-center rounded-lg px-3.5 text-[0.8125rem] font-semibold text-white transition-colors"
+          className="bg-accent hover:bg-accent-hover flex min-h-9 items-center justify-center rounded-lg px-3.5 text-[0.8125rem] font-semibold text-white"
           href="/channels"
         >
           Back to channels

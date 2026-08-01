@@ -141,7 +141,7 @@ export function MessageComposer({
       onSubmit={onSubmit}
       ref={formRef}
     >
-      <div className="border-divider dark:border-divider-dark bg-elevated dark:bg-elevated-dark focus-within:border-accent focus-within:ring-accent/20 relative flex flex-col overflow-hidden rounded-xl border shadow-sm transition-colors focus-within:ring-2">
+      <div className="border-divider dark:border-divider-dark bg-elevated dark:bg-elevated-dark focus-within:border-accent focus-within:ring-accent/20 relative flex flex-col overflow-hidden rounded-xl border shadow-sm focus-within:ring-2">
         <div
           aria-label="Formatting"
           className={cn(

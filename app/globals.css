@@ -146,6 +146,34 @@ body:has([data-user-switching]) nav[aria-label='Channels'] {
   }
 }
 
+@keyframes typing-shimmer {
+  from {
+    background-position: 200% center;
+  }
+  to {
+    background-position: -200% center;
+  }
+}
+
+.typing-shimmer {
+  animation: typing-shimmer 1.8s linear infinite;
+  background: linear-gradient(
+    90deg,
+    currentColor 20%,
+    rgba(255, 255, 255, 0.95) 50%,
+    currentColor 80%
+  );
+  background-clip: text;
+  background-size: 200% 100%;
+  color: var(--color-muted);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dark .typing-shimmer {
+  color: var(--color-muted-dark);
+}
+
 .skeleton-animation:not([class*='rounded-']) {
   border-radius: var(--radius-sm);
 }
@@ -159,8 +187,14 @@ body:has([data-user-switching]) nav[aria-label='Channels'] {
   }
 
   .message-highlight,
+  .typing-shimmer,
   .skeleton-animation {
     animation: none !important;
+  }
+
+  .typing-shimmer {
+    background: none;
+    -webkit-text-fill-color: currentColor;
   }
 }
 

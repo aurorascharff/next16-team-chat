@@ -10,6 +10,7 @@ build/
 
 # local env files
 .env*
+!.env.sample
 
 # TypeScript
 *.tsbuildinfo

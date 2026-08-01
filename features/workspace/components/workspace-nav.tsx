@@ -15,7 +15,7 @@ function BrandMark() {
 export function WorkspaceNav() {
   return (
     <Link
-      className="hover:bg-card dark:hover:bg-card-dark flex items-center gap-2.5 rounded-lg p-1.5 transition-colors"
+      className="hover:bg-card dark:hover:bg-card-dark flex items-center gap-2.5 rounded-lg p-1.5"
       href="/"
     >
       <BrandMark />

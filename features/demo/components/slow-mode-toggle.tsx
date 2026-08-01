@@ -14,7 +14,7 @@ export function SlowModeToggle({ enabled }: { enabled: boolean }) {
       aria-label="Toggle simulated network delays"
       aria-pressed={optimisticEnabled}
       className={cn(
-        'flex min-h-8 items-center gap-2 rounded-full border px-2.5 text-xs font-medium transition-colors',
+        'flex min-h-8 items-center gap-2 rounded-full border px-2.5 text-xs font-medium',
         optimisticEnabled
           ? 'bg-accent-fade text-accent border-transparent'
           : 'border-divider dark:border-divider-dark text-muted dark:text-muted-dark hover:text-black dark:hover:text-white',
@@ -33,7 +33,7 @@ export function SlowModeToggle({ enabled }: { enabled: boolean }) {
       <span
         aria-hidden
         className={cn(
-          'ml-0.5 flex h-4 w-7 items-center rounded-full p-0.5 transition-colors',
+          'ml-0.5 flex h-4 w-7 items-center rounded-full p-0.5',
           optimisticEnabled
             ? 'bg-accent justify-end'
             : 'bg-muted/30 justify-start',

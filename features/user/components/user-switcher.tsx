@@ -17,7 +17,7 @@ export function UserSwitcher({ currentUserId }: { currentUserId: string }) {
   return (
     <button
       aria-label="Switch user"
-      className="text-muted dark:text-muted-dark hover:bg-surface dark:hover:bg-elevated-dark flex size-8 items-center justify-center rounded-lg transition-colors hover:text-black disabled:opacity-55 dark:hover:text-white"
+      className="text-muted dark:text-muted-dark hover:bg-surface dark:hover:bg-elevated-dark flex size-8 items-center justify-center rounded-lg hover:text-black disabled:opacity-55 dark:hover:text-white"
       data-user-switching={isPending ? '' : undefined}
       disabled={isPending}
       onClick={() => {

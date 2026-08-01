@@ -44,7 +44,7 @@ export function ResizablePanel({
   return (
     <div
       className={cn(
-        'relative hidden shrink-0 lg:block lg:w-[var(--panel-width)]',
+        'relative hidden min-h-0 shrink-0 overflow-hidden lg:block lg:h-full lg:w-[var(--panel-width)]',
         className,
       )}
       ref={panelRef}

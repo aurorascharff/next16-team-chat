@@ -1,8 +1,14 @@
 'use client'
 
-import { useSuspenseQuery } from '@tanstack/react-query'
+import {
+  useQuery,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query'
 import { X } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { type ReactNode, useEffect } from 'react'
+import { UserAvatar } from '@/components/ui/user-avatar'
+import { messageKeys } from '@/features/message/message-cache'
 import {
   messagesQueryOptions,
   repliesQueryOptions,
@@ -32,14 +38,16 @@ export function ThreadPanel({
         </h2>
         <button
           aria-label="Close thread"
-          className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex size-8 items-center justify-center rounded-lg transition-colors hover:text-black dark:hover:text-white"
+          className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex size-8 items-center justify-center rounded-lg hover:text-black dark:hover:text-white"
           onClick={closeThread}
           type="button"
         >
           <X aria-hidden className="size-4" strokeWidth={2} />
         </button>
       </header>
-      <div className="flex-1 overflow-y-auto py-2">{children}</div>
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain py-2">
+        {children}
+      </div>
       <MessageComposer placeholder="Reply…" />
     </aside>
   )
@@ -54,9 +62,26 @@ export function ThreadBody({
 }) {
   const { data: messages } = useSuspenseQuery(messagesQueryOptions(channelId))
   const { data: replies } = useSuspenseQuery(repliesQueryOptions(messageId))
+  const queryClient = useQueryClient()
+  const { data: botTyping } = useQuery<{ startedAt: string } | null>({
+    enabled: false,
+    initialData: null,
+    queryKey: messageKeys.botTyping(messageId),
+    queryFn: async () => null,
+  })
   const parent = messages.find((message) => {
     return message.id === messageId
   })
+
+  useEffect(() => {
+    if (!botTyping) return
+    const replyArrived = replies.some((reply) => {
+      return reply.userId === 'bot' && reply.createdAt >= botTyping.startedAt
+    })
+    if (replyArrived) {
+      queryClient.setQueryData(messageKeys.botTyping(messageId), null)
+    }
+  }, [botTyping, messageId, queryClient, replies])
 
   return (
     <>
@@ -67,6 +92,23 @@ export function ThreadBody({
       {replies.map((reply) => {
         return <MessageRow key={reply.id} message={reply} />
       })}
+      {botTyping ? <BotTypingIndicator /> : null}
     </>
+  )
+}
+
+function BotTypingIndicator() {
+  return (
+    <div
+      aria-label="Huddle Bot is thinking"
+      className="flex gap-3 px-5 py-2"
+      role="status"
+    >
+      <UserAvatar bot name="Huddle Bot" />
+      <div className="min-w-0 pt-0.5">
+        <strong className="text-[0.9375rem] font-semibold">Huddle Bot</strong>
+        <p className="typing-shimmer mt-1 text-sm font-medium">Typing...</p>
+      </div>
+    </div>
   )
 }

@@ -42,7 +42,7 @@ export function ActivityRow({ item }: { item: ActivityItem }) {
   return (
     <Link
       className={cn(
-        'group hover:bg-card dark:hover:bg-card-dark flex gap-3 rounded-xl px-3 py-3 transition-colors',
+        'group hover:bg-card dark:hover:bg-card-dark flex gap-3 rounded-xl px-3 py-3',
         !item.read && 'bg-accent-fade/40 dark:bg-accent/5',
       )}
       href={href}

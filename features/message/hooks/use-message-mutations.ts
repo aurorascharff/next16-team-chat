@@ -119,6 +119,13 @@ export function useSendMessage() {
             ),
         )
       }
+
+      if (result.ok && /@huddlebot\b/i.test(message.body)) {
+        const threadParent = parentId ?? result.message.id
+        queryClient.setQueryData(messageKeys.botTyping(threadParent), {
+          startedAt: new Date().toISOString(),
+        })
+      }
     },
     onError: (_error, { channelId, message, parentId }) => {
       const key = parentId

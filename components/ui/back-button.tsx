@@ -11,7 +11,7 @@ export function BackButton({ className }: { className?: string }) {
     <button
       aria-label="Go back"
       className={cn(
-        'text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex size-8 shrink-0 items-center justify-center rounded-lg transition-colors hover:text-black dark:hover:text-white',
+        'text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex size-8 shrink-0 items-center justify-center rounded-lg hover:text-black dark:hover:text-white',
         className,
       )}
       onClick={() => router.back()}
