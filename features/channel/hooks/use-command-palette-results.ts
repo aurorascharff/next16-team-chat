@@ -11,7 +11,7 @@ export function useCommandPaletteResults(channelId?: string) {
   const messagesKey = channelId ? messageKeys.channel(channelId) : null
 
   return useSWR(
-    ['command-palette', channelKeys.all, messagesKey] as const,
+    channelKeys.commandPalette(messagesKey),
     async ([, channelsUrl, messagesUrl]) => {
       const [channels, messages] = await Promise.all([
         fetchJson<ChannelSearchItem[]>(channelsUrl),
