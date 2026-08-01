@@ -23,6 +23,8 @@ export function MessageList({
 
   const unreadMessages = messages.filter((message) => {
     return (
+      message.status !== 'sending' &&
+      message.status !== 'failed' &&
       message.userId !== currentUserId &&
       (readAtOnEntry ? message.createdAt > readAtOnEntry : true)
     )
