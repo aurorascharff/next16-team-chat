@@ -20,7 +20,7 @@ The architecture follows the [Next.js App Architecture](https://github.com/auror
 
 Both implementations demonstrate the same client data patterns:
 
-- **Client-only Suspense:** The `@mention` autocomplete and command palette fetch after interaction and suspend only their local results.
+- **Client-only Suspense:** Workspace search and `@mention` autocomplete keep their inputs interactive while results load behind local Suspense boundaries.
 - **Server-seeded live data:** Channel messages, thread replies, users, and unread state render on the server before the client cache takes over.
 
 Related guide work: [Client-side data fetching guide PR](https://github.com/vercel/next.js/pull/96341)

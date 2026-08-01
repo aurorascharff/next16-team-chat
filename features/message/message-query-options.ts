@@ -21,10 +21,11 @@ export function messagesQueryOptions(channelId: string) {
   })
 }
 
-export function workspaceSearchMessagesQueryOptions() {
+export function workspaceSearchMessagesQueryOptions(query: string) {
   return queryOptions({
     queryFn: async (): Promise<Message[]> => {
-      const res = await fetch(apiUrl('/api/messages/search'))
+      const params = new URLSearchParams({ q: query })
+      const res = await fetch(apiUrl(`/api/messages/search?${params}`))
 
       if (!res.ok) {
         throw new Error('Failed to fetch workspace messages')
@@ -32,7 +33,7 @@ export function workspaceSearchMessagesQueryOptions() {
 
       return res.json()
     },
-    queryKey: messageKeys.workspaceSearch,
+    queryKey: messageKeys.workspaceSearch(query),
   })
 }
 

@@ -1,7 +1,7 @@
 export const channelKeys = {
-  all: ['channels', 'all'] as const,
   lastRead: (channelId: string) =>
     ['channels', channelId, 'last-read'] as const,
+  search: (query: string) => ['channels', 'search', query] as const,
   unread: ['channels', 'unread'] as const,
 }
 

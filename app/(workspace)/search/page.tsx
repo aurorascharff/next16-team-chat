@@ -1,18 +1,10 @@
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
-import {
-  MobileSearch,
-  MobileSearchSkeleton,
-} from '@/features/channel/components/mobile-search'
+import { MobileSearch } from '@/features/channel/components/command-palette'
 
 export const metadata: Metadata = {
   title: 'Search',
 }
 
 export default function SearchPage() {
-  return (
-    <Suspense fallback={<MobileSearchSkeleton />}>
-      <MobileSearch />
-    </Suspense>
-  )
+  return <MobileSearch />
 }

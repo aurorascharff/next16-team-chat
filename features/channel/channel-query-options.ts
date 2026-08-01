@@ -10,10 +10,11 @@ export type ChannelSearchItem = {
   isPrivate: boolean
 }
 
-export function channelSearchQueryOptions() {
+export function channelSearchQueryOptions(query: string) {
   return queryOptions({
     queryFn: async (): Promise<ChannelSearchItem[]> => {
-      const res = await fetch('/api/channels')
+      const params = new URLSearchParams({ q: query })
+      const res = await fetch(`/api/channels?${params}`)
 
       if (!res.ok) {
         throw new Error('Failed to fetch channels')
@@ -21,7 +22,7 @@ export function channelSearchQueryOptions() {
 
       return res.json()
     },
-    queryKey: channelKeys.all,
+    queryKey: channelKeys.search(query),
   })
 }
 
