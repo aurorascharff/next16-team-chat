@@ -214,6 +214,22 @@ export async function searchChannels(userId: string) {
   return listChannels(userId)
 }
 
+export async function getChannelSearchResults() {
+  const user = await getCurrentUser()
+  const channels = await searchChannels(user.id)
+
+  return {
+    channels: channels.map((channel) => {
+      return {
+        group: channel.group,
+        id: channel.id,
+        isPrivate: channel.isPrivate,
+        name: channel.name,
+      }
+    }),
+  }
+}
+
 export async function markChannelRead(channelId: string, userId: string) {
   return prisma.$transaction(async (tx) => {
     const member = await tx.channelMember.findUnique({

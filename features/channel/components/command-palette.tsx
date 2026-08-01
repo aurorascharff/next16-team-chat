@@ -98,7 +98,7 @@ export function CommandPalette() {
   )
 }
 
-export function MobileSearch() {
+export function MobileSearchView() {
   const router = useRouter()
 
   function activate(result: Result) {
