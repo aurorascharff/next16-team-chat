@@ -100,7 +100,8 @@ export function applyLayoutAction(
       if (target < 0 || target >= movable.length) return groups
       const next = [...movable]
       ;[next[index], next[target]] = [next[target], next[index]]
-      return withUngroupedLast(next)
+      const ungrouped = groups.find((group) => group.name === UNGROUPED)
+      return ungrouped ? [...next, ungrouped] : next
     }
     default:
       return groups
