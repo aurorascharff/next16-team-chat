@@ -1,6 +1,5 @@
 'use client'
 
-import { queryOptions, useSuspenseQueries } from '@tanstack/react-query'
 import { Hash, Lock, MessageSquare, Search } from 'lucide-react'
 import { useRouter, usePathname } from 'next/navigation'
 import type { Route } from 'next'
@@ -13,10 +12,7 @@ import {
   useState,
 } from 'react'
 import { Skeleton } from '@/components/ui/skeleton'
-import { channelSearchQueryOptions } from '@/features/channel/channel-query-options'
-import { messageKeys } from '@/features/message/message-cache'
-import { messagesQueryOptions } from '@/features/message/message-query-options'
-import type { Message } from '@/features/message/types/message'
+import { useCommandPaletteResults } from '@/features/channel/hooks/use-command-palette-results'
 import { stripMarkdown } from '@/features/message/utils/format'
 import { cn } from '@/lib/utils'
 
@@ -40,12 +36,6 @@ type CommandPaletteResultsHandle = {
   activate: () => void
   move: (delta: number) => void
 }
-
-const emptyMessagesQueryOptions = queryOptions({
-  queryFn: async (): Promise<Message[]> => [],
-  queryKey: messageKeys.channel('command-palette'),
-  staleTime: Infinity,
-})
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false)
@@ -211,28 +201,23 @@ function CommandPaletteResults({
   query: string
   ref: Ref<CommandPaletteResultsHandle>
 }) {
-  const [channelsQuery, messagesQuery] = useSuspenseQueries({
-    queries: [
-      channelSearchQueryOptions(),
-      channelId ? messagesQueryOptions(channelId) : emptyMessagesQueryOptions,
-    ],
-  })
+  const { data } = useCommandPaletteResults(channelId)
   const [activeIndex, setActiveIndex] = useState(0)
   const term = query.trim().toLowerCase()
   const channelResults: Result[] = (
     term
-      ? channelsQuery.data.filter((channel) => {
+      ? data.channels.filter((channel) => {
           return (
             channel.name.toLowerCase().includes(term) ||
             channel.group.toLowerCase().includes(term)
           )
         })
-      : channelsQuery.data
+      : data.channels
   ).map((channel) => {
     return { type: 'channel', ...channel }
   })
   const messageResults: Result[] = term
-    ? messagesQuery.data
+    ? data.messages
         .filter((message) => {
           return message.body.toLowerCase().includes(term)
         })
