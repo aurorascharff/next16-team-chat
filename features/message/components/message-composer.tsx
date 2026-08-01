@@ -255,12 +255,3 @@ export function MessageComposer({
     </form>
   )
 }
-
-export function MessageComposerFallback() {
-  return (
-    <div
-      aria-hidden
-      className="border-divider dark:border-divider-dark bg-surface/90 dark:bg-surface-dark/90 sticky bottom-0 h-[4.8125rem] shrink-0 border-t backdrop-blur-lg md:h-[12.8125rem]"
-    />
-  )
-}
