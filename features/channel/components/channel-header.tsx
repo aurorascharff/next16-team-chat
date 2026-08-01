@@ -10,7 +10,10 @@ export async function ChannelHeader({ channelId }: { channelId: string }) {
   const channel = await getChannel(channelId)
 
   return (
-    <header className="border-divider dark:border-divider-dark bg-surface/80 dark:bg-surface-dark/80 sticky top-0 z-10 flex items-center justify-between gap-3 border-b px-5 py-3 backdrop-blur-lg max-md:items-start">
+    <header
+      className="border-divider dark:border-divider-dark bg-surface/80 dark:bg-surface-dark/80 sticky top-0 z-10 flex items-center justify-between gap-3 border-b px-5 py-3 backdrop-blur-lg max-md:items-start"
+      style={{ viewTransitionName: 'channel-header' }}
+    >
       <div className="flex min-w-0 items-start gap-2">
         <BackButton className="-ml-1.5 md:hidden" />
         <div className="min-w-0">
@@ -46,7 +49,10 @@ export async function ChannelHeader({ channelId }: { channelId: string }) {
 
 export function ChannelHeaderSkeleton() {
   return (
-    <header className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark sticky top-0 z-10 flex items-center justify-between gap-3 border-b px-5 py-3 max-md:items-start">
+    <header
+      className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark sticky top-0 z-10 flex items-center justify-between gap-3 border-b px-5 py-3 max-md:items-start"
+      style={{ viewTransitionName: 'channel-header' }}
+    >
       <div className="flex min-w-0 items-start gap-2">
         <div className="flex size-8 shrink-0 items-center justify-center md:hidden">
           <ArrowLeft
