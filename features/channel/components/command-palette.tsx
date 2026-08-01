@@ -49,8 +49,6 @@ const emptyMessagesQueryOptions = queryOptions({
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false)
-  const [query, setQuery] = useState('')
-  const resultsRef = useRef<CommandPaletteResultsHandle>(null)
   const router = useRouter()
   const pathname = usePathname()
   const channelId = pathname?.startsWith('/channel/')
@@ -68,7 +66,7 @@ export function CommandPalette() {
     }
 
     function onOpen() {
-      setOpen(true)
+      setOpen((current) => !current)
     }
 
     window.addEventListener('keydown', onKeyDown)
@@ -80,10 +78,8 @@ export function CommandPalette() {
   }, [])
 
   useEffect(() => {
-    if (open) {
-      setQuery('')
-    }
-  }, [open])
+    setOpen(false)
+  }, [pathname])
 
   if (!open) return null
 
@@ -95,7 +91,7 @@ export function CommandPalette() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 px-4 pt-[12vh] backdrop-blur-sm"
+      className="fixed inset-0 z-50 hidden items-start justify-center bg-black/40 px-4 pt-[12vh] backdrop-blur-sm md:flex"
       onClick={() => {
         return setOpen(false)
       }}
@@ -106,59 +102,98 @@ export function CommandPalette() {
           return event.stopPropagation()
         }}
       >
-        <div className="border-divider dark:border-divider-dark flex items-center gap-2.5 border-b px-4">
-          <Search
-            aria-hidden
-            className="text-gray size-4 shrink-0"
-            strokeWidth={2}
-          />
-          <input
-            autoFocus
-            className="h-12 w-full bg-transparent text-sm outline-none"
-            onChange={(event) => {
-              setQuery(event.target.value)
-            }}
-            onKeyDown={(event) => {
-              if (event.key === 'Escape') setOpen(false)
-              if (event.key === 'ArrowDown') {
-                event.preventDefault()
-                resultsRef.current?.move(1)
-              }
-              if (event.key === 'ArrowUp') {
-                event.preventDefault()
-                resultsRef.current?.move(-1)
-              }
-              if (event.key === 'Enter') {
-                resultsRef.current?.activate()
-              }
-            }}
-            placeholder={
-              channelId ? 'Search channels and messages…' : 'Search channels…'
-            }
-            type="text"
-            value={query}
-          />
-          <kbd className="border-divider dark:border-divider-dark text-muted dark:text-muted-dark hidden rounded border px-1.5 py-0.5 font-mono text-[0.625rem] font-medium md:block">
-            Esc
-          </kbd>
-        </div>
-        <Suspense
-          fallback={
-            <ul aria-busy className="max-h-80 overflow-y-auto p-1.5">
-              <CommandPaletteResultsFallback />
-            </ul>
-          }
-        >
-          <CommandPaletteResults
-            channelId={channelId}
-            key={`${channelId}:${query}`}
-            onActivate={activate}
-            query={query}
-            ref={resultsRef}
-          />
-        </Suspense>
+        <SearchContent
+          channelId={channelId}
+          onActivate={activate}
+          onDismiss={() => setOpen(false)}
+          showShortcut
+        />
       </div>
     </div>
+  )
+}
+
+export function MobileSearch() {
+  const router = useRouter()
+
+  function activate(result: Result) {
+    const target = result.type === 'channel' ? result.id : result.channelId
+    router.push(`/channel/${target}` as Route)
+  }
+
+  return (
+    <section className="flex h-[calc(100dvh-3.5rem)] flex-col md:hidden">
+      <SearchContent onActivate={activate} />
+    </section>
+  )
+}
+
+function SearchContent({
+  channelId,
+  onActivate,
+  onDismiss,
+  showShortcut = false,
+}: {
+  channelId?: string
+  onActivate: (result: Result) => void
+  onDismiss?: () => void
+  showShortcut?: boolean
+}) {
+  const [query, setQuery] = useState('')
+  const resultsRef = useRef<CommandPaletteResultsHandle>(null)
+
+  return (
+    <>
+      <div className="border-divider dark:border-divider-dark flex items-center gap-2.5 border-b px-4">
+        <Search
+          aria-hidden
+          className="text-gray size-4 shrink-0"
+          strokeWidth={2}
+        />
+        <input
+          autoFocus
+          className="h-12 w-full bg-transparent text-sm outline-none"
+          onChange={(event) => setQuery(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') onDismiss?.()
+            if (event.key === 'ArrowDown') {
+              event.preventDefault()
+              resultsRef.current?.move(1)
+            }
+            if (event.key === 'ArrowUp') {
+              event.preventDefault()
+              resultsRef.current?.move(-1)
+            }
+            if (event.key === 'Enter') resultsRef.current?.activate()
+          }}
+          placeholder={
+            channelId ? 'Search channels and messages…' : 'Search channels…'
+          }
+          type="text"
+          value={query}
+        />
+        {showShortcut ? (
+          <kbd className="border-divider dark:border-divider-dark text-muted dark:text-muted-dark rounded border px-1.5 py-0.5 font-mono text-[0.625rem] font-medium">
+            Esc
+          </kbd>
+        ) : null}
+      </div>
+      <Suspense
+        fallback={
+          <ul aria-busy className="min-h-0 flex-1 overflow-y-auto p-1.5 md:max-h-80">
+            <CommandPaletteResultsFallback />
+          </ul>
+        }
+      >
+        <CommandPaletteResults
+          channelId={channelId}
+          key={`${channelId}:${query}`}
+          onActivate={onActivate}
+          query={query}
+          ref={resultsRef}
+        />
+      </Suspense>
+    </>
   )
 }
 
@@ -226,7 +261,7 @@ function CommandPaletteResults({
   })
 
   return (
-    <ul className="max-h-80 overflow-y-auto p-1.5">
+    <ul className="min-h-0 flex-1 overflow-y-auto p-1.5 md:max-h-80">
       {results.length === 0 ? (
         <li className="text-muted dark:text-muted-dark px-3 py-6 text-center text-sm">
           No results

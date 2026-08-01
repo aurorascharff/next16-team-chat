@@ -1,7 +1,7 @@
 'use client'
 
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { X } from 'lucide-react'
+import { Hash, X } from 'lucide-react'
 import { Suspense } from 'react'
 import { Crossfade } from '@/components/ui/crossfade'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -30,8 +30,9 @@ export function ThreadPanel({
       <header className="border-divider dark:border-divider-dark flex items-center justify-between border-b px-4 py-3">
         <div>
           <h2>Thread</h2>
-          <p className="text-muted dark:text-muted-dark text-xs">
-            #{channelId}
+          <p className="text-muted dark:text-muted-dark flex items-center gap-1 text-xs">
+            <Hash aria-hidden className="size-3" strokeWidth={2} />
+            {channelId}
           </p>
         </div>
         <button

@@ -10,15 +10,8 @@ import { isNavActive, PRIMARY_NAV } from './workspace-rail'
 
 export function MobileTabBar() {
   const pathname = usePathname()
-  const { clearActivity, hasActivity } = useActivityIndicator()
-
-  return (
-    <MobileTabBarShell
-      hasActivity={hasActivity}
-      pathname={pathname}
-      onActivityNavigate={clearActivity}
-    />
-  )
+  const { hasActivity } = useActivityIndicator()
+  return <MobileTabBarShell hasActivity={hasActivity} pathname={pathname} />
 }
 
 export function MobileTabBarSkeleton() {
@@ -27,21 +20,20 @@ export function MobileTabBarSkeleton() {
 
 function MobileTabBarShell({
   hasActivity,
-  onActivityNavigate,
   pathname,
 }: {
   hasActivity: boolean
-  onActivityNavigate?: () => void
   pathname: string | null
 }) {
   return (
     <nav
       aria-label="Primary"
-      className="border-divider dark:border-divider-dark bg-surface/90 dark:bg-surface-dark/90 sticky bottom-0 z-40 flex shrink-0 border-t pb-[env(safe-area-inset-bottom)] backdrop-blur-lg md:hidden"
+      className="border-divider dark:border-divider-dark bg-surface/90 dark:bg-surface-dark/90 fixed inset-x-0 bottom-0 z-40 flex shrink-0 border-t pb-[env(safe-area-inset-bottom)] backdrop-blur-lg md:hidden"
       style={{ viewTransitionName: 'mobile-nav' }}
     >
       {PRIMARY_NAV.map((item) => {
         const { href, icon: Icon, label } = item
+        const mobileHref = href === '/' ? '/channels' : href
         const active = isNavActive(item, pathname)
         const showDot = item.showActivityDot && hasActivity && !active
 
@@ -54,9 +46,8 @@ function MobileTabBarShell({
                 ? 'text-accent'
                 : 'text-muted dark:text-muted-dark hover:text-black dark:hover:text-white',
             )}
-            href={href as Route}
+            href={mobileHref as Route}
             key={href}
-            onClick={item.showActivityDot ? onActivityNavigate : undefined}
             prefetch={true}
           >
             <span className="relative">
@@ -76,16 +67,24 @@ function MobileTabBarShell({
           </Link>
         )
       })}
-      <button
-        className="text-muted dark:text-muted-dark flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[0.625rem] font-medium transition-colors hover:text-black dark:hover:text-white"
-        onClick={() => {
-          window.dispatchEvent(new Event('open-command-palette'))
-        }}
-        type="button"
+      <Link
+        aria-current={pathname === '/search' ? 'page' : undefined}
+        className={cn(
+          'flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[0.625rem] font-medium transition-colors',
+          pathname === '/search'
+            ? 'text-accent'
+            : 'text-muted dark:text-muted-dark hover:text-black dark:hover:text-white',
+        )}
+        href={'/search' as Route}
+        prefetch={true}
       >
-        <Search aria-hidden className="size-5" strokeWidth={2} />
+        <Search
+          aria-hidden
+          className="size-5"
+          strokeWidth={pathname === '/search' ? 2.5 : 2}
+        />
         Search
-      </button>
+      </Link>
     </nav>
   )
 }

@@ -63,7 +63,7 @@ function NavLink({ item }: { item: PrimaryNavItem }) {
 
 function NavLinkInner({ item }: { item: PrimaryNavItem }) {
   const pathname = usePathname()
-  const { clearActivity, hasActivity } = useActivityIndicator(
+  const { hasActivity } = useActivityIndicator(
     Boolean(item.showActivityDot),
   )
   const isActive = isNavActive(item, pathname)
@@ -73,9 +73,6 @@ function NavLinkInner({ item }: { item: PrimaryNavItem }) {
       hasActivity={hasActivity}
       isActive={isActive}
       item={item}
-      onNavigate={() => {
-        if (item.showActivityDot) clearActivity()
-      }}
     />
   )
 }
@@ -84,12 +81,10 @@ function NavLinkShell({
   hasActivity = false,
   isActive = false,
   item,
-  onNavigate,
 }: {
   hasActivity?: boolean
   isActive?: boolean
   item: PrimaryNavItem
-  onNavigate?: () => void
 }) {
   const { href, icon: Icon, label } = item
   const showDot = item.showActivityDot && hasActivity && !isActive
@@ -104,7 +99,6 @@ function NavLinkShell({
           : 'text-muted dark:text-muted-dark hover:text-black dark:hover:text-white',
       )}
       href={href as Route}
-      onClick={onNavigate}
       prefetch={true}
       suppressHydrationWarning
     >
