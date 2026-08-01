@@ -77,12 +77,20 @@ async function listMessages(channelId: string, currentUserId?: string) {
 
 export async function getWorkspaceSearchMessages() {
   const user = await getCurrentUser()
+  return getWorkspaceSearchMessagesForUser(user.id)
+}
+
+async function getWorkspaceSearchMessagesForUser(userId: string) {
+  'use cache'
+  cacheTag(messageTags.all)
+  cacheLife('hours')
+
   const messages = await prisma.message.findMany({
     include: messageInclude,
     orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
     take: 100,
     where: {
-      channel: { members: { some: { userId: user.id } } },
+      channel: { members: { some: { userId } } },
       createdAt: {
         gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
       },
@@ -90,7 +98,7 @@ export async function getWorkspaceSearchMessages() {
     },
   })
 
-  return messages.map((message) => toMessage(message, user.id))
+  return messages.map((message) => toMessage(message, userId))
 }
 
 async function listReplies(parentId: string, currentUserId?: string) {

@@ -9,7 +9,7 @@ export function MobileSearch() {
   const searchData = preload(
     channelKeys.commandPalette(messageKeys.workspaceSearch),
     async () => {
-      const [channels, messages] = await Promise.all([
+      const [{ channels }, messages] = await Promise.all([
         getChannelSearchResults(),
         getWorkspaceSearchMessages(),
       ])
