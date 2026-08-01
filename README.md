@@ -18,9 +18,11 @@ The architecture follows the [Next.js App Architecture](https://github.com/auror
 
 ## Client data
 
+[Client-side data fetching guide PR](https://github.com/vercel/next.js/pull/96341)
+
 Both implementations demonstrate two client data patterns:
 
-- **Client-only Suspense queries:** The `@mention` autocomplete, thread replies, and command palette fetch after an interaction. Their interactive shells stay visible while local Suspense boundaries render the loading state.
+- **Client-only Suspense queries:** The `@mention` autocomplete, command palette, and thread replies use local Suspense boundaries while results load.
 - **Server seeded:** Channel messages, user data, and unread state are rendered on the server and seed the client cache.
 
 ## Features
