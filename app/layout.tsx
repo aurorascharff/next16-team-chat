@@ -8,6 +8,7 @@ import { channelKeys } from '@/features/channel/channel-cache'
 import { CommandPalette } from '@/features/channel/components/command-palette'
 import { getUnreadChannels } from '@/features/channel/channel-queries'
 import { BotDriver } from '@/features/demo/components/bot-driver'
+import { OfflineIndicator } from '@/features/demo/components/offline-indicator'
 import {
   MobileTabBar,
   MobileTabBarSkeleton,
@@ -65,6 +66,7 @@ export default function RootLayout({
             </Suspense>
             <UnreadFavicon />
             <BotDriver />
+            <OfflineIndicator />
             <Toaster />
           </SWRConfig>
         </Providers>

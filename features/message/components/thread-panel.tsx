@@ -12,6 +12,7 @@ import {
 import { MessageComposer } from './message-composer'
 import { MessageRow } from './message-row'
 import { useThread } from '@/features/message/hooks/use-thread'
+import { usePinnedToBottom } from '@/features/message/hooks/use-pinned-to-bottom'
 
 export function ThreadPanel({
   children,
@@ -21,13 +22,17 @@ export function ThreadPanel({
   subtitle: ReactNode
 }) {
   const { closeThread } = useThread()
+  const scrollerRef = usePinnedToBottom()
 
   return (
     <aside
       aria-label="Thread"
       className="border-divider dark:border-divider-dark flex h-full min-h-0 flex-col border-l"
     >
-      <header className="border-divider dark:border-divider-dark flex items-center justify-between border-b px-4 py-3">
+      <header
+        className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark flex items-center justify-between border-b px-4 py-3"
+        style={{ viewTransitionName: 'thread-header' }}
+      >
         <h2 className="flex min-w-0 items-center gap-1.5">
           <span>Thread</span>
           {subtitle}
@@ -41,10 +46,18 @@ export function ThreadPanel({
           <X aria-hidden className="size-4" strokeWidth={2} />
         </button>
       </header>
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain py-2">
-        {children}
+      <div
+        className="min-h-0 flex-1 overflow-y-auto overscroll-contain pt-2"
+        data-message-scroll
+        ref={scrollerRef}
+      >
+        <div className="flex min-h-full flex-col">
+          {children}
+          <div className="mt-auto">
+            <MessageComposer placeholder="Reply…" />
+          </div>
+        </div>
       </div>
-      <MessageComposer placeholder="Reply…" />
     </aside>
   )
 }

@@ -140,7 +140,7 @@ export function MessageComposer({
 
   return (
     <form
-      className="border-divider dark:border-divider-dark bg-surface/90 dark:bg-surface-dark/90 sticky bottom-0 flex flex-col gap-2 border-t px-3 py-2 backdrop-blur-lg md:px-5 md:py-3"
+      className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark flex flex-col gap-2 border-t px-3 py-2 md:px-5 md:py-3"
       onSubmit={onSubmit}
       ref={formRef}
     >

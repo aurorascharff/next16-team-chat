@@ -9,9 +9,10 @@ import { prisma } from '@/lib/db'
 const GENERATION_FAILED_REPLY =
   "I couldn't reach the AI service just now. Try mentioning me again in a moment."
 
-const gateway = process.env.VERCEL_AI_GATEWAY_TOKEN
-  ? createGateway({ apiKey: process.env.VERCEL_AI_GATEWAY_TOKEN })
-  : null
+const gatewayApiKey =
+  process.env.AI_GATEWAY_API_KEY ?? process.env.VERCEL_AI_GATEWAY_TOKEN
+
+const gateway = gatewayApiKey ? createGateway({ apiKey: gatewayApiKey }) : null
 
 async function generateBotReply({
   body,
@@ -64,6 +65,12 @@ async function generateBotReply({
         .map((message) => `${message.user.name}: ${message.body}`)
 
   try {
+    if (!gateway) {
+      throw new Error(
+        'Huddle Bot requires AI_GATEWAY_API_KEY or VERCEL_AI_GATEWAY_TOKEN.',
+      )
+    }
+
     const { text } = await generateText({
       instructions: [
         'You are Huddle Bot, a concise and helpful teammate in a demo team chat.',
@@ -72,9 +79,7 @@ async function generateBotReply({
         'Use one to three short sentences with no heading or preamble.',
       ].join(' '),
       maxOutputTokens: 120,
-      model:
-        gateway?.languageModel('google/gemini-2.5-flash-lite') ??
-        'google/gemini-2.5-flash-lite',
+      model: gateway('google/gemini-2.5-flash-lite'),
       prompt: [
         `Channel: #${channel?.name ?? channelId}`,
         channel?.description ? `Description: ${channel.description}` : '',
