@@ -1,12 +1,43 @@
 'use client'
 
 import type { Route } from 'next'
-import { Search } from 'lucide-react'
+import { AtSign, House, Search, type LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useActivityIndicator } from '@/features/workspace/hooks/use-activity-indicator'
 import { cn } from '@/lib/utils'
-import { isNavActive, PRIMARY_NAV } from './workspace-rail'
+
+type PrimaryNavItem = {
+  href: string
+  icon: LucideIcon
+  label: string
+  match: string[]
+  showActivityDot?: boolean
+}
+
+const PRIMARY_NAV: PrimaryNavItem[] = [
+  {
+    href: '/channels',
+    icon: House,
+    label: 'Home',
+    match: ['/', '/channel', '/channels'],
+  },
+  {
+    href: '/activity',
+    icon: AtSign,
+    label: 'Activity',
+    match: ['/activity'],
+    showActivityDot: true,
+  },
+]
+
+function isNavActive(item: PrimaryNavItem, pathname: string | null) {
+  if (!pathname) return false
+  return item.match.some((prefix) => {
+    if (prefix === '/') return pathname === '/'
+    return pathname === prefix || pathname.startsWith(`${prefix}/`)
+  })
+}
 
 export function MobileTabBar() {
   const pathname = usePathname()
@@ -33,7 +64,6 @@ function MobileTabBarShell({
     >
       {PRIMARY_NAV.map((item) => {
         const { href, icon: Icon, label } = item
-        const mobileHref = href === '/' ? '/channels' : href
         const active = isNavActive(item, pathname)
         const showDot = item.showActivityDot && hasActivity && !active
 
@@ -46,7 +76,7 @@ function MobileTabBarShell({
                 ? 'text-accent'
                 : 'text-muted dark:text-muted-dark hover:text-black dark:hover:text-white',
             )}
-            href={mobileHref as Route}
+            href={href as Route}
             key={href}
             prefetch={true}
           >

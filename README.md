@@ -18,19 +18,22 @@ The architecture follows the [Next.js App Architecture](https://github.com/auror
 
 ## Client data
 
-[Client-side data fetching guide PR](https://github.com/vercel/next.js/pull/96341)
+Both implementations demonstrate the same client data patterns:
 
-Both implementations demonstrate two client data patterns:
+- **Client-only Suspense:** The `@mention` autocomplete and command palette fetch after interaction and suspend only their local results.
+- **Server-seeded live data:** Channel messages, thread replies, users, and unread state render on the server before the client cache takes over.
 
-- **Client-only Suspense queries:** The `@mention` autocomplete and command palette use local Suspense boundaries while results load.
-- **Server seeded:** Channel messages, thread replies, user data, and unread state are rendered on the server and seed the client cache.
+Related guide work: [Client-side data fetching guide PR](https://github.com/vercel/next.js/pull/96341)
 
 ## Features
 
-- **[Cache Components](https://preview.nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents)** cache server reads with `'use cache'`, `cacheTag`, and `cacheLife`. Per-user reads use [`'use cache: private'`](https://preview.nextjs.org/docs/app/api-reference/directives/use-cache-private).
-- **[Partial Prefetching](https://preview.nextjs.org/docs/app/guides/adopting-partial-prefetching)** reuses one App Shell per route. Channel links set `prefetch={true}` on hover, focus, or touch to opt into [runtime prefetching](https://preview.nextjs.org/docs/app/guides/runtime-prefetching).
-- **[Server Functions](https://nextjs.org/docs/app/getting-started/mutating-data)** run mutations and invalidate only the affected cache tags with [`updateTag`](https://nextjs.org/docs/app/api-reference/functions/updateTag).
+- **[Cache Components](https://preview.nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents)** cache reusable server reads with `'use cache'`, name the data with `cacheTag`, and set its lifetime with `cacheLife`, so repeated reads come from the cache until a tag is invalidated. The session-aware current-user read uses [`'use cache: private'`](https://preview.nextjs.org/docs/app/api-reference/directives/use-cache-private).
+- **[Partial Prefetching](https://preview.nextjs.org/docs/app/guides/adopting-partial-prefetching)** prefetches the shared App Shell of links as they enter the viewport, so navigation commits instantly and route data streams in behind it.
+- **[Runtime prefetching](https://preview.nextjs.org/docs/app/guides/runtime-prefetching)** lets channel and navigation links prefetch URL-specific data with `<Link prefetch={true}>` before navigation.
+- **[Hover-triggered prefetch](https://preview.nextjs.org/docs/app/guides/prefetching#hover-triggered-prefetch)** defers channel prefetching until pointer, focus, or touch intent, so the channel list does not prefetch every destination on render.
+- **[Server Functions](https://nextjs.org/docs/app/getting-started/mutating-data)** send messages, add reactions, mark activity as read, and update channel groups on the server. They invalidate only the affected cache tags with [`updateTag`](https://nextjs.org/docs/app/api-reference/functions/updateTag).
 - **[React Compiler](https://react.dev/learn/react-compiler)** memoizes components and hooks automatically, so the code needs no manual `useMemo` or `useCallback`.
+- **[View Transitions](https://nextjs.org/docs/app/guides/view-transitions)** pin persistent navigation and composer UI while cross-fading content as it streams in from Suspense.
 - **[Async React](https://github.com/rickhanlonii/async-react)** keeps the UI interactive during server work with `Suspense`, `useOptimistic`, `useTransition`, `useActionState`, and `use`.
 
 ## Getting started
