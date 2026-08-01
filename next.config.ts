@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   experimental: {
     useOffline: true,
+    inlineCss: true,
   },
   partialPrefetching: true,
   reactCompiler: true,
