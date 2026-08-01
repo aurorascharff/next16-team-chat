@@ -17,7 +17,9 @@ export function useMessageJump(
   const viewportRef = useRef<HTMLDivElement>(null)
   const unreadMarkerRef = useRef<HTMLDivElement>(null)
   const previousLastMessageId = useRef<string | null>(null)
-  const [isUnreadMarkerVisible, setIsUnreadMarkerVisible] = useState(true)
+  const [unreadMarkerPosition, setUnreadMarkerPosition] = useState<
+    'above' | 'visible' | 'below'
+  >('visible')
   const [newMessageCount, setNewMessageCount] = useState(0)
   const [isAtEnd, setIsAtEnd] = useState(true)
   const lastMessageId = messageIds.at(-1) ?? null
@@ -81,13 +83,21 @@ export function useMessageJump(
     const viewport = viewportRef.current
 
     if (!unreadMarkerId || !marker || !viewport) {
-      setIsUnreadMarkerVisible(true)
+      setUnreadMarkerPosition('visible')
       return
     }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsUnreadMarkerVisible(entry.isIntersecting)
+        if (entry.isIntersecting) {
+          setUnreadMarkerPosition('visible')
+          return
+        }
+
+        const viewportTop = entry.rootBounds?.top ?? 0
+        setUnreadMarkerPosition(
+          entry.boundingClientRect.bottom <= viewportTop ? 'above' : 'below',
+        )
       },
       { root: viewport },
     )
@@ -101,7 +111,7 @@ export function useMessageJump(
   return {
     dismissNewMessages,
     isAtEnd,
-    isUnreadMarkerVisible,
+    unreadMarkerPosition,
     newMessageCount,
     onScroll,
     scrollToEnd,
