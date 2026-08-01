@@ -1,6 +1,7 @@
-import { Suspense, type ReactNode } from 'react'
-import { redirect } from 'next/navigation'
+import type { ReactNode } from 'react'
+import { Suspense } from 'react'
 import type { Route } from 'next'
+import { redirect } from 'next/navigation'
 import { listChannelsForUser } from '@/features/channel/channel-queries'
 import { getCurrentUser } from '@/features/user/user-queries'
 
