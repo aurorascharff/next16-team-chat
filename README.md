@@ -22,8 +22,8 @@ The architecture follows the [Next.js App Architecture](https://github.com/auror
 
 Both implementations demonstrate two client data patterns:
 
-- **Client-only Suspense queries:** The `@mention` autocomplete, command palette, and thread replies use local Suspense boundaries while results load.
-- **Server seeded:** Channel messages, user data, and unread state are rendered on the server and seed the client cache.
+- **Client-only Suspense queries:** The `@mention` autocomplete and command palette use local Suspense boundaries while results load.
+- **Server seeded:** Channel messages, thread replies, user data, and unread state are rendered on the server and seed the client cache.
 
 ## Features
 
