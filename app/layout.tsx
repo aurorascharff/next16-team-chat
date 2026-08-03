@@ -6,6 +6,7 @@ import { Toaster } from '@/components/ui/toaster'
 import { CommandPalette } from '@/features/channel/components/command-palette'
 import { BotDriver } from '@/features/demo/components/bot-driver'
 import { OfflineIndicator } from '@/features/demo/components/offline-indicator'
+import { ActivitySync } from '@/features/workspace/components/activity-sync'
 import {
   MobileTabBar,
   MobileTabBarSkeleton,
@@ -52,6 +53,7 @@ export default function RootLayout({
             <CommandPalette />
           </Suspense>
           <UnreadFavicon />
+          <ActivitySync />
           <BotDriver />
           <OfflineIndicator />
           <Toaster />
