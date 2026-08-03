@@ -23,10 +23,12 @@ export function MessageComposer({
   channelId,
   parentId,
   placeholder,
+  thread,
 }: {
   channelId?: string
   parentId?: string
   placeholder?: string
+  thread?: boolean
 }) {
   const formRef = useRef<HTMLFormElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -101,7 +103,7 @@ export function MessageComposer({
     const body = value.trim()
     const target = channelId
       ? { channelId, parentId }
-      : getMessageTargetFromLocation()
+      : getMessageTargetFromLocation({ includeParent: thread })
 
     if (!target) {
       toast.error('The channel is still loading. Try sending again.')

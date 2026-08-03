@@ -54,7 +54,7 @@ export function ThreadPanel({
         <div className="flex min-h-full flex-col">
           {children}
           <div className="mt-auto">
-            <MessageComposer placeholder="Reply…" />
+            <MessageComposer placeholder="Reply…" thread />
           </div>
         </div>
       </div>
