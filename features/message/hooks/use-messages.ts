@@ -19,7 +19,6 @@ export function useMessages(channelId: string | null, enabled = true) {
 export function useSuspenseMessages(channelId: string) {
   return useSWR<Message[]>(messageKeys.channel(channelId), fetchJson, {
     refreshInterval: 10_000,
-    revalidateOnMount: true,
     suspense: true,
   })
 }
