@@ -1,3 +1,4 @@
+import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { UserAvatar } from '@/components/ui/user-avatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getCurrentUser } from '@/features/user/user-queries'
@@ -11,18 +12,17 @@ export async function CurrentUserCard() {
       <div className="relative flex h-full w-18 shrink-0 items-center justify-center">
         <UserAvatar bot={user.id === 'bot'} name={user.name} />
       </div>
-      <div className="border-divider dark:border-divider-dark flex h-full min-w-0 flex-1 items-center gap-2.5 border-r pr-3 pl-3">
-        <div className="min-w-0 flex-1">
+      <div className="border-divider dark:border-divider-dark flex h-full min-w-0 flex-1 items-center justify-between gap-2 border-r px-3">
+        <div className="min-w-0">
           <p className="truncate text-sm font-semibold">{user.name}</p>
-          <span className="text-muted dark:text-muted-dark flex items-center gap-1.5 truncate text-xs">
-            <span
-              aria-hidden
-              className="size-2 shrink-0 rounded-full bg-emerald-500"
-            />
-            Active
-          </span>
+          <p className="text-muted dark:text-muted-dark truncate text-xs">
+            {user.role}
+          </p>
         </div>
-        <UserSwitcher currentUserId={user.id} />
+        <div className="flex shrink-0 items-center gap-1">
+          <ThemeToggle />
+          <UserSwitcher currentUserId={user.id} />
+        </div>
       </div>
     </section>
   )
@@ -46,9 +46,15 @@ export function CurrentUserCardSkeleton() {
       <div className="relative flex h-full w-18 shrink-0 items-center justify-center">
         <Skeleton className="size-9 rounded-lg" />
       </div>
-      <div className="border-divider dark:border-divider-dark flex h-full flex-1 flex-col justify-center gap-1.5 border-r px-3">
-        <Skeleton className="h-3 w-24 rounded-full" />
-        <Skeleton className="h-2.5 w-16 rounded-full" />
+      <div className="border-divider dark:border-divider-dark flex h-full flex-1 items-center justify-between border-r px-3">
+        <div className="flex flex-col gap-1.5">
+          <Skeleton className="h-3.5 w-24 rounded" />
+          <Skeleton className="h-3 w-14 rounded" />
+        </div>
+        <div className="flex items-center gap-1">
+          <Skeleton className="h-7 w-22 rounded-full" />
+          <Skeleton className="size-8 rounded-lg" />
+        </div>
       </div>
     </section>
   )

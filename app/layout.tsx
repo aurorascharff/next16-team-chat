@@ -5,6 +5,7 @@ import { Suspense } from 'react'
 import { Toaster } from '@/components/ui/toaster'
 import { CommandPalette } from '@/features/channel/components/command-palette'
 import { BotDriver } from '@/features/demo/components/bot-driver'
+import { DemoToolbar } from '@/features/demo/components/demo-toolbar'
 import { OfflineIndicator } from '@/features/demo/components/offline-indicator'
 import { ActivitySync } from '@/features/workspace/components/activity-sync'
 import {
@@ -56,6 +57,11 @@ export default function RootLayout({
           <ActivitySync />
           <BotDriver />
           <OfflineIndicator />
+          <div className="fixed top-4 right-4 z-50 hidden items-start sm:flex">
+            <Suspense fallback={null}>
+              <DemoToolbar />
+            </Suspense>
+          </div>
           <Toaster />
         </Providers>
       </body>

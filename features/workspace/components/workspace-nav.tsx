@@ -1,5 +1,6 @@
 import { Users } from 'lucide-react'
 import Link from 'next/link'
+import { GitHubLink } from '@/components/ui/github-link'
 
 function BrandMark() {
   return <Users aria-hidden className="text-accent size-7" strokeWidth={2.5} />
@@ -7,34 +8,39 @@ function BrandMark() {
 
 export function WorkspaceNav() {
   return (
-    <Link
-      className="hover:bg-card dark:hover:bg-card-dark flex items-center gap-2.5 rounded-lg p-1.5"
-      href="/"
-    >
-      <BrandMark />
-      <span className="flex min-w-0 flex-col leading-tight">
-        <strong className="text-[0.9375rem] font-semibold tracking-tight">
-          Huddle
-        </strong>
-        <small className="text-muted dark:text-muted-dark text-xs">
-          Team workspace
-        </small>
-      </span>
-    </Link>
+    <div className="flex items-center justify-between gap-2">
+      <Link
+        className="hover:bg-card dark:hover:bg-card-dark flex min-w-0 items-center gap-2.5 rounded-lg p-1.5"
+        href="/"
+      >
+        <BrandMark />
+        <span className="flex min-w-0 flex-col leading-tight">
+          <strong className="text-[0.9375rem] font-semibold tracking-tight">
+            Huddle
+          </strong>
+          <small className="text-muted dark:text-muted-dark text-xs">
+            Team workspace
+          </small>
+        </span>
+      </Link>
+      <GitHubLink />
+    </div>
   )
 }
 
 export function WorkspaceNavSkeleton() {
   return (
-    <div className="flex items-center gap-2.5 p-1.5">
-      <BrandMark />
-      <span className="flex flex-col leading-tight">
-        <strong className="text-[0.9375rem] font-semibold tracking-tight">
-          Huddle
-        </strong>
-        <small className="text-muted dark:text-muted-dark text-xs">
-          Team workspace
-        </small>
+    <div className="flex items-center justify-between gap-2">
+      <span className="flex items-center gap-2.5 p-1.5">
+        <BrandMark />
+        <span className="flex flex-col leading-tight">
+          <strong className="text-[0.9375rem] font-semibold tracking-tight">
+            Huddle
+          </strong>
+          <small className="text-muted dark:text-muted-dark text-xs">
+            Team workspace
+          </small>
+        </span>
       </span>
     </div>
   )

@@ -1,10 +1,6 @@
 import { ArrowLeft, Hash } from 'lucide-react'
 import { BackButton } from '@/components/ui/back-button'
-import { GitHubLink } from '@/components/ui/github-link'
-import { ThemeToggle } from '@/components/theme/theme-toggle'
 import { Skeleton } from '@/components/ui/skeleton'
-import { SlowModeControl } from '@/features/demo/components/slow-mode-control'
-import { OfflineToggle } from '@/features/demo/components/offline-toggle'
 import { getChannel } from '@/features/channel/channel-queries'
 
 export async function ChannelHeader({ channelId }: { channelId: string }) {
@@ -29,20 +25,6 @@ export async function ChannelHeader({ channelId }: { channelId: string }) {
           <p className="text-muted dark:text-muted-dark mt-0.5 truncate text-sm max-md:whitespace-normal">
             {channel.description}
           </p>
-        </div>
-      </div>
-      <div className="flex items-center gap-2.5 max-md:hidden">
-        <div className="flex items-center gap-2.5">
-          <span className="max-md:hidden">
-            <SlowModeControl />
-          </span>
-          <OfflineToggle />
-          <span className="max-md:hidden">
-            <ThemeToggle />
-          </span>
-          <span className="max-md:hidden">
-            <GitHubLink />
-          </span>
         </div>
       </div>
     </header>
@@ -71,11 +53,6 @@ export function ChannelHeaderSkeleton() {
             <Skeleton className="h-3 w-64 max-w-full rounded-full" />
           </p>
         </div>
-      </div>
-      <div className="flex items-center gap-2.5 max-md:hidden">
-        <Skeleton className="h-8 w-20 rounded-full" />
-        <Skeleton className="h-7 w-24 rounded-full" />
-        <Skeleton className="size-7 rounded-full" />
       </div>
     </header>
   )
