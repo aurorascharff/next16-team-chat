@@ -210,10 +210,6 @@ async function loadChannelDetail(channelId: string) {
   } satisfies ChannelDetail
 }
 
-export async function searchChannels(userId: string) {
-  return listChannels(userId)
-}
-
 export async function getChannelSearchResults() {
   const user = await getCurrentUser()
   const channels = await listChannelsForUser(user.id)

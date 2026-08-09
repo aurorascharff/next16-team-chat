@@ -4,7 +4,7 @@
 
 # Next 16 Team Chat "Huddle"
 
-A "Slack"-like team chat demo built with [Next.js 16.3 Cache Components](https://preview.nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents), React 19, Tailwind CSS v4, and Prisma 7. The app is available in equivalent [TanStack Query](https://tanstack.com/query) and [SWR](https://swr.vercel.app/) implementations.
+A "Slack"-like team chat demo built with [Next.js 16.3 Cache Components](https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents), React 19, Tailwind CSS v4, and Prisma 7. The app is available in equivalent [TanStack Query](https://tanstack.com/query) and [SWR](https://swr.vercel.app/) implementations.
 
 [TanStack Query source →](https://github.com/aurorascharff/next16-messaging/tree/main) · [Demo →](https://next16-team-chat.vercel.app)
 
@@ -27,10 +27,10 @@ Related guide work: [Client-side data fetching guide PR](https://github.com/verc
 
 ## Features
 
-- **[Cache Components](https://preview.nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents)** cache reusable server reads with `'use cache'`, name the data with `cacheTag`, and set its lifetime with `cacheLife`, so repeated reads come from the cache until a tag is invalidated. The session-aware current-user read uses [`'use cache: private'`](https://preview.nextjs.org/docs/app/api-reference/directives/use-cache-private).
-- **[Partial Prefetching](https://preview.nextjs.org/docs/app/guides/adopting-partial-prefetching)** prefetches the shared App Shell of links as they enter the viewport, so navigation commits instantly and route data streams in behind it.
-- **[Runtime prefetching](https://preview.nextjs.org/docs/app/guides/runtime-prefetching)** lets channel and navigation links prefetch URL-specific data with `<Link prefetch={true}>` before navigation.
-- **[Hover-triggered prefetch](https://preview.nextjs.org/docs/app/guides/prefetching#hover-triggered-prefetch)** defers channel and thread prefetching until pointer, focus, or touch intent, so lists do not prefetch every destination on render.
+- **[Cache Components](https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents)** cache reusable server reads with `'use cache'`, name the data with `cacheTag`, and set its lifetime with `cacheLife`, so repeated reads come from the cache until a tag is invalidated. The session-aware current-user read uses [`'use cache: private'`](https://nextjs.org/docs/app/api-reference/directives/use-cache-private).
+- **[Partial Prefetching](https://nextjs.org/docs/app/guides/adopting-partial-prefetching)** prefetches the shared App Shell of links as they enter the viewport, so navigation commits instantly and route data streams in behind it.
+- **[Runtime prefetching](https://nextjs.org/docs/app/guides/runtime-prefetching)** lets channel and navigation links prefetch URL-specific data with `<Link prefetch={true}>` before navigation.
+- **[Hover-triggered prefetch](https://nextjs.org/docs/app/guides/prefetching#hover-triggered-prefetch)** defers channel and thread prefetching until pointer, focus, or touch intent, so lists do not prefetch every destination on render.
 - **[Server Functions](https://nextjs.org/docs/app/getting-started/mutating-data)** send messages, add reactions, mark activity as read, and update channel groups on the server. They invalidate only the affected cache tags with [`updateTag`](https://nextjs.org/docs/app/api-reference/functions/updateTag).
 - **[React Compiler](https://react.dev/learn/react-compiler)** memoizes components and hooks automatically, so the code needs no manual `useMemo` or `useCallback`.
 - **[View Transitions](https://nextjs.org/docs/app/guides/view-transitions)** pin persistent navigation and composer UI while cross-fading content as it streams in from Suspense.
@@ -54,7 +54,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser. You can bro
 
 Drop this prompt into your agent to swap the datasource for SQLite:
 
-> Set up Huddle to run locally on SQLite instead of Postgres. Swap `provider = "postgresql"` to `provider = "sqlite"` in `prisma/schema.prisma`. Replace `@prisma/adapter-pg` with `@prisma/adapter-better-sqlite3` in `lib/prisma-client.ts` and `prisma/seed.ts`, using `new PrismaBetterSqlite3({ url })` where `url` is `process.env.DATABASE_URL` with the `file:` prefix stripped. Install `@prisma/adapter-better-sqlite3` and `better-sqlite3`, uninstall `@prisma/adapter-pg`, `pg`, and `@types/pg`. Write `DATABASE_URL=file:./prisma/dev.db` to `.env.local`, then run `pnpm run prisma.push` and `pnpm run prisma.seed`.
+> Set up Huddle to run locally on SQLite instead of Postgres. Keep both database adapter stacks installed so the production Postgres setup remains available. Swap `provider = "postgresql"` to `provider = "sqlite"` in `prisma/schema.prisma`. Replace `@prisma/adapter-pg` with `@prisma/adapter-better-sqlite3` in `lib/prisma-client.ts` and `prisma/seed.ts`, using `new PrismaBetterSqlite3({ url })` where `url` is `process.env.DATABASE_URL` with the `file:` prefix stripped. Write `DATABASE_URL=file:./prisma/dev.db` to `.env.local`, then run `pnpm run prisma.push` and `pnpm run prisma.seed`.
 
 The schema is otherwise identical, so the rest of the app behaves the same as production.
 

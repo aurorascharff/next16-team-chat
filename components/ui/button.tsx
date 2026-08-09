@@ -6,7 +6,6 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react'
-import { useFormStatus } from 'react-dom'
 import { cn } from '@/lib/utils'
 
 type Variant = 'primary' | 'secondary' | 'ghost'
@@ -16,8 +15,6 @@ type Props = {
   children: ReactNode
   variant?: Variant
   size?: Size
-  // Render as another element (a Next `Link`, an Ariakit trigger, etc.) while
-  // keeping the button styling. Mirrors the `render` convention used elsewhere.
   render?: ReactElement<{ className?: string; children?: ReactNode }>
 } & ButtonHTMLAttributes<HTMLButtonElement>
 

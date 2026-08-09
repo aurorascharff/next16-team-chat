@@ -2,7 +2,7 @@
 
 import * as Ariakit from '@ariakit/react'
 import { Loader2 } from 'lucide-react'
-import type { KeyboardEvent, RefObject} from 'react';
+import type { KeyboardEvent, RefObject } from 'react'
 import { Suspense, useDeferredValue } from 'react'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import { UserAvatar } from '@/components/ui/user-avatar'
