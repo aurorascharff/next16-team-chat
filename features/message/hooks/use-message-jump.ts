@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  useCallback,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -17,6 +18,7 @@ export function useMessageJump(
   const viewportRef = useRef<HTMLDivElement>(null)
   const unreadMarkerRef = useRef<HTMLDivElement>(null)
   const previousLastMessageId = useRef<string | null>(null)
+  const didInitialScroll = useRef(false)
   const [unreadMarkerPosition, setUnreadMarkerPosition] = useState<
     'above' | 'visible' | 'below'
   >('visible')
@@ -24,37 +26,43 @@ export function useMessageJump(
   const [isAtEnd, setIsAtEnd] = useState(true)
   const lastMessageId = messageIds.at(-1) ?? null
 
-  function isViewportAtEnd(viewport: HTMLDivElement) {
+  const isViewportAtEnd = useCallback((viewport: HTMLDivElement) => {
     return Math.abs(viewport.scrollTop) < END_THRESHOLD
-  }
+  }, [])
 
-  function dismissNewMessages() {
+  const dismissNewMessages = useCallback(() => {
     setNewMessageCount(0)
-  }
+  }, [])
 
-  function scrollToEnd(behavior: ScrollBehavior = 'smooth') {
-    viewportRef.current?.scrollTo({ behavior, top: 0 })
-    setIsAtEnd(true)
-    dismissNewMessages()
-  }
+  const scrollToEnd = useCallback(
+    (behavior: ScrollBehavior = 'smooth') => {
+      viewportRef.current?.scrollTo({ behavior, top: 0 })
+      setIsAtEnd(true)
+      dismissNewMessages()
+    },
+    [dismissNewMessages],
+  )
 
-  function onScroll(event: UIEvent<HTMLDivElement>) {
-    const atEnd = isViewportAtEnd(event.currentTarget)
-    setIsAtEnd(atEnd)
-    if (atEnd) dismissNewMessages()
-  }
+  const onScroll = useCallback(
+    (event: UIEvent<HTMLDivElement>) => {
+      const atEnd = isViewportAtEnd(event.currentTarget)
+      setIsAtEnd(atEnd)
+      if (atEnd) dismissNewMessages()
+    },
+    [dismissNewMessages, isViewportAtEnd],
+  )
 
   useLayoutEffect(() => {
+    if (didInitialScroll.current) return
+    didInitialScroll.current = true
     viewportRef.current?.scrollTo({ top: 0 })
     previousLastMessageId.current = lastMessageId
-    setNewMessageCount(0)
-    setIsAtEnd(true)
-  }, [])
+  }, [lastMessageId])
 
   useEffect(() => {
     if (!lastMessageId) {
       previousLastMessageId.current = null
-      setNewMessageCount(0)
+      queueMicrotask(() => setNewMessageCount(0))
       return
     }
 
@@ -65,7 +73,11 @@ export function useMessageJump(
 
     const viewport = viewportRef.current
     if (!viewport || isViewportAtEnd(viewport)) {
-      scrollToEnd('auto')
+      viewport?.scrollTo({ top: 0 })
+      queueMicrotask(() => {
+        setIsAtEnd(true)
+        setNewMessageCount(0)
+      })
       return
     }
 
@@ -73,10 +85,12 @@ export function useMessageJump(
     const appendedCount =
       previousIndex === -1 ? 1 : messageIds.length - previousIndex - 1
 
-    setNewMessageCount((count) => {
-      return count + Math.max(appendedCount, 1)
+    queueMicrotask(() => {
+      setNewMessageCount((count) => {
+        return count + Math.max(appendedCount, 1)
+      })
     })
-  }, [lastMessageId, messageIds.length])
+  }, [isViewportAtEnd, lastMessageId, messageIds])
 
   useEffect(() => {
     const marker = unreadMarkerRef.current

@@ -1,7 +1,7 @@
 'use client'
 
 import { useSuspenseQuery } from '@tanstack/react-query'
-import type { RefObject } from 'react'
+import { useMemo, type RefObject } from 'react'
 import { EmptyState } from '@/components/ui/empty-state'
 import { useChannelReadOnEntry } from '@/features/channel/hooks/use-channel-read'
 import { useMessageJump } from '@/features/message/hooks/use-message-jump'
@@ -31,10 +31,19 @@ export function MessageList({
   })
   const firstUnreadId = unreadMessages.at(0)?.id
   const unreadCount = unreadMessages.length
-  const messageJump = useMessageJump(
-    messages.map((message) => message.id),
-    firstUnreadId,
-  )
+  const messageIds = useMemo(() => {
+    return messages.map((message) => message.id)
+  }, [messages])
+  const {
+    dismissNewMessages,
+    isAtEnd,
+    newMessageCount,
+    onScroll,
+    scrollToEnd,
+    unreadMarkerPosition,
+    unreadMarkerRef,
+    viewportRef,
+  } = useMessageJump(messageIds, firstUnreadId)
 
   if (messages.length === 0) {
     return (
@@ -50,24 +59,22 @@ export function MessageList({
     )
   }
 
-  const showNewMessages =
-    !messageJump.isAtEnd && messageJump.newMessageCount > 0
-  const showUnreadMessages =
-    unreadCount > 0 && messageJump.unreadMarkerPosition === 'above'
+  const showNewMessages = !isAtEnd && newMessageCount > 0
+  const showUnreadMessages = unreadCount > 0 && unreadMarkerPosition === 'above'
 
   return (
     <section aria-label="Messages" className="relative flex min-h-0 flex-1">
       <div
         className="flex flex-1 flex-col-reverse overflow-y-auto py-3"
-        onScroll={messageJump.onScroll}
-        ref={messageJump.viewportRef}
+        onScroll={onScroll}
+        ref={viewportRef}
       >
         <div className="flex flex-col">
           {messages.map((message) => {
             return (
               <div key={message.id}>
                 {message.id === firstUnreadId ? (
-                  <NewMessagesDivider markerRef={messageJump.unreadMarkerRef} />
+                  <NewMessagesDivider markerRef={unreadMarkerRef} />
                 ) : null}
                 <MessageRow message={message} showThreadAffordance />
               </div>
@@ -77,10 +84,10 @@ export function MessageList({
       </div>
       {showNewMessages ? (
         <MessageJumpButton
-          count={messageJump.newMessageCount}
+          count={newMessageCount}
           direction="down"
-          onDismiss={messageJump.dismissNewMessages}
-          onJump={messageJump.scrollToEnd}
+          onDismiss={dismissNewMessages}
+          onJump={scrollToEnd}
         />
       ) : null}
       {showUnreadMessages ? (
@@ -88,7 +95,7 @@ export function MessageList({
           count={unreadCount}
           direction="up"
           onJump={() => {
-            messageJump.unreadMarkerRef.current?.scrollIntoView({
+            unreadMarkerRef.current?.scrollIntoView({
               behavior: 'smooth',
               block: 'start',
             })

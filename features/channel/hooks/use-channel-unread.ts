@@ -1,21 +1,17 @@
 'use client'
 
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
 import { channelKeys } from '@/features/channel/channel-cache'
 import {
   type UnreadChannels,
   unreadChannelsQueryOptions,
 } from '@/features/channel/channel-query-options'
+import { useIsMounted } from '@/lib/use-is-mounted'
 
 export function useChannelUnread(channelId: string, initialUnread?: number) {
   const queryClient = useQueryClient()
-  const [mounted, setMounted] = useState(false)
+  const mounted = useIsMounted()
   const { data: unreadMap } = useQuery(unreadChannelsQueryOptions())
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   const unread = unreadMap ? unreadMap[channelId] : initialUnread
 

@@ -3,7 +3,8 @@
 import * as Ariakit from '@ariakit/react'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
-import { KeyboardEvent, RefObject, Suspense, useDeferredValue } from 'react'
+import type { KeyboardEvent, RefObject} from 'react';
+import { Suspense, useDeferredValue } from 'react'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import { UserAvatar } from '@/components/ui/user-avatar'
 import { userSearchQueryOptions } from '@/features/user/user-query-options'

@@ -1,6 +1,11 @@
 'use client'
 
-import { cloneElement, type ButtonHTMLAttributes, type ReactElement, type ReactNode } from 'react'
+import {
+  cloneElement,
+  type ButtonHTMLAttributes,
+  type ReactElement,
+  type ReactNode,
+} from 'react'
 import { cn } from '@/lib/utils'
 
 type Size = 'sm' | 'default'
@@ -38,7 +43,11 @@ export function IconButton({
   if (render) {
     return cloneElement(
       render,
-      { 'aria-label': label, className: cn(classes, render.props?.className), ...props },
+      {
+        'aria-label': label,
+        className: cn(classes, render.props?.className),
+        ...props,
+      },
       children,
     )
   }

@@ -1,9 +1,10 @@
 'use client'
 
 import { Eye, PenLine } from 'lucide-react'
-import {
+import type {
   KeyboardEvent,
-  SyntheticEvent,
+  SyntheticEvent} from 'react';
+import {
   useId,
   useLayoutEffect,
   useRef,
