@@ -10,6 +10,8 @@ import {
   useRef,
   useState,
 } from 'react'
+import { Button } from '@/components/ui/button'
+import { IconButton } from '@/components/ui/icon-button'
 import { useSendMessage } from '@/features/message/hooks/use-message-mutations'
 import type { Message } from '@/features/message/types/message'
 import { getMessageTargetFromLocation } from '@/features/message/utils/message-route'
@@ -80,7 +82,7 @@ export function MessageComposer({
 
     if (event.key === 'Enter') {
       event.preventDefault()
-      formRef.current?.requestSubmit()
+      if (value.trim()) formRef.current?.requestSubmit()
       return
     }
 
@@ -137,9 +139,6 @@ export function MessageComposer({
     void sendMessage(optimistic, target)
   }
 
-  const toolbarButton =
-    'text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex size-7 items-center justify-center rounded-md transition-colors hover:text-black dark:hover:text-white'
-
   return (
     <form
       className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark flex flex-col gap-2 border-t px-3 py-2 md:px-5 md:py-3"
@@ -154,36 +153,33 @@ export function MessageComposer({
             expanded ? 'flex' : 'hidden',
           )}
         >
-          <button
-            aria-label="Bold"
-            className={toolbarButton}
+          <IconButton
+            label="Bold"
             onClick={() => wrapSelection('**')}
             onMouseDown={(event) => event.preventDefault()}
+            size="sm"
             title="Bold (⌘B)"
-            type="button"
           >
             <strong>B</strong>
-          </button>
-          <button
-            aria-label="Italic"
-            className={toolbarButton}
+          </IconButton>
+          <IconButton
+            label="Italic"
             onClick={() => wrapSelection('*')}
             onMouseDown={(event) => event.preventDefault()}
+            size="sm"
             title="Italic (⌘I)"
-            type="button"
           >
             <em>I</em>
-          </button>
-          <button
-            aria-label="Inline code"
-            className={toolbarButton}
+          </IconButton>
+          <IconButton
+            label="Inline code"
             onClick={() => wrapSelection('`')}
             onMouseDown={(event) => event.preventDefault()}
+            size="sm"
             title="Code (⌘⇧C)"
-            type="button"
           >
             <code className="font-mono text-xs">{'<>'}</code>
-          </button>
+          </IconButton>
           <div className="ml-auto">
             {mode === 'write' ? (
               <button
@@ -245,12 +241,9 @@ export function MessageComposer({
               : 'absolute right-1.5 bottom-1.5 flex',
           )}
         >
-          <button
-            className="bg-accent hover:bg-accent-hover flex min-h-8 items-center justify-center rounded-lg px-3.5 text-[0.8125rem] font-semibold text-white transition-colors"
-            type="submit"
-          >
+          <Button className="min-h-8" disabled={!value.trim()} type="submit">
             Send
-          </button>
+          </Button>
         </div>
       </div>
       {error ? <p className="text-danger text-[0.8125rem]">{error}</p> : null}

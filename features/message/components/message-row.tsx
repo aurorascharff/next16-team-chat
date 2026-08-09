@@ -12,6 +12,7 @@ import type { Route } from 'next'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { HoverPrefetchLink } from '@/components/ui/hover-prefetch-link'
+import { IconButton } from '@/components/ui/icon-button'
 import { UserAvatar } from '@/components/ui/user-avatar'
 import { useSendMessage } from '@/features/message/hooks/use-message-mutations'
 import type { Message } from '@/features/message/types/message'
@@ -131,24 +132,19 @@ export function MessageRow({
               <MessageSquare aria-hidden className="size-3.5" strokeWidth={2} />
             </HoverPrefetchLink>
           ) : null}
-          <button
-            aria-label="Copy link to message"
-            className={cn(
-              'flex size-7 items-center justify-center rounded-md transition-colors',
-              copied
-                ? 'text-success'
-                : 'text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark hover:text-accent',
-            )}
+          <IconButton
+            className={cn(copied && 'text-success hover:bg-transparent hover:text-success', !copied && 'hover:text-accent dark:hover:text-accent')}
+            label="Copy link to message"
             onClick={copyLink}
+            size="sm"
             title={copied ? 'Copied!' : 'Copy link'}
-            type="button"
           >
             {copied ? (
               <Check aria-hidden className="size-3.5" strokeWidth={2.5} />
             ) : (
               <Link2 aria-hidden className="size-3.5" strokeWidth={2} />
             )}
-          </button>
+          </IconButton>
         </div>
       ) : null}
     </article>

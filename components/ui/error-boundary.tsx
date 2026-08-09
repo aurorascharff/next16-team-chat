@@ -2,6 +2,7 @@
 
 import { AlertTriangle } from 'lucide-react'
 import { catchError, type ErrorInfo } from 'next/error'
+import { Button } from '@/components/ui/button'
 
 function ErrorFallback(
   { compact, title }: { compact?: boolean; title?: string },
@@ -23,13 +24,9 @@ function ErrorFallback(
       <p className="text-muted dark:text-muted-dark text-sm">
         {title ?? 'Something went wrong'}
       </p>
-      <button
-        className="border-divider dark:border-divider-dark bg-elevated hover:bg-card dark:bg-elevated-dark dark:hover:bg-card-dark flex min-h-8 items-center justify-center rounded-lg border px-3 text-xs font-semibold"
-        onClick={retry}
-        type="button"
-      >
+      <Button onClick={retry} size="sm" variant="secondary">
         Try again
-      </button>
+      </Button>
     </div>
   )
 }
