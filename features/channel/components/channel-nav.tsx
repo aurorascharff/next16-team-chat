@@ -70,10 +70,7 @@ export function ChannelNav({ groups: initialGroups }: Props) {
   )
 
   return (
-    <nav
-      aria-label="Channels"
-      className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto"
-    >
+    <nav aria-label="Channels" className="flex min-h-full flex-col gap-3">
       {optimisticGroups.map((group) => {
         const removable = group.name !== UNGROUPED
 

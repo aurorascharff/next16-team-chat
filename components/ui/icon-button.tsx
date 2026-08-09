@@ -9,7 +9,8 @@ type Props = {
   label: string
   children: ReactNode
   size?: Size
-  // Render as another element (e.g. a prefetch Link) while keeping the styling.
+  href?: string
+  external?: boolean
   render?: ReactElement<{ className?: string; children?: ReactNode }>
 } & ButtonHTMLAttributes<HTMLButtonElement>
 
@@ -24,6 +25,8 @@ const sizes: Record<Size, string> = {
 export function IconButton({
   children,
   className,
+  external,
+  href,
   label,
   render,
   size = 'default',
@@ -35,8 +38,21 @@ export function IconButton({
   if (render) {
     return cloneElement(
       render,
-      { 'aria-label': label, className: cn(classes, render.props.className), ...props },
+      { 'aria-label': label, className: cn(classes, render.props?.className), ...props },
       children,
+    )
+  }
+
+  if (href) {
+    return (
+      <a
+        aria-label={label}
+        className={classes}
+        href={href}
+        {...(external ? { rel: 'noopener noreferrer', target: '_blank' } : {})}
+      >
+        {children}
+      </a>
     )
   }
 
