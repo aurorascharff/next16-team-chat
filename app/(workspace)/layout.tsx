@@ -32,7 +32,7 @@ export default function WorkspaceLayout({ children }: { children: ReactNode }) {
               </Suspense>
               <SearchButton />
               <div className="relative -mx-1 min-h-0 flex-1">
-                <div className="h-full overflow-y-auto px-1 pb-6 [scrollbar-gutter:stable]">
+                <div className="h-full [scrollbar-gutter:stable] overflow-y-auto px-1 pb-6">
                   <Suspense fallback={<ChannelListSkeleton />}>
                     <ChannelList />
                   </Suspense>
