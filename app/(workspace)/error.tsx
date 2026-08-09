@@ -2,6 +2,7 @@
 
 import { AlertTriangle } from 'lucide-react'
 import { useEffect } from 'react'
+import { Button } from '@/components/ui/button'
 
 export default function WorkspaceError({
   error,
@@ -26,13 +27,9 @@ export default function WorkspaceError({
       <p className="text-muted dark:text-muted-dark max-w-xs text-sm leading-relaxed">
         We couldn’t load this part of the workspace. Try again.
       </p>
-      <button
-        className="border-divider dark:border-divider-dark bg-elevated hover:bg-card dark:bg-elevated-dark dark:hover:bg-card-dark mt-1 flex min-h-9 items-center justify-center rounded-lg border px-3.5 text-[0.8125rem] font-semibold"
-        onClick={retry}
-        type="button"
-      >
+      <Button className="mt-1" onClick={retry} variant="secondary">
         Try again
-      </button>
+      </Button>
     </div>
   )
 }

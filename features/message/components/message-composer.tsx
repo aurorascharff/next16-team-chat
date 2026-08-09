@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { Button } from '@/components/ui/button'
 import { useSendMessage } from '@/features/message/hooks/use-message-mutations'
 import type { Message } from '@/features/message/types/message'
 import { getMessageTargetFromLocation } from '@/features/message/utils/message-route'
@@ -79,7 +80,7 @@ export function MessageComposer({
 
     if (event.key === 'Enter') {
       event.preventDefault()
-      formRef.current?.requestSubmit()
+      if (value.trim()) formRef.current?.requestSubmit()
       return
     }
 
@@ -257,12 +258,9 @@ export function MessageComposer({
               : 'absolute right-1.5 bottom-1.5 flex',
           )}
         >
-          <button
-            className="bg-accent hover:bg-accent-hover flex min-h-8 items-center justify-center rounded-lg px-3.5 text-[0.8125rem] font-semibold text-white transition-colors"
-            type="submit"
-          >
+          <Button className="min-h-8" disabled={!value.trim()} type="submit">
             Send
-          </button>
+          </Button>
         </div>
       </div>
       {error ? <p className="text-danger text-[0.8125rem]">{error}</p> : null}

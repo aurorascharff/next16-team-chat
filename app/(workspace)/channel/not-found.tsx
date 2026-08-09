@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 
 export default function ChannelNotFound() {
@@ -8,12 +9,7 @@ export default function ChannelNotFound() {
         body="This channel may have been removed, or you may no longer have access."
         title="Channel not found"
       >
-        <Link
-          className="bg-accent hover:bg-accent-hover flex min-h-9 items-center justify-center rounded-lg px-3.5 text-[0.8125rem] font-semibold text-white"
-          href="/channels"
-        >
-          Back to channels
-        </Link>
+        <Button render={<Link href="/channels" />}>Back to channels</Button>
       </EmptyState>
     </div>
   )
