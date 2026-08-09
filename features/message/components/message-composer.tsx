@@ -1,15 +1,8 @@
 'use client'
 
 import { Eye, PenLine } from 'lucide-react'
-import type {
-  KeyboardEvent,
-  SyntheticEvent} from 'react';
-import {
-  useId,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react'
+import type { KeyboardEvent, SyntheticEvent } from 'react'
+import { useId, useLayoutEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { IconButton } from '@/components/ui/icon-button'
 import { useSendMessage } from '@/features/message/hooks/use-message-mutations'
@@ -20,6 +13,80 @@ import { MentionCombobox } from './mention-combobox'
 import { MessagePreview } from './message-preview'
 
 const MAX_LENGTH = 280
+type ComposerMode = 'write' | 'preview'
+
+function FormattingToolbar({
+  expanded,
+  mode,
+  onEdit,
+  onPreview,
+  onWrapSelection,
+}: {
+  expanded: boolean
+  mode: ComposerMode
+  onEdit: () => void
+  onPreview: () => void
+  onWrapSelection: (marker: string) => void
+}) {
+  return (
+    <div
+      aria-label="Formatting"
+      className={cn(
+        'border-divider dark:border-divider-dark items-center gap-0.5 border-b p-1.5 md:flex',
+        expanded ? 'flex' : 'hidden',
+      )}
+    >
+      <IconButton
+        label="Bold"
+        onClick={() => onWrapSelection('**')}
+        onMouseDown={(event) => event.preventDefault()}
+        size="sm"
+        title="Bold (⌘B)"
+      >
+        <strong>B</strong>
+      </IconButton>
+      <IconButton
+        label="Italic"
+        onClick={() => onWrapSelection('*')}
+        onMouseDown={(event) => event.preventDefault()}
+        size="sm"
+        title="Italic (⌘I)"
+      >
+        <em>I</em>
+      </IconButton>
+      <IconButton
+        label="Inline code"
+        onClick={() => onWrapSelection('`')}
+        onMouseDown={(event) => event.preventDefault()}
+        size="sm"
+        title="Code (⌘⇧C)"
+      >
+        <code className="font-mono text-xs">{'<>'}</code>
+      </IconButton>
+      <div className="ml-auto">
+        {mode === 'write' ? (
+          <button
+            className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex h-7 items-center gap-1.5 rounded-md px-2 text-xs font-medium transition-colors hover:text-black dark:hover:text-white"
+            onClick={onPreview}
+            type="button"
+          >
+            <Eye aria-hidden className="size-3.5" strokeWidth={2} />
+            Preview
+          </button>
+        ) : (
+          <button
+            className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex h-7 items-center gap-1.5 rounded-md px-2 text-xs font-medium transition-colors hover:text-black dark:hover:text-white"
+            onClick={onEdit}
+            type="button"
+          >
+            <PenLine aria-hidden className="size-3.5" strokeWidth={2} />
+            Edit
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
 
 export function MessageComposer({
   channelId,
@@ -40,7 +107,7 @@ export function MessageComposer({
   const sendMessage = useSendMessage()
   const [error, setError] = useState('')
   const [expanded, setExpanded] = useState(false)
-  const [mode, setMode] = useState<'write' | 'preview'>('write')
+  const [mode, setMode] = useState<ComposerMode>('write')
   const [value, setValue] = useState('')
   const [writeHeight, setWriteHeight] = useState(0)
   const [caretOffset, setCaretOffset] = useState<number | null>(null)
@@ -156,62 +223,13 @@ export function MessageComposer({
       ref={formRef}
     >
       <div className="border-divider dark:border-divider-dark bg-elevated dark:bg-elevated-dark focus-within:border-accent focus-within:ring-accent/20 relative flex flex-col overflow-hidden rounded-xl border shadow-sm focus-within:ring-2">
-        <div
-          aria-label="Formatting"
-          className={cn(
-            'border-divider dark:border-divider-dark items-center gap-0.5 border-b p-1.5 md:flex',
-            expanded ? 'flex' : 'hidden',
-          )}
-        >
-          <IconButton
-            label="Bold"
-            onClick={() => wrapSelection('**')}
-            onMouseDown={(event) => event.preventDefault()}
-            size="sm"
-            title="Bold (⌘B)"
-          >
-            <strong>B</strong>
-          </IconButton>
-          <IconButton
-            label="Italic"
-            onClick={() => wrapSelection('*')}
-            onMouseDown={(event) => event.preventDefault()}
-            size="sm"
-            title="Italic (⌘I)"
-          >
-            <em>I</em>
-          </IconButton>
-          <IconButton
-            label="Inline code"
-            onClick={() => wrapSelection('`')}
-            onMouseDown={(event) => event.preventDefault()}
-            size="sm"
-            title="Code (⌘⇧C)"
-          >
-            <code className="font-mono text-xs">{'<>'}</code>
-          </IconButton>
-          <div className="ml-auto">
-            {mode === 'write' ? (
-              <button
-                className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex h-7 items-center gap-1.5 rounded-md px-2 text-xs font-medium transition-colors hover:text-black dark:hover:text-white"
-                onClick={showPreview}
-                type="button"
-              >
-                <Eye aria-hidden className="size-3.5" strokeWidth={2} />
-                Preview
-              </button>
-            ) : (
-              <button
-                className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex h-7 items-center gap-1.5 rounded-md px-2 text-xs font-medium transition-colors hover:text-black dark:hover:text-white"
-                onClick={() => setMode('write')}
-                type="button"
-              >
-                <PenLine aria-hidden className="size-3.5" strokeWidth={2} />
-                Edit
-              </button>
-            )}
-          </div>
-        </div>
+        <FormattingToolbar
+          expanded={expanded}
+          mode={mode}
+          onEdit={() => setMode('write')}
+          onPreview={showPreview}
+          onWrapSelection={wrapSelection}
+        />
         <label className="sr-only" htmlFor={fieldId}>
           Message
         </label>
