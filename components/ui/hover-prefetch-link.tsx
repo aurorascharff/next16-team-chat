@@ -4,6 +4,7 @@ import type { Route } from 'next'
 import Link from 'next/link'
 import type { ComponentProps } from 'react'
 import { useState } from 'react'
+import { usePrefetchDefault } from '@/features/demo/use-prefetch-default'
 
 type Props<T extends string = string> = Omit<
   ComponentProps<typeof Link>,
@@ -20,6 +21,7 @@ export function HoverPrefetchLink<T extends string>({
   ...props
 }: Props<T>) {
   const [intent, setIntent] = useState(false)
+  const enabled = usePrefetchDefault() === true
 
   return (
     <Link
@@ -37,7 +39,7 @@ export function HoverPrefetchLink<T extends string>({
         setIntent(true)
         onTouchStart?.(event)
       }}
-      prefetch={intent ? true : null}
+      prefetch={enabled && intent ? true : null}
     />
   )
 }

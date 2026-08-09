@@ -8,6 +8,7 @@ import { channelKeys } from '@/features/channel/channel-cache'
 import { CommandPalette } from '@/features/channel/components/command-palette'
 import { getUnreadChannels } from '@/features/channel/channel-queries'
 import { BotDriver } from '@/features/demo/components/bot-driver'
+import { DemoToolbar } from '@/features/demo/components/demo-toolbar'
 import { OfflineIndicator } from '@/features/demo/components/offline-indicator'
 import { ActivitySync } from '@/features/workspace/components/activity-sync'
 import {
@@ -69,7 +70,12 @@ export default function RootLayout({
             <ActivitySync />
             <BotDriver />
             <OfflineIndicator />
-            <Toaster />
+          <div className="fixed top-4 right-4 z-50 hidden items-start sm:flex">
+            <Suspense fallback={null}>
+              <DemoToolbar />
+            </Suspense>
+          </div>
+          <Toaster />
           </SWRConfig>
         </Providers>
       </body>
