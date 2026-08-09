@@ -31,10 +31,16 @@ export default function WorkspaceLayout({ children }: { children: ReactNode }) {
                 <WorkspaceNav />
               </Suspense>
               <SearchButton />
-              <div className="-mx-1 min-h-0 flex-1 overflow-y-auto px-1">
-                <Suspense fallback={<ChannelListSkeleton />}>
-                  <ChannelList />
-                </Suspense>
+              <div className="relative -mx-1 min-h-0 flex-1">
+                <div className="h-full overflow-y-auto px-1 pb-6 [scrollbar-gutter:stable]">
+                  <Suspense fallback={<ChannelListSkeleton />}>
+                    <ChannelList />
+                  </Suspense>
+                </div>
+                <div
+                  aria-hidden
+                  className="from-surface dark:from-surface-dark pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t to-transparent"
+                />
               </div>
             </ChannelSidebar>
           </Suspense>
