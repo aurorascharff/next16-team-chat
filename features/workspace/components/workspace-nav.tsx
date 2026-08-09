@@ -2,14 +2,7 @@ import { Users } from 'lucide-react'
 import Link from 'next/link'
 
 function BrandMark() {
-  return (
-    <span
-      aria-hidden
-      className="from-accent to-accent-hover flex size-8 items-center justify-center rounded-lg bg-linear-to-br text-white shadow-sm"
-    >
-      <Users className="size-4" strokeWidth={2.5} />
-    </span>
-  )
+  return <Users aria-hidden className="text-accent size-7" strokeWidth={2.5} />
 }
 
 export function WorkspaceNav() {
