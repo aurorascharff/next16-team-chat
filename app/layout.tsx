@@ -70,12 +70,12 @@ export default function RootLayout({
             <ActivitySync />
             <BotDriver />
             <OfflineIndicator />
-          <div className="fixed top-4 right-4 z-50 hidden items-start sm:flex">
-            <Suspense fallback={null}>
-              <DemoToolbar />
-            </Suspense>
-          </div>
-          <Toaster />
+            <div className="fixed top-4 right-4 z-50 hidden items-start sm:flex">
+              <Suspense fallback={null}>
+                <DemoToolbar />
+              </Suspense>
+            </div>
+            <Toaster />
           </SWRConfig>
         </Providers>
       </body>
