@@ -1,15 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useUnreadActivity } from '@/features/workspace/hooks/use-unread-activity'
+import { useIsMounted } from '@/lib/use-is-mounted'
 
 export function useActivityIndicator(enabled = true) {
-  const [mounted, setMounted] = useState(false)
+  const mounted = useIsMounted()
   const { data: activity } = useUnreadActivity(enabled)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   return {
     hasActivity: mounted && Boolean(activity && activity.count > 0),

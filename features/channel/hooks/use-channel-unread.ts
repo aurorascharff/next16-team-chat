@@ -1,21 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useSWRConfig } from 'swr'
 import { channelKeys } from '@/features/channel/channel-cache'
 import {
   type UnreadChannels,
   useUnreadChannels,
 } from '@/features/channel/hooks/use-unread-channels'
+import { useIsMounted } from '@/lib/use-is-mounted'
 
 export function useChannelUnread(channelId: string, initialUnread?: number) {
   const { mutate } = useSWRConfig()
-  const [mounted, setMounted] = useState(false)
+  const mounted = useIsMounted()
   const { data: unreadMap } = useUnreadChannels()
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   const unread = unreadMap ? unreadMap[channelId] : initialUnread
 

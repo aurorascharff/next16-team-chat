@@ -2,8 +2,8 @@
 
 import { Monitor, Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
-import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
+import { useIsMounted } from '@/lib/use-is-mounted'
 
 const options = [
   { icon: Sun, label: 'Light', value: 'light' },
@@ -13,11 +13,7 @@ const options = [
 
 export function ThemeToggle() {
   const { setTheme, theme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  const mounted = useIsMounted()
 
   return (
     <div className="inline-flex items-center gap-0.5">

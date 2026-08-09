@@ -17,6 +17,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useCommandPaletteResults } from '@/features/channel/hooks/use-command-palette-results'
 import { stripMarkdown } from '@/features/message/utils/format'
 import { cn } from '@/lib/utils'
+import { useIsMounted } from '@/lib/use-is-mounted'
 
 type Result =
   | {
@@ -40,19 +41,25 @@ type WorkspaceSearchResultsHandle = {
 }
 
 export function CommandPalette() {
-  const [open, setOpen] = useState(false)
+  const [openPathname, setOpenPathname] = useState<string | null>(null)
   const router = useRouter()
   const pathname = usePathname()
+  const open = openPathname === pathname
+
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault()
-        setOpen((current) => !current)
+        setOpenPathname((current) => {
+          return current === pathname ? null : pathname
+        })
       }
     }
 
     function onOpen() {
-      setOpen((current) => !current)
+      setOpenPathname((current) => {
+        return current === pathname ? null : pathname
+      })
     }
 
     window.addEventListener('keydown', onKeyDown)
@@ -61,16 +68,12 @@ export function CommandPalette() {
       window.removeEventListener('keydown', onKeyDown)
       window.removeEventListener('open-command-palette', onOpen)
     }
-  }, [])
-
-  useEffect(() => {
-    setOpen(false)
   }, [pathname])
 
   if (!open) return null
 
   function activate(result: Result) {
-    setOpen(false)
+    setOpenPathname(null)
     const target = result.type === 'channel' ? result.id : result.channelId
     router.push(`/channel/${target}` as Route)
   }
@@ -78,7 +81,9 @@ export function CommandPalette() {
   return (
     <div
       className="fixed inset-0 z-50 hidden items-start justify-center bg-black/40 px-4 pt-[12vh] backdrop-blur-sm md:flex"
-      onClick={() => setOpen(false)}
+      onClick={() => {
+        return setOpenPathname(null)
+      }}
     >
       <div
         className="bg-surface dark:bg-surface-dark border-divider dark:border-divider-dark w-full max-w-lg overflow-hidden rounded-xl border shadow-2xl"
@@ -86,7 +91,7 @@ export function CommandPalette() {
       >
         <WorkspaceSearch
           onActivate={activate}
-          onDismiss={() => setOpen(false)}
+          onDismiss={() => setOpenPathname(null)}
           showShortcut
         />
       </div>
@@ -185,11 +190,7 @@ function ClientSearchResults({
   query: string
   ref: Ref<WorkspaceSearchResultsHandle>
 }) {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  const mounted = useIsMounted()
 
   if (!mounted) return <WorkspaceSearchResultsFallbackList />
 

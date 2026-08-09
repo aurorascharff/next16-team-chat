@@ -1,15 +1,9 @@
 'use client'
 
 import { Eye, PenLine } from 'lucide-react'
+import type { KeyboardEvent, SyntheticEvent } from 'react'
 import { toast } from 'sonner'
-import {
-  KeyboardEvent,
-  SyntheticEvent,
-  useId,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react'
+import { useId, useLayoutEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { IconButton } from '@/components/ui/icon-button'
 import { useSendMessage } from '@/features/message/hooks/use-message-mutations'

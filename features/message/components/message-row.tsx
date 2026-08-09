@@ -133,7 +133,10 @@ export function MessageRow({
             </HoverPrefetchLink>
           ) : null}
           <IconButton
-            className={cn(copied && 'text-success hover:bg-transparent hover:text-success', !copied && 'hover:text-accent dark:hover:text-accent')}
+            className={cn(
+              copied && 'text-success hover:text-success hover:bg-transparent',
+              !copied && 'hover:text-accent dark:hover:text-accent',
+            )}
             label="Copy link to message"
             onClick={copyLink}
             size="sm"
