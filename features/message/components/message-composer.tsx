@@ -10,6 +10,7 @@ import {
   useState,
 } from 'react'
 import { Button } from '@/components/ui/button'
+import { IconButton } from '@/components/ui/icon-button'
 import { useSendMessage } from '@/features/message/hooks/use-message-mutations'
 import type { Message } from '@/features/message/types/message'
 import { getMessageTargetFromLocation } from '@/features/message/utils/message-route'
@@ -147,9 +148,6 @@ export function MessageComposer({
     }
   }
 
-  const toolbarButton =
-    'text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex size-7 items-center justify-center rounded-md transition-colors hover:text-black dark:hover:text-white'
-
   return (
     <form
       className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark flex flex-col gap-2 border-t px-3 py-2 md:px-5 md:py-3"
@@ -164,36 +162,33 @@ export function MessageComposer({
             expanded ? 'flex' : 'hidden',
           )}
         >
-          <button
-            aria-label="Bold"
-            className={toolbarButton}
+          <IconButton
+            label="Bold"
             onClick={() => wrapSelection('**')}
             onMouseDown={(event) => event.preventDefault()}
+            size="sm"
             title="Bold (⌘B)"
-            type="button"
           >
             <strong>B</strong>
-          </button>
-          <button
-            aria-label="Italic"
-            className={toolbarButton}
+          </IconButton>
+          <IconButton
+            label="Italic"
             onClick={() => wrapSelection('*')}
             onMouseDown={(event) => event.preventDefault()}
+            size="sm"
             title="Italic (⌘I)"
-            type="button"
           >
             <em>I</em>
-          </button>
-          <button
-            aria-label="Inline code"
-            className={toolbarButton}
+          </IconButton>
+          <IconButton
+            label="Inline code"
             onClick={() => wrapSelection('`')}
             onMouseDown={(event) => event.preventDefault()}
+            size="sm"
             title="Code (⌘⇧C)"
-            type="button"
           >
             <code className="font-mono text-xs">{'<>'}</code>
-          </button>
+          </IconButton>
           <div className="ml-auto">
             {mode === 'write' ? (
               <button

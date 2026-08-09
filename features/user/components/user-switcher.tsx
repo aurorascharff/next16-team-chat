@@ -5,6 +5,7 @@ import { ArrowLeftRight } from 'lucide-react'
 import type { Route } from 'next'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
+import { IconButton } from '@/components/ui/icon-button'
 import { switchUser } from '@/features/user/user-actions'
 import { cn } from '@/lib/utils'
 
@@ -15,11 +16,11 @@ export function UserSwitcher({ currentUserId }: { currentUserId: string }) {
   const nextUserId = currentUserId === 'ada' ? 'grace' : 'ada'
 
   return (
-    <button
-      aria-label="Switch user"
-      className="text-muted dark:text-muted-dark hover:bg-surface dark:hover:bg-elevated-dark flex size-8 items-center justify-center rounded-lg hover:text-black disabled:opacity-55 dark:hover:text-white"
+    <IconButton
+      className="hover:bg-surface dark:hover:bg-elevated-dark disabled:opacity-55"
       data-user-switching={isPending ? '' : undefined}
       disabled={isPending}
+      label="Switch user"
       onClick={() => {
         startTransition(async () => {
           const destination = await switchUser(nextUserId)
@@ -28,13 +29,12 @@ export function UserSwitcher({ currentUserId }: { currentUserId: string }) {
         })
       }}
       title="Switch user"
-      type="button"
     >
       <ArrowLeftRight
         aria-hidden
         className={cn('size-4 transition-transform', isPending && 'rotate-180')}
         strokeWidth={2}
       />
-    </button>
+    </IconButton>
   )
 }

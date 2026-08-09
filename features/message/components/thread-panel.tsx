@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-query'
 import { X } from 'lucide-react'
 import { type ReactNode, useEffect } from 'react'
+import { IconButton } from '@/components/ui/icon-button'
 import { UserAvatar } from '@/components/ui/user-avatar'
 import { messageKeys } from '@/features/message/message-cache'
 import {
@@ -41,14 +42,9 @@ export function ThreadPanel({
           <span>Thread</span>
           {subtitle}
         </h2>
-        <button
-          aria-label="Close thread"
-          className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark flex size-8 items-center justify-center rounded-lg hover:text-black dark:hover:text-white"
-          onClick={closeThread}
-          type="button"
-        >
+        <IconButton label="Close thread" onClick={closeThread}>
           <X aria-hidden className="size-4" strokeWidth={2} />
-        </button>
+        </IconButton>
       </header>
       <div
         className="min-h-0 flex-1 overflow-y-auto overscroll-contain pt-2"

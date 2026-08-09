@@ -2,6 +2,7 @@
 
 import * as Ariakit from '@ariakit/react'
 import { SmilePlus } from 'lucide-react'
+import { IconButton } from '@/components/ui/icon-button'
 import { useReactionToggle } from '@/features/message/hooks/use-message-mutations'
 import type { Message, Reaction } from '@/features/message/types/message'
 import { cn } from '@/lib/utils'
@@ -70,14 +71,14 @@ export function AddReaction({ message }: { message: Message }) {
 
   return (
     <>
-      <Ariakit.PopoverDisclosure
-        aria-label="Add reaction"
-        className="text-muted dark:text-muted-dark hover:bg-card dark:hover:bg-card-dark hover:text-accent flex size-7 items-center justify-center rounded-md transition-colors"
-        store={popover}
-        type="button"
+      <IconButton
+        className="hover:text-accent dark:hover:text-accent"
+        label="Add reaction"
+        render={<Ariakit.PopoverDisclosure store={popover} />}
+        size="sm"
       >
         <SmilePlus aria-hidden className="size-3.5" strokeWidth={2} />
-      </Ariakit.PopoverDisclosure>
+      </IconButton>
       <Ariakit.Popover
         className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark z-30 flex gap-0.5 rounded-lg border p-1 shadow-lg"
         gutter={8}
@@ -87,18 +88,18 @@ export function AddReaction({ message }: { message: Message }) {
       >
         {CHOICES.map((emoji) => {
           return (
-            <button
-              aria-label={`React with ${emoji}`}
-              className="hover:bg-card dark:hover:bg-card-dark flex size-7 items-center justify-center rounded-md text-base transition-colors"
+            <IconButton
+              className="text-base"
               key={emoji}
+              label={`React with ${emoji}`}
               onClick={() => {
                 popover.hide()
                 toggle(emoji)
               }}
-              type="button"
+              size="sm"
             >
               {emoji}
-            </button>
+            </IconButton>
           )
         })}
       </Ariakit.Popover>
