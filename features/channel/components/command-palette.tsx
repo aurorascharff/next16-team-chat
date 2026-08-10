@@ -14,6 +14,7 @@ import {
   useState,
 } from 'react'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
+import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { channelSearchQueryOptions } from '@/features/channel/channel-query-options'
 import { workspaceSearchMessagesQueryOptions } from '@/features/message/message-query-options'
@@ -145,7 +146,7 @@ function WorkspaceSearch({
           className="text-gray size-4 shrink-0"
           strokeWidth={2}
         />
-        <input
+        <Input
           className="h-12 w-full bg-transparent text-sm outline-none"
           onChange={(event) => setQuery(event.target.value)}
           onKeyDown={(event) => {
@@ -164,6 +165,7 @@ function WorkspaceSearch({
           ref={inputRef}
           type="text"
           value={query}
+          variant="unstyled"
         />
         {showShortcut ? (
           <kbd className="border-divider dark:border-divider-dark text-muted dark:text-muted-dark rounded border px-1.5 py-0.5 font-mono text-[0.625rem] font-medium">
