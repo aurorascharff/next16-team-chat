@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Suspense } from 'react'
 import { Crossfade } from '@/components/ui/crossfade'
+import { ErrorBoundary } from '@/components/ui/error-boundary'
 import { ResizablePanel } from '@/components/ui/resizable-panel'
 import {
   ChannelHeader,
@@ -27,13 +28,15 @@ export default function ChannelLayout({
       </Suspense>
       <div className="flex min-h-0 lg:grid lg:grid-cols-[minmax(0,1fr)_auto]">
         <div className="grid min-h-0 min-w-0 flex-1 grid-rows-[minmax(0,1fr)_auto]">
-          <Suspense fallback={<MessageThreadSkeleton />}>
-            <Crossfade>
-              {params.then(({ channelId }) => (
-                <MessageThread channelId={channelId} />
-              ))}
-            </Crossfade>
-          </Suspense>
+          <ErrorBoundary title="Messages unavailable">
+            <Suspense fallback={<MessageThreadSkeleton />}>
+              <Crossfade>
+                {params.then(({ channelId }) => (
+                  <MessageThread channelId={channelId} />
+                ))}
+              </Crossfade>
+            </Suspense>
+          </ErrorBoundary>
           <MessageComposer />
         </div>
         <ResizablePanel className="channel-route-panel">
