@@ -34,5 +34,4 @@ test.describe('Search page (/search)', () => {
       ).toBeFocused()
     })
   })
-
 })
