@@ -134,7 +134,7 @@ export function DemoToolbarClient({
       <Divider />
       <Ariakit.DialogDisclosure
         aria-label="How this demo works"
-        className="text-muted dark:text-muted-dark flex h-8 items-center px-2.5 transition-colors hover:text-black dark:hover:text-white"
+        className="text-muted dark:text-muted-dark focus-visible:bg-accent/10 dark:focus-visible:bg-accent/20 flex h-8 items-center px-2.5 transition-colors hover:text-black focus-visible:outline-none dark:hover:text-white"
         store={guide}
       >
         <CircleHelp className="size-3.5" />
