@@ -5,7 +5,8 @@ import { cookies } from 'next/headers'
 import { channelTags } from '@/features/channel/channel-cache'
 import { listChannelsForUser } from '@/features/channel/channel-queries'
 import { userTags } from './user-cache'
-import { getUsers, SESSION_COOKIE } from './user-queries'
+import { LAST_CHANNEL_COOKIE, SESSION_COOKIE } from './session'
+import { getUsers } from './user-queries'
 
 export async function switchUser(userId: string) {
   const cookieStore = await cookies()
@@ -23,5 +24,16 @@ export async function switchUser(userId: string) {
   updateTag(channelTags.all)
 
   const channels = await listChannelsForUser(nextUserId)
-  return channels[0] ? `/channel/${channels[0].id}` : '/channels'
+  const firstChannel = channels[0]
+
+  if (firstChannel) {
+    cookieStore.set(LAST_CHANNEL_COOKIE, firstChannel.id, {
+      path: '/',
+      sameSite: 'lax',
+    })
+  } else {
+    cookieStore.delete(LAST_CHANNEL_COOKIE)
+  }
+
+  return firstChannel ? `/channel/${firstChannel.id}` : '/channels'
 }

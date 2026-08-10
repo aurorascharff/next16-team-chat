@@ -5,8 +5,7 @@ import { cookies } from 'next/headers'
 import type { User } from '@/features/user/types/user'
 import { prisma } from '@/lib/db'
 import { userTags } from './user-cache'
-
-export const SESSION_COOKIE = 'message-demo-user'
+import { SESSION_COOKIE } from './session'
 
 export async function getUsers(): Promise<User[]> {
   'use cache'
