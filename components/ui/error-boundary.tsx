@@ -1,8 +1,8 @@
 'use client'
 
-import { AlertTriangle } from 'lucide-react'
 import { catchError, type ErrorInfo } from 'next/error'
 import { Button } from '@/components/ui/button'
+import { HuddleMark } from '@/components/ui/huddle-mark'
 
 function ErrorFallback(
   { compact, title }: { compact?: boolean; title?: string },
@@ -16,10 +16,8 @@ function ErrorFallback(
           : 'flex flex-col items-center gap-3 px-6 py-10 text-center'
       }
     >
-      <AlertTriangle
-        aria-hidden
-        className={compact ? 'text-danger size-4' : 'text-danger size-6'}
-        strokeWidth={2}
+      <HuddleMark
+        className={compact ? 'text-danger size-5' : 'text-danger size-8'}
       />
       <p className="text-muted dark:text-muted-dark text-sm">
         {title ?? 'Something went wrong'}

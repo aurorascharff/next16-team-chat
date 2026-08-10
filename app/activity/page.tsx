@@ -1,4 +1,5 @@
 import { Suspense } from 'react'
+import { ErrorBoundary } from '@/components/ui/error-boundary'
 import {
   ActivityList,
   ActivityListSkeleton,
@@ -25,9 +26,11 @@ export default function ActivityPage() {
           Mentions and thread replies across your channels, newest first.
         </p>
       </header>
-      <Suspense fallback={<ActivityListSkeleton />}>
-        <ActivityList />
-      </Suspense>
+      <ErrorBoundary title="Activity unavailable">
+        <Suspense fallback={<ActivityListSkeleton />}>
+          <ActivityList />
+        </Suspense>
+      </ErrorBoundary>
     </section>
   )
 }

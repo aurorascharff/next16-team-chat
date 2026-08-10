@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { EmptyState } from '@/components/ui/empty-state'
+import { ErrorBoundary } from '@/components/ui/error-boundary'
 import {
   ChannelList,
   ChannelListSkeleton,
@@ -18,9 +19,11 @@ export default function ChannelsPage() {
     <>
       <div className="flex min-h-0 flex-col gap-4 p-3 md:hidden">
         <WorkspaceNav />
-        <Suspense fallback={<ChannelListSkeleton />}>
-          <ChannelList />
-        </Suspense>
+        <ErrorBoundary compact title="Channels unavailable">
+          <Suspense fallback={<ChannelListSkeleton />}>
+            <ChannelList />
+          </Suspense>
+        </ErrorBoundary>
       </div>
       <div className="hidden h-full items-center justify-center md:flex">
         <EmptyState
