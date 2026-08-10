@@ -100,11 +100,6 @@
   h3 {
     @apply font-sans text-base font-semibold tracking-tight text-black dark:text-white;
   }
-
-  input,
-  textarea {
-    @apply placeholder-gray text-black outline-none dark:text-white;
-  }
 }
 
 .sr-only {

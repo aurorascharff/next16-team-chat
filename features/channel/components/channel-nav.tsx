@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { Input } from '@/components/ui/input'
 import { channelLayoutReducer } from '@/features/channel/channel-actions'
 import {
   applyLayoutAction,
@@ -108,9 +109,8 @@ export function ChannelNav({ groups: initialGroups }: Props) {
             }}
           >
             {editingName === group.name ? (
-              <input
+              <Input
                 autoFocus
-                className="text-muted dark:text-muted-dark focus:ring-accent min-h-6 w-full rounded border border-transparent bg-transparent px-2.5 py-1 text-xs font-semibold tracking-wide uppercase outline-none ring-inset focus:ring-1"
                 defaultValue={group.name}
                 onBlur={(event) => {
                   return renameGroup(group.name, event.target.value)
@@ -125,6 +125,7 @@ export function ChannelNav({ groups: initialGroups }: Props) {
                     event.currentTarget.blur()
                   }
                 }}
+                variant="inline-label"
               />
             ) : (
               <div

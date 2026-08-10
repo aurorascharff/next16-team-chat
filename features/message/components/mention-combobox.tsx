@@ -5,6 +5,7 @@ import { Loader2 } from 'lucide-react'
 import type { KeyboardEvent, RefObject } from 'react'
 import { Suspense, useDeferredValue } from 'react'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
+import { Textarea } from '@/components/ui/textarea'
 import { UserAvatar } from '@/components/ui/user-avatar'
 import { useUserSearch } from '@/features/user/hooks/use-users'
 
@@ -112,7 +113,7 @@ export function MentionCombobox({
         id={id}
         maxLength={maxLength}
         render={
-          <textarea
+          <Textarea
             onChange={onChange}
             onFocus={onFocus}
             onKeyDown={handleKeyDown}
@@ -121,6 +122,7 @@ export function MentionCombobox({
             placeholder={placeholder}
             ref={textareaRef}
             rows={3}
+            variant="unstyled"
           />
         }
         setValueOnChange={false}
