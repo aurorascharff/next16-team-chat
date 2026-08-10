@@ -60,6 +60,14 @@ The schema is otherwise identical, so the rest of the app behaves the same as pr
 
 </details>
 
+## Testing
+
+The end-to-end tests use [`@next/playwright`](https://nextjs.org/docs/app/guides/testing/playwright) with the [`instant()`](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config/instant) API to guard initial loads and client navigations, and they run in CI.
+
+```bash
+pnpm test:e2e
+```
+
 ## Stack
 
 - **[Next.js 16.3](https://nextjs.org/)**: App Router, Cache Components, Server Functions
