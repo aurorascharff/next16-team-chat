@@ -3,6 +3,7 @@
 import { useMemo, type RefObject } from 'react'
 import { Boundary } from '@/components/internal/boundary'
 import { EmptyState } from '@/components/ui/empty-state'
+import { MarkChannelRead } from '@/features/channel/components/mark-channel-read'
 import { useChannelReadOnEntry } from '@/features/channel/hooks/use-channel-read'
 import { useMessageJump } from '@/features/message/hooks/use-message-jump'
 import { useSuspenseMessages } from '@/features/message/hooks/use-messages'
@@ -67,6 +68,7 @@ export function MessageList({
   return (
     <Boundary label="MessageList" asChild>
       <section aria-label="Messages" className="relative flex min-h-0 flex-1">
+        <MarkChannelRead channelId={channelId} hasUnread={unreadCount > 0} />
         <div
           className="flex flex-1 flex-col-reverse overflow-y-auto overscroll-contain py-3"
           onScroll={onScroll}
