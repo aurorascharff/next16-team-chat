@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import { Suspense } from 'react'
+import { BoundaryProvider } from '@/components/internal/boundary'
 import { Toaster } from '@/components/ui/toaster'
 import { CommandPalette } from '@/features/channel/components/command-palette'
 import { BotDriver } from '@/features/demo/components/bot-driver'
@@ -46,23 +47,25 @@ export default function RootLayout({
     >
       <body>
         <Providers>
-          {children}
-          <Suspense fallback={<MobileTabBarSkeleton />}>
-            <MobileTabBar />
-          </Suspense>
-          <Suspense fallback={null}>
-            <CommandPalette />
-          </Suspense>
-          <UnreadFavicon />
-          <ActivitySync />
-          <BotDriver />
-          <OfflineIndicator />
-          <div className="fixed top-4 right-4 z-50 hidden items-start sm:flex">
-            <Suspense fallback={null}>
-              <DemoToolbar />
+          <BoundaryProvider>
+            {children}
+            <Suspense fallback={<MobileTabBarSkeleton />}>
+              <MobileTabBar />
             </Suspense>
-          </div>
-          <Toaster />
+            <Suspense fallback={null}>
+              <CommandPalette />
+            </Suspense>
+            <UnreadFavicon />
+            <ActivitySync />
+            <BotDriver />
+            <OfflineIndicator />
+            <div className="fixed top-4 right-4 z-50 hidden items-start sm:flex">
+              <Suspense fallback={null}>
+                <DemoToolbar />
+              </Suspense>
+            </div>
+            <Toaster />
+          </BoundaryProvider>
         </Providers>
       </body>
     </html>

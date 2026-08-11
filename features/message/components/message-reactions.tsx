@@ -40,6 +40,7 @@ export function MessageReactions({ message }: { message: Message }) {
         const label = reactionLabel(reaction)
         return (
           <button
+            data-component="MessageReaction"
             className={cn(
               'group/reaction relative flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium shadow-sm transition-colors',
               reaction.reacted
@@ -73,6 +74,7 @@ export function AddReaction({ message }: { message: Message }) {
     <>
       <IconButton
         className="hover:text-accent dark:hover:text-accent"
+        data-component="AddReaction"
         label="Add reaction"
         render={<Ariakit.PopoverDisclosure store={popover} />}
         size="sm"
@@ -81,6 +83,7 @@ export function AddReaction({ message }: { message: Message }) {
       </IconButton>
       <Ariakit.Popover
         className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark z-30 flex gap-0.5 rounded-lg border p-1 shadow-lg"
+        data-component="ReactionPicker"
         gutter={8}
         portal
         store={popover}

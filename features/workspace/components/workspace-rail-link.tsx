@@ -4,6 +4,7 @@ import type { Route } from 'next'
 import { AtSign, House } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Boundary } from '@/components/internal/boundary'
 import { useActivityIndicator } from '@/features/workspace/hooks/use-activity-indicator'
 import { cn } from '@/lib/utils'
 
@@ -45,33 +46,41 @@ export function WorkspaceRailLinkShell({
   const showDot = item.showActivityDot && hasActivity && !isActive
 
   return (
-    <Link
-      aria-current={isActive ? 'page' : undefined}
-      className={cn(
-        'flex w-full flex-col items-center gap-1 rounded-lg py-1.5 text-[0.625rem] font-medium',
-        isActive
-          ? 'text-accent'
-          : 'text-muted dark:text-muted-dark hover:text-black dark:hover:text-white',
-      )}
-      href={href}
-      prefetch={true}
-    >
-      <span
+    <Boundary label="WorkspaceRailLink" asChild>
+      <Link
+        aria-current={isActive ? 'page' : undefined}
         className={cn(
-          'relative flex size-9 items-center justify-center rounded-xl',
-          isActive ? 'bg-accent-fade' : 'hover:bg-card dark:hover:bg-card-dark',
+          'flex w-full flex-col items-center gap-1 rounded-lg py-1.5 text-[0.625rem] font-medium',
+          isActive
+            ? 'text-accent'
+            : 'text-muted dark:text-muted-dark hover:text-black dark:hover:text-white',
         )}
+        href={href}
+        prefetch={true}
       >
-        <Icon aria-hidden className="size-5" strokeWidth={isActive ? 2.5 : 2} />
-        {showDot ? (
-          <span
-            aria-label="New activity"
-            className="bg-accent ring-elevated dark:ring-elevated-dark absolute top-1 right-1 size-2 rounded-full ring-2"
+        <span
+          className={cn(
+            'relative flex size-9 items-center justify-center rounded-xl',
+            isActive
+              ? 'bg-accent-fade'
+              : 'hover:bg-card dark:hover:bg-card-dark',
+          )}
+        >
+          <Icon
+            aria-hidden
+            className="size-5"
+            strokeWidth={isActive ? 2.5 : 2}
           />
-        ) : null}
-      </span>
-      {label}
-    </Link>
+          {showDot ? (
+            <span
+              aria-label="New activity"
+              className="bg-accent ring-elevated dark:ring-elevated-dark absolute top-1 right-1 size-2 rounded-full ring-2"
+            />
+          ) : null}
+        </span>
+        {label}
+      </Link>
+    </Boundary>
   )
 }
 

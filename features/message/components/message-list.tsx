@@ -2,6 +2,7 @@
 
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useMemo, type RefObject } from 'react'
+import { Boundary } from '@/components/internal/boundary'
 import { EmptyState } from '@/components/ui/empty-state'
 import { useChannelReadOnEntry } from '@/features/channel/hooks/use-channel-read'
 import { useMessageJump } from '@/features/message/hooks/use-message-jump'
@@ -47,15 +48,17 @@ export function MessageList({
 
   if (messages.length === 0) {
     return (
-      <section
-        aria-label="Messages"
-        className="flex flex-1 flex-col overflow-y-auto py-3"
-      >
-        <EmptyState
-          body="Start the room with a note, a handoff, or the thing you want reviewed."
-          title="No messages yet"
-        />
-      </section>
+      <Boundary label="MessageList" asChild>
+        <section
+          aria-label="Messages"
+          className="flex flex-1 flex-col overflow-y-auto py-3"
+        >
+          <EmptyState
+            body="Start the room with a note, a handoff, or the thing you want reviewed."
+            title="No messages yet"
+          />
+        </section>
+      </Boundary>
     )
   }
 
@@ -63,46 +66,48 @@ export function MessageList({
   const showUnreadMessages = unreadCount > 0 && unreadMarkerPosition === 'above'
 
   return (
-    <section aria-label="Messages" className="relative flex min-h-0 flex-1">
-      <div
-        className="flex flex-1 flex-col-reverse overflow-y-auto py-3"
-        onScroll={onScroll}
-        ref={viewportRef}
-      >
-        <div className="flex flex-col">
-          {messages.map((message) => {
-            return (
-              <div key={message.id}>
-                {message.id === firstUnreadId ? (
-                  <NewMessagesDivider markerRef={unreadMarkerRef} />
-                ) : null}
-                <MessageRow message={message} showThreadAffordance />
-              </div>
-            )
-          })}
+    <Boundary label="MessageList" asChild>
+      <section aria-label="Messages" className="relative flex min-h-0 flex-1">
+        <div
+          className="flex flex-1 flex-col-reverse overflow-y-auto py-3"
+          onScroll={onScroll}
+          ref={viewportRef}
+        >
+          <div className="flex flex-col">
+            {messages.map((message) => {
+              return (
+                <div key={message.id}>
+                  {message.id === firstUnreadId ? (
+                    <NewMessagesDivider markerRef={unreadMarkerRef} />
+                  ) : null}
+                  <MessageRow message={message} showThreadAffordance />
+                </div>
+              )
+            })}
+          </div>
         </div>
-      </div>
-      {showNewMessages ? (
-        <MessageJumpButton
-          count={newMessageCount}
-          direction="down"
-          onDismiss={dismissNewMessages}
-          onJump={scrollToEnd}
-        />
-      ) : null}
-      {showUnreadMessages ? (
-        <MessageJumpButton
-          count={unreadCount}
-          direction="up"
-          onJump={() => {
-            unreadMarkerRef.current?.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start',
-            })
-          }}
-        />
-      ) : null}
-    </section>
+        {showNewMessages ? (
+          <MessageJumpButton
+            count={newMessageCount}
+            direction="down"
+            onDismiss={dismissNewMessages}
+            onJump={scrollToEnd}
+          />
+        ) : null}
+        {showUnreadMessages ? (
+          <MessageJumpButton
+            count={unreadCount}
+            direction="up"
+            onJump={() => {
+              unreadMarkerRef.current?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+              })
+            }}
+          />
+        ) : null}
+      </section>
+    </Boundary>
   )
 }
 

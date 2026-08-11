@@ -6,6 +6,7 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react'
+import { Boundary } from '@/components/internal/boundary'
 import { cn } from '@/lib/utils'
 
 type Variant = 'primary' | 'secondary' | 'ghost'
@@ -47,16 +48,22 @@ export function Button({
   const classes = cn(base, sizes[size], variants[variant], className)
 
   if (render) {
-    return cloneElement(
-      render,
-      { className: cn(classes, render.props.className), ...props },
-      children,
+    return (
+      <Boundary label="Button" asChild>
+        {cloneElement(
+          render,
+          { className: cn(classes, render.props.className), ...props },
+          children,
+        )}
+      </Boundary>
     )
   }
 
   return (
-    <button className={classes} type={type} {...props}>
-      {children}
-    </button>
+    <Boundary label="Button" asChild>
+      <button className={classes} type={type} {...props}>
+        {children}
+      </button>
+    </Boundary>
   )
 }

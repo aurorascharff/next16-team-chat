@@ -1,6 +1,7 @@
 'use client'
 
 import { Fragment } from 'react'
+import { Boundary } from '@/components/internal/boundary'
 import { Crossfade } from '@/components/ui/crossfade'
 import type { ActivityItem } from '@/features/workspace/workspace-queries'
 import { useVisitSnapshot } from '@/lib/use-visit-snapshot'
@@ -25,16 +26,18 @@ export function ActivityListView({ items }: { items: ActivityItem[] }) {
     <>
       <MarkActivityRead itemIds={unreadIds} />
       <Crossfade>
-        <div className="flex flex-col p-3">
-          {itemsOnEntry.map((item) => {
-            return (
-              <Fragment key={item.id}>
-                {item.id === firstReadId ? <ActivityDivider /> : null}
-                <ActivityRow item={item} />
-              </Fragment>
-            )
-          })}
-        </div>
+        <Boundary label="ActivityList" asChild>
+          <div className="flex flex-col p-3">
+            {itemsOnEntry.map((item) => {
+              return (
+                <Fragment key={item.id}>
+                  {item.id === firstReadId ? <ActivityDivider /> : null}
+                  <ActivityRow item={item} />
+                </Fragment>
+              )
+            })}
+          </div>
+        </Boundary>
       </Crossfade>
     </>
   )

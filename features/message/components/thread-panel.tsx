@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-query'
 import { X } from 'lucide-react'
 import { type ReactNode, useEffect } from 'react'
+import { Boundary } from '@/components/internal/boundary'
 import { IconButton } from '@/components/ui/icon-button'
 import { UserAvatar } from '@/components/ui/user-avatar'
 import { messageKeys } from '@/features/message/message-cache'
@@ -30,35 +31,37 @@ export function ThreadPanel({
   const scrollerRef = usePinnedToBottom()
 
   return (
-    <aside
-      aria-label="Thread"
-      className="border-divider dark:border-divider-dark flex h-full min-h-0 flex-col border-l"
-    >
-      <header
-        className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark flex items-center justify-between border-b px-4 py-3"
-        style={{ viewTransitionName: 'thread-header' }}
+    <Boundary label="ThreadPanel" asChild>
+      <aside
+        aria-label="Thread"
+        className="border-divider dark:border-divider-dark flex h-full min-h-0 flex-col border-l"
       >
-        <h2 className="flex min-w-0 items-center gap-1.5">
-          <span>Thread</span>
-          {subtitle}
-        </h2>
-        <IconButton label="Close thread" onClick={closeThread}>
-          <X aria-hidden className="size-4" strokeWidth={2} />
-        </IconButton>
-      </header>
-      <div
-        className="min-h-0 flex-1 overflow-y-auto overscroll-contain pt-2"
-        data-message-scroll
-        ref={scrollerRef}
-      >
-        <div className="flex min-h-full flex-col">
-          {children}
-          <div className="mt-auto">
-            <MessageComposer placeholder="Reply…" thread />
+        <header
+          className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark flex items-center justify-between border-b px-4 py-3"
+          style={{ viewTransitionName: 'thread-header' }}
+        >
+          <h2 className="flex min-w-0 items-center gap-1.5">
+            <span>Thread</span>
+            {subtitle}
+          </h2>
+          <IconButton label="Close thread" onClick={closeThread}>
+            <X aria-hidden className="size-4" strokeWidth={2} />
+          </IconButton>
+        </header>
+        <div
+          className="min-h-0 flex-1 overflow-y-auto overscroll-contain pt-2"
+          data-message-scroll
+          ref={scrollerRef}
+        >
+          <div className="flex min-h-full flex-col">
+            {children}
+            <div className="mt-auto">
+              <MessageComposer placeholder="Reply…" thread />
+            </div>
           </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </Boundary>
   )
 }
 

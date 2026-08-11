@@ -3,6 +3,7 @@
 import { Eye, PenLine } from 'lucide-react'
 import type { KeyboardEvent, SyntheticEvent } from 'react'
 import { useId, useLayoutEffect, useRef, useState } from 'react'
+import { Boundary } from '@/components/internal/boundary'
 import { Button } from '@/components/ui/button'
 import { IconButton } from '@/components/ui/icon-button'
 import { useSendMessage } from '@/features/message/hooks/use-message-mutations'
@@ -217,67 +218,69 @@ export function MessageComposer({
   }
 
   return (
-    <form
-      className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark flex flex-col gap-2 border-t px-3 py-2 md:px-5 md:py-3"
-      onSubmit={onSubmit}
-      ref={formRef}
-    >
-      <div className="border-divider dark:border-divider-dark bg-elevated dark:bg-elevated-dark focus-within:border-accent focus-within:ring-accent/20 relative flex flex-col overflow-hidden rounded-xl border shadow-sm focus-within:ring-2">
-        <FormattingToolbar
-          expanded={expanded}
-          mode={mode}
-          onEdit={() => setMode('write')}
-          onPreview={showPreview}
-          onWrapSelection={wrapSelection}
-        />
-        <label className="sr-only" htmlFor={fieldId}>
-          Message
-        </label>
-        <MentionCombobox
-          className={
-            mode === 'preview'
-              ? 'hidden'
-              : cn(
-                  'w-full resize-none bg-transparent px-3.5 text-sm leading-relaxed outline-none md:min-h-20 md:py-3 md:pr-3.5',
-                  expanded
-                    ? 'min-h-20 py-3'
-                    : 'h-11 min-h-11 py-2.5 pr-20 md:h-auto',
-                )
-          }
-          id={fieldId}
-          maxLength={MAX_LENGTH}
-          onFocus={() => setExpanded(true)}
-          onKeyDown={onKeyDown}
-          onValueChange={onValueChange}
-          placeholder={
-            placeholder ??
-            (channelId ? `Message #${channelId}` : 'Message channel')
-          }
-          textareaRef={textareaRef}
-          value={value}
-        />
-        {mode === 'preview' ? (
+    <Boundary label="MessageComposer" asChild>
+      <form
+        className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark flex flex-col gap-2 border-t px-3 py-2 md:px-5 md:py-3"
+        onSubmit={onSubmit}
+        ref={formRef}
+      >
+        <div className="border-divider dark:border-divider-dark bg-elevated dark:bg-elevated-dark focus-within:border-accent focus-within:ring-accent/20 relative flex flex-col overflow-hidden rounded-xl border shadow-sm focus-within:ring-2">
+          <FormattingToolbar
+            expanded={expanded}
+            mode={mode}
+            onEdit={() => setMode('write')}
+            onPreview={showPreview}
+            onWrapSelection={wrapSelection}
+          />
+          <label className="sr-only" htmlFor={fieldId}>
+            Message
+          </label>
+          <MentionCombobox
+            className={
+              mode === 'preview'
+                ? 'hidden'
+                : cn(
+                    'w-full resize-none bg-transparent px-3.5 text-sm leading-relaxed outline-none md:min-h-20 md:py-3 md:pr-3.5',
+                    expanded
+                      ? 'min-h-20 py-3'
+                      : 'h-11 min-h-11 py-2.5 pr-20 md:h-auto',
+                  )
+            }
+            id={fieldId}
+            maxLength={MAX_LENGTH}
+            onFocus={() => setExpanded(true)}
+            onKeyDown={onKeyDown}
+            onValueChange={onValueChange}
+            placeholder={
+              placeholder ??
+              (channelId ? `Message #${channelId}` : 'Message channel')
+            }
+            textareaRef={textareaRef}
+            value={value}
+          />
+          {mode === 'preview' ? (
+            <div
+              className="px-3.5 py-3"
+              style={{ minHeight: writeHeight || undefined }}
+            >
+              <MessagePreview body={value.trim()} />
+            </div>
+          ) : null}
           <div
-            className="px-3.5 py-3"
-            style={{ minHeight: writeHeight || undefined }}
+            className={cn(
+              'border-divider dark:border-divider-dark items-center justify-end md:static md:flex md:border-t md:p-1.5',
+              expanded
+                ? 'flex border-t p-1.5'
+                : 'absolute right-1.5 bottom-1.5 flex',
+            )}
           >
-            <MessagePreview body={value.trim()} />
+            <Button className="min-h-8" disabled={!value.trim()} type="submit">
+              Send
+            </Button>
           </div>
-        ) : null}
-        <div
-          className={cn(
-            'border-divider dark:border-divider-dark items-center justify-end md:static md:flex md:border-t md:p-1.5',
-            expanded
-              ? 'flex border-t p-1.5'
-              : 'absolute right-1.5 bottom-1.5 flex',
-          )}
-        >
-          <Button className="min-h-8" disabled={!value.trim()} type="submit">
-            Send
-          </Button>
         </div>
-      </div>
-      {error ? <p className="text-danger text-[0.8125rem]">{error}</p> : null}
-    </form>
+        {error ? <p className="text-danger text-[0.8125rem]">{error}</p> : null}
+      </form>
+    </Boundary>
   )
 }

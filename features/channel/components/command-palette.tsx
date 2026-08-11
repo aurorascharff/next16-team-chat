@@ -13,6 +13,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { Boundary } from '@/components/internal/boundary'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -82,25 +83,27 @@ export function CommandPalette() {
   }
 
   return (
-    <div
-      className="fixed inset-0 z-50 hidden items-start justify-center bg-black/40 px-4 pt-[12vh] backdrop-blur-sm md:flex"
-      onClick={() => {
-        return setOpenPathname(null)
-      }}
-    >
+    <Boundary label="CommandPalette" asChild>
       <div
-        className="bg-surface dark:bg-surface-dark border-divider dark:border-divider-dark w-full max-w-lg overflow-hidden rounded-xl border shadow-2xl"
-        onClick={(event) => {
-          return event.stopPropagation()
+        className="fixed inset-0 z-50 hidden items-start justify-center bg-black/40 px-4 pt-[12vh] backdrop-blur-sm md:flex"
+        onClick={() => {
+          return setOpenPathname(null)
         }}
       >
-        <WorkspaceSearch
-          onActivate={activate}
-          onDismiss={() => setOpenPathname(null)}
-          showShortcut
-        />
+        <div
+          className="bg-surface dark:bg-surface-dark border-divider dark:border-divider-dark w-full max-w-lg overflow-hidden rounded-xl border shadow-2xl"
+          onClick={(event) => {
+            return event.stopPropagation()
+          }}
+        >
+          <WorkspaceSearch
+            onActivate={activate}
+            onDismiss={() => setOpenPathname(null)}
+            showShortcut
+          />
+        </div>
       </div>
-    </div>
+    </Boundary>
   )
 }
 
@@ -113,9 +116,11 @@ export function MobileSearch() {
   }
 
   return (
-    <section className="flex h-[calc(100dvh-3.5rem)] flex-col px-3 pt-3 md:hidden">
-      <WorkspaceSearch onActivate={activate} />
-    </section>
+    <Boundary label="MobileSearch" asChild>
+      <section className="flex h-[calc(100dvh-3.5rem)] flex-col px-3 pt-3 md:hidden">
+        <WorkspaceSearch onActivate={activate} />
+      </section>
+    </Boundary>
   )
 }
 
