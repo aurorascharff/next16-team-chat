@@ -61,7 +61,7 @@ function MobileTabBarShell({
     <Boundary label="MobileTabBar" asChild>
       <nav
         aria-label="Primary"
-        className="border-divider dark:border-divider-dark bg-surface/90 dark:bg-surface-dark/90 fixed inset-x-0 bottom-0 z-40 flex shrink-0 border-t pb-[env(safe-area-inset-bottom)] backdrop-blur-lg md:hidden"
+        className="border-divider dark:border-divider-dark bg-surface/90 dark:bg-surface-dark/90 fixed inset-x-0 bottom-0 z-40 flex shrink-0 border-t pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] backdrop-blur-lg md:hidden"
         style={{ viewTransitionName: 'mobile-nav' }}
       >
         {PRIMARY_NAV.map((item) => {

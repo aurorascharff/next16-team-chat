@@ -18,7 +18,7 @@ import { WorkspaceRail } from '@/features/workspace/components/workspace-rail'
 
 export default function WorkspaceLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex h-[calc(100dvh-3.5rem)] flex-col overflow-hidden md:h-dvh md:flex-row">
+    <div className="flex h-[calc(100dvh-3.5rem-env(safe-area-inset-bottom))] flex-col overflow-hidden pt-[env(safe-area-inset-top)] md:h-dvh md:flex-row">
       <div className="sticky top-0 z-30 hidden h-dvh shrink-0 flex-col md:flex">
         <div className="flex min-h-0 flex-1">
           <WorkspaceRail />
@@ -33,7 +33,7 @@ export default function WorkspaceLayout({ children }: { children: ReactNode }) {
               </Suspense>
               <SearchButton />
               <div className="relative -mx-1 min-h-0 flex-1 overflow-hidden">
-                <div className="h-full [scrollbar-gutter:stable] overflow-y-auto px-1 pt-3 pb-3">
+                <div className="h-full [scrollbar-gutter:stable] overflow-y-auto overscroll-contain px-1 pt-3 pb-3">
                   <ErrorBoundary compact title="Channels unavailable">
                     <Suspense fallback={<ChannelListSkeleton />}>
                       <ChannelList />

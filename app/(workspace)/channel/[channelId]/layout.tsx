@@ -18,7 +18,7 @@ export default function ChannelLayout({
   params,
 }: LayoutProps<'/channel/[channelId]'> & { children: ReactNode }) {
   return (
-    <div className="grid h-dvh grid-rows-[auto_minmax(0,1fr)] max-md:h-[calc(100dvh-3.5rem)]">
+    <div className="grid h-full grid-rows-[auto_minmax(0,1fr)]">
       <Suspense fallback={<ChannelHeaderSkeleton />}>
         {params.then(({ channelId }) => (
           <Crossfade>

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import { Suspense } from 'react'
@@ -21,6 +21,14 @@ import { activityKeys } from '@/features/workspace/workspace-cache'
 import { getUnreadActivity } from '@/features/workspace/workspace-queries'
 import { Providers } from './providers'
 import './globals.css'
+
+export const viewport: Viewport = {
+  themeColor: [
+    { color: '#ffffff', media: '(prefers-color-scheme: light)' },
+    { color: '#0b0b0c', media: '(prefers-color-scheme: dark)' },
+  ],
+  viewportFit: 'cover',
+}
 
 export const metadata: Metadata = {
   applicationName: 'Huddle',

@@ -50,7 +50,7 @@ export function MessageList({
       <Boundary label="MessageList" asChild>
         <section
           aria-label="Messages"
-          className="flex flex-1 flex-col overflow-y-auto py-3"
+          className="flex flex-1 flex-col overflow-y-auto overscroll-contain py-3"
         >
           <EmptyState
             body="Start the room with a note, a handoff, or the thing you want reviewed."
@@ -68,7 +68,7 @@ export function MessageList({
     <Boundary label="MessageList" asChild>
       <section aria-label="Messages" className="relative flex min-h-0 flex-1">
         <div
-          className="flex flex-1 flex-col-reverse overflow-y-auto py-3"
+          className="flex flex-1 flex-col-reverse overflow-y-auto overscroll-contain py-3"
           onScroll={onScroll}
           ref={viewportRef}
         >
