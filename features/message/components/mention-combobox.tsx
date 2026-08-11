@@ -110,6 +110,7 @@ export function MentionCombobox({
       <Ariakit.Combobox
         autoSelect
         className={className}
+        data-component="MentionCombobox"
         id={id}
         maxLength={maxLength}
         render={
@@ -134,6 +135,7 @@ export function MentionCombobox({
       />
       <Ariakit.ComboboxPopover
         className="border-divider dark:border-divider-dark bg-surface dark:bg-elevated-dark z-30 w-56 overflow-hidden rounded-lg border shadow-lg"
+        data-component="MentionPicker"
         gutter={44}
         hidden={!open}
         portal

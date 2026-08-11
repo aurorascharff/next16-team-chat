@@ -169,6 +169,62 @@ body:has([data-user-switching]) nav[aria-label='Channels'] {
   color: var(--color-muted-dark);
 }
 
+/* Client Component boundaries (demo): toggled by the `boundary-mode` class on <html>.
+   In @layer base so Tailwind position/radius utilities win — the outline must never
+   move the element it marks (e.g. an `absolute` play button). */
+@layer base {
+  html.boundary-mode [data-component] {
+    position: relative;
+    border-radius: 6px;
+  }
+
+  /* Sonner portals its toasts outside the tree, so they are matched by their own attribute. */
+  html.boundary-mode :is([data-component], [data-sonner-toast])::before {
+    content: attr(data-component);
+    position: absolute;
+    top: 0;
+    left: 0.5rem;
+    transform: translateY(-100%);
+    z-index: 9999;
+    padding: 1px 6px;
+    border-radius: 4px 4px 0 0;
+    background: #4f6ef7;
+    color: #fff;
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  html.boundary-mode [data-sonner-toast]::before {
+    content: 'Toast';
+  }
+
+  /* Keep labels visible when the marked component intentionally clips overflow. */
+  html.boundary-mode [data-component][data-boundary-label-inside]::before {
+    transform: none;
+    border-radius: 0 0 4px 4px;
+  }
+}
+
+/* Unlayered: the outline has to beat `outline-none` utilities (Ariakit dialogs) and
+   Sonner's injected `[data-sonner-toast] { outline: none }`, which both win over @layer. */
+html.boundary-mode :is([data-component], [data-sonner-toast]) {
+  outline: 2px solid #4f6ef7;
+  outline-offset: -2px;
+}
+
+/* A feature boundary already communicates that its subtree is client-owned. */
+html.boundary-mode [data-component] [data-component] {
+  outline: none;
+}
+
+html.boundary-mode [data-component] [data-component]::before {
+  display: none;
+}
+
 .skeleton-animation:not([class*='rounded-']) {
   border-radius: var(--radius-sm);
 }

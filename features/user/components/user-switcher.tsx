@@ -18,6 +18,7 @@ export function UserSwitcher({ currentUserId }: { currentUserId: string }) {
   return (
     <IconButton
       className="hover:bg-surface dark:hover:bg-elevated-dark disabled:opacity-55"
+      data-component="UserSwitcher"
       data-user-switching={isPending ? '' : undefined}
       disabled={isPending}
       label="Switch user"

@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import { Boundary } from '@/components/internal/boundary'
 import { cn } from '@/lib/utils'
 
 const MIN_WIDTH = 280
@@ -42,29 +43,32 @@ export function ResizablePanel({
   }
 
   return (
-    <div
-      className={cn(
-        'relative hidden min-h-0 shrink-0 overflow-hidden lg:block lg:h-full lg:w-[var(--panel-width)]',
-        className,
-      )}
-      ref={panelRef}
-      style={{ '--panel-width': `${width}px` } as CSSProperties}
-    >
-      <button
-        aria-label="Resize panel"
+    <Boundary label="ResizablePanel" asChild>
+      <div
         className={cn(
-          'absolute top-0 left-0 z-10 h-full w-1 -translate-x-1/2 cursor-col-resize',
-          'before:absolute before:inset-y-0 before:left-1/2 before:w-px before:-translate-x-1/2 before:bg-transparent',
-          'hover:before:bg-accent',
-          dragging && 'before:bg-accent',
+          'relative hidden min-h-0 shrink-0 overflow-hidden lg:block lg:h-full lg:w-[var(--panel-width)]',
+          className,
         )}
-        onPointerDown={(event) => {
-          event.preventDefault()
-          startDragging()
-        }}
-        type="button"
-      />
-      {children}
-    </div>
+        data-boundary-label-inside
+        ref={panelRef}
+        style={{ '--panel-width': `${width}px` } as CSSProperties}
+      >
+        <button
+          aria-label="Resize panel"
+          className={cn(
+            'absolute top-0 left-0 z-10 h-full w-1 -translate-x-1/2 cursor-col-resize',
+            'before:absolute before:inset-y-0 before:left-1/2 before:w-px before:-translate-x-1/2 before:bg-transparent',
+            'hover:before:bg-accent',
+            dragging && 'before:bg-accent',
+          )}
+          onPointerDown={(event) => {
+            event.preventDefault()
+            startDragging()
+          }}
+          type="button"
+        />
+        {children}
+      </div>
+    </Boundary>
   )
 }

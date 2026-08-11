@@ -4,7 +4,8 @@ import { cookies } from 'next/headers'
 
 export const SLOW_COOKIE = 'huddle-slow'
 
+// Artificial latency is opt-in. Read the cookie in uncached query wrappers and
+// pass the result into cached functions so request data becomes part of the key.
 export async function isSlowMode() {
-  const store = await cookies()
-  return store.get(SLOW_COOKIE)?.value === '1'
+  return (await cookies()).has(SLOW_COOKIE)
 }

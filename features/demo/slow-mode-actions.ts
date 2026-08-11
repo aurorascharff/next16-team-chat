@@ -1,7 +1,6 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import { revalidatePath } from 'next/cache'
 import { SLOW_COOKIE } from './slow-mode'
 
 export async function setSlowMode(enabled: boolean) {
@@ -12,6 +11,4 @@ export async function setSlowMode(enabled: boolean) {
   } else {
     store.delete(SLOW_COOKIE)
   }
-
-  revalidatePath('/', 'layout')
 }

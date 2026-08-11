@@ -4,6 +4,7 @@ import type { Route } from 'next'
 import Link from 'next/link'
 import type { ComponentProps } from 'react'
 import { useState } from 'react'
+import { Boundary } from '@/components/internal/boundary'
 import { usePrefetchDefault } from '@/features/demo/use-prefetch-default'
 
 type Props<T extends string = string> = Omit<
@@ -24,22 +25,24 @@ export function HoverPrefetchLink<T extends string>({
   const enabled = usePrefetchDefault() === true
 
   return (
-    <Link
-      {...props}
-      href={href as Route}
-      onFocus={(event) => {
-        setIntent(true)
-        onFocus?.(event)
-      }}
-      onMouseEnter={(event) => {
-        setIntent(true)
-        onMouseEnter?.(event)
-      }}
-      onTouchStart={(event) => {
-        setIntent(true)
-        onTouchStart?.(event)
-      }}
-      prefetch={enabled && intent ? true : null}
-    />
+    <Boundary label="HoverPrefetchLink" asChild>
+      <Link
+        {...props}
+        href={href as Route}
+        onFocus={(event) => {
+          setIntent(true)
+          onFocus?.(event)
+        }}
+        onMouseEnter={(event) => {
+          setIntent(true)
+          onMouseEnter?.(event)
+        }}
+        onTouchStart={(event) => {
+          setIntent(true)
+          onTouchStart?.(event)
+        }}
+        prefetch={enabled && intent ? true : null}
+      />
+    </Boundary>
   )
 }

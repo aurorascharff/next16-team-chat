@@ -2,8 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
-
-const NO_PREFETCH_COOKIE = 'no-prefetch'
+import { NO_PREFETCH_COOKIE } from './demo-queries'
 
 export async function setPrefetchMode(enabled: boolean) {
   const store = await cookies()
@@ -15,9 +14,4 @@ export async function setPrefetchMode(enabled: boolean) {
   }
 
   revalidatePath('/', 'layout')
-}
-
-export async function isPrefetchMode() {
-  const store = await cookies()
-  return !store.has(NO_PREFETCH_COOKIE)
 }

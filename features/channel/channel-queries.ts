@@ -105,8 +105,8 @@ async function listChannelLayout(userId: string) {
 }
 
 export async function getCurrentChannelLayout() {
-  const [user, slow] = await Promise.all([getCurrentUser(), isSlowMode()])
-  const groups = await getChannelLayoutCached(user.id, slow)
+  const user = await getCurrentUser()
+  const groups = await getChannelLayoutCached(user.id, await isSlowMode())
   return { groups, userId: user.id }
 }
 

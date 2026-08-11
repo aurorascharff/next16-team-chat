@@ -3,6 +3,7 @@ import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import { Suspense } from 'react'
 import { preload, SWRConfig } from 'swr'
+import { BoundaryProvider } from '@/components/internal/boundary'
 import { Toaster } from '@/components/ui/toaster'
 import { channelKeys } from '@/features/channel/channel-cache'
 import { CommandPalette } from '@/features/channel/components/command-palette'
@@ -54,29 +55,31 @@ export default function RootLayout({
     >
       <body>
         <Providers>
-          <SWRConfig
-            value={{
-              cacheData: { ...unreadChannels, ...unreadActivity },
-            }}
-          >
-            {children}
-            <Suspense fallback={<MobileTabBarSkeleton />}>
-              <MobileTabBar />
-            </Suspense>
-            <Suspense fallback={null}>
-              <CommandPalette />
-            </Suspense>
-            <UnreadFavicon />
-            <ActivitySync />
-            <BotDriver />
-            <OfflineIndicator />
-            <div className="fixed top-4 right-4 z-50 hidden items-start sm:flex">
-              <Suspense fallback={null}>
-                <DemoToolbar />
+          <BoundaryProvider>
+            <SWRConfig
+              value={{
+                cacheData: { ...unreadChannels, ...unreadActivity },
+              }}
+            >
+              {children}
+              <Suspense fallback={<MobileTabBarSkeleton />}>
+                <MobileTabBar />
               </Suspense>
-            </div>
-            <Toaster />
-          </SWRConfig>
+              <Suspense fallback={null}>
+                <CommandPalette />
+              </Suspense>
+              <UnreadFavicon />
+              <ActivitySync />
+              <BotDriver />
+              <OfflineIndicator />
+              <div className="fixed top-4 right-4 z-50 hidden items-start sm:flex">
+                <Suspense fallback={null}>
+                  <DemoToolbar />
+                </Suspense>
+              </div>
+              <Toaster />
+            </SWRConfig>
+          </BoundaryProvider>
         </Providers>
       </body>
     </html>
