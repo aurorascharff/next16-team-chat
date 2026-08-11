@@ -14,7 +14,7 @@ A "Slack"-like team chat demo built with [Next.js 16.3 Cache Components](https:/
 
 ---
 
-The architecture follows the [Next.js App Architecture](https://github.com/aurorascharff/skills/tree/main/skills/nextjs-app-architecture) skill and the [Component Architecture for React Server Components](https://aurorascharff.no/posts/component-architecture-for-react-server-components/) blog post.
+The architecture follows the [Next.js App Architecture](https://github.com/aurorascharff/nextjs-app-architeture-skill) skill and the [Component Architecture for React Server Components](https://aurorascharff.no/posts/component-architecture-for-react-server-components/) blog post.
 
 ## Client data
 
