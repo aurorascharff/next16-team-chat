@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import { Suspense } from 'react'
@@ -16,6 +16,14 @@ import {
 import { UnreadFavicon } from '@/features/workspace/components/unread-favicon'
 import { Providers } from './providers'
 import './globals.css'
+
+export const viewport: Viewport = {
+  themeColor: [
+    { color: '#ffffff', media: '(prefers-color-scheme: light)' },
+    { color: '#0b0b0c', media: '(prefers-color-scheme: dark)' },
+  ],
+  viewportFit: 'cover',
+}
 
 export const metadata: Metadata = {
   applicationName: 'Huddle',

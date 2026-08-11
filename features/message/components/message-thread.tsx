@@ -51,7 +51,7 @@ export function MessageThreadSkeleton() {
     <section
       aria-hidden
       aria-label="Messages"
-      className="flex flex-1 flex-col-reverse overflow-y-auto py-3"
+      className="flex flex-1 flex-col-reverse overflow-y-auto overscroll-contain py-3"
     >
       <div className="flex flex-col opacity-45">
         {Array.from({ length: 4 }).map((_, i) => {

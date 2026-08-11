@@ -117,7 +117,7 @@ export function MobileSearch() {
 
   return (
     <Boundary label="MobileSearch" asChild>
-      <section className="flex h-[calc(100dvh-3.5rem)] flex-col px-3 pt-3 md:hidden">
+      <section className="flex h-[calc(100dvh-3.5rem-env(safe-area-inset-bottom))] flex-col px-3 pt-[max(0.75rem,env(safe-area-inset-top))] md:hidden">
         <WorkspaceSearch onActivate={activate} />
       </section>
     </Boundary>
