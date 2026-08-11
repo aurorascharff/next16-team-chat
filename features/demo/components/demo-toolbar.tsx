@@ -1,4 +1,4 @@
-import { isPrefetchMode } from '@/features/demo/prefetch-actions'
+import { isPrefetchMode } from '@/features/demo/demo-queries'
 import { isSlowMode } from '@/features/demo/slow-mode'
 import { DemoToolbarClient } from './demo-toolbar-client'
 
