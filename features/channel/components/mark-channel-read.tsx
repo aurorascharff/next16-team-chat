@@ -3,12 +3,19 @@
 import { useEffect } from 'react'
 import { useMarkChannelRead } from '@/features/channel/hooks/use-mark-channel-read'
 
-export function MarkChannelRead({ channelId }: { channelId: string }) {
+export function MarkChannelRead({
+  channelId,
+  hasUnread,
+}: {
+  channelId: string
+  hasUnread: boolean
+}) {
   const { mutate } = useMarkChannelRead()
 
   useEffect(() => {
+    if (!hasUnread) return
     mutate(channelId)
-  }, [channelId, mutate])
+  }, [channelId, hasUnread, mutate])
 
   return null
 }

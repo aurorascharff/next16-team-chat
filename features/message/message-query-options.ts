@@ -16,7 +16,6 @@ export function messagesQueryOptions(channelId: string) {
     },
     queryKey: messageKeys.channel(channelId),
     refetchInterval: 10_000,
-    refetchOnMount: 'always',
     staleTime: Infinity,
   })
 }
