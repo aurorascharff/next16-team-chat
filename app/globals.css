@@ -281,13 +281,19 @@ html.boundary-mode [data-component] [data-component]::before {
   animation: none;
 }
 
-::view-transition-group(mobile-nav) {
+::view-transition-group(mobile-nav),
+::view-transition-group(demo-toolbar) {
   animation: none;
   z-index: 100;
 }
 ::view-transition-old(mobile-nav),
-::view-transition-new(mobile-nav) {
+::view-transition-new(mobile-nav),
+::view-transition-new(demo-toolbar) {
   animation: none;
+}
+
+::view-transition-old(demo-toolbar) {
+  display: none;
 }
 
 ::view-transition-group(activity-header) {
