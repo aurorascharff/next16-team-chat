@@ -14,7 +14,7 @@ import {
 } from '@/features/channel/utils/channel-layout-reducer'
 import { verifyAuth } from '@/features/user/user-queries'
 
-export async function channelLayoutReducer(
+export async function saveChannelLayout(
   groups: LayoutGroup[],
   change: LayoutChange,
 ): Promise<LayoutGroup[]> {

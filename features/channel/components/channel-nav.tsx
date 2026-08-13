@@ -10,7 +10,7 @@ import {
 } from 'react'
 import { Boundary } from '@/components/internal/boundary'
 import { Input } from '@/components/ui/input'
-import { channelLayoutReducer } from '@/features/channel/channel-actions'
+import { saveChannelLayout } from '@/features/channel/channel-actions'
 import {
   applyLayoutChange,
   type LayoutChange,
@@ -25,7 +25,7 @@ type Props = {
 }
 
 export function ChannelNav({ groups: initialGroups }: Props) {
-  const [groups, dispatch] = useActionState(channelLayoutReducer, initialGroups)
+  const [groups, dispatch] = useActionState(saveChannelLayout, initialGroups)
   const [optimisticGroups, addOptimistic] = useOptimistic(
     groups,
     applyLayoutChange,
