@@ -7,7 +7,7 @@ import {
   reorderChannels,
 } from '@/features/channel/channel-queries'
 import {
-  applyLayoutChange,
+  channelLayoutReducer,
   type LayoutChange,
   type LayoutGroup,
   toLayoutPayload,
@@ -19,7 +19,7 @@ export async function saveChannelLayout(
   change: LayoutChange,
 ): Promise<LayoutGroup[]> {
   const user = await verifyAuth()
-  const next = applyLayoutChange(groups, change)
+  const next = channelLayoutReducer(groups, change)
   await reorderChannels(user.id, toLayoutPayload(next))
   updateTag(channelTags.user(user.id))
   return next

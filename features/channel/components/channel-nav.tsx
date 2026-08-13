@@ -12,7 +12,7 @@ import { Boundary } from '@/components/internal/boundary'
 import { Input } from '@/components/ui/input'
 import { saveChannelLayout } from '@/features/channel/channel-actions'
 import {
-  applyLayoutChange,
+  channelLayoutReducer,
   type LayoutChange,
   type LayoutGroup,
   UNGROUPED,
@@ -28,7 +28,7 @@ export function ChannelNav({ groups: initialGroups }: Props) {
   const [groups, dispatch] = useActionState(saveChannelLayout, initialGroups)
   const [optimisticGroups, addOptimistic] = useOptimistic(
     groups,
-    applyLayoutChange,
+    channelLayoutReducer,
   )
   const dragging = useRef<{ groupName: string; channelId: string } | null>(null)
   const [overGroup, setOverGroup] = useState<string | null>(null)

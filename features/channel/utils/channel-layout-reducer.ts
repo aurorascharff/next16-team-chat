@@ -30,7 +30,7 @@ function withUngroupedLast(groups: LayoutGroup[]): LayoutGroup[] {
   return ungrouped ? [...named, ungrouped] : named
 }
 
-export function applyLayoutChange(
+export function channelLayoutReducer(
   groups: LayoutGroup[],
   change: LayoutChange,
 ): LayoutGroup[] {
