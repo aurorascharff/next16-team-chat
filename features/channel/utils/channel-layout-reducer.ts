@@ -12,7 +12,7 @@ export type LayoutGroup = {
   channels: LayoutChannel[]
 }
 
-export type LayoutAction =
+export type LayoutChange =
   | {
       type: 'move'
       channelId: string
@@ -30,55 +30,55 @@ function withUngroupedLast(groups: LayoutGroup[]): LayoutGroup[] {
   return ungrouped ? [...named, ungrouped] : named
 }
 
-export function applyLayoutAction(
+export function applyLayoutChange(
   groups: LayoutGroup[],
-  action: LayoutAction,
+  change: LayoutChange,
 ): LayoutGroup[] {
-  switch (action.type) {
+  switch (change.type) {
     case 'move': {
       const next = groups.map((group) => {
         return {
           ...group,
           channels: group.channels.filter(
-            (channel) => channel.id !== action.channelId,
+            (channel) => channel.id !== change.channelId,
           ),
         }
       })
       const moved = groups
         .flatMap((group) => group.channels)
-        .find((channel) => channel.id === action.channelId)
+        .find((channel) => channel.id === change.channelId)
       if (!moved) return groups
-      const target = next.find((group) => group.name === action.toGroup)
+      const target = next.find((group) => group.name === change.toGroup)
       if (!target) return groups
       const index = Math.max(
         0,
-        Math.min(action.toIndex, target.channels.length),
+        Math.min(change.toIndex, target.channels.length),
       )
       target.channels.splice(index, 0, moved)
       return next
     }
     case 'addGroup': {
-      if (groups.some((group) => group.name === action.name)) return groups
-      return withUngroupedLast([...groups, { channels: [], name: action.name }])
+      if (groups.some((group) => group.name === change.name)) return groups
+      return withUngroupedLast([...groups, { channels: [], name: change.name }])
     }
     case 'renameGroup': {
-      const to = action.to.trim()
+      const to = change.to.trim()
       if (
         !to ||
         to === UNGROUPED ||
-        action.from === UNGROUPED ||
+        change.from === UNGROUPED ||
         groups.some((group) => group.name === to)
       ) {
         return groups
       }
       return groups.map((group) => {
-        return group.name === action.from ? { ...group, name: to } : group
+        return group.name === change.from ? { ...group, name: to } : group
       })
     }
     case 'deleteGroup': {
-      const target = groups.find((group) => group.name === action.name)
-      if (!target || action.name === UNGROUPED) return groups
-      const remaining = groups.filter((group) => group.name !== action.name)
+      const target = groups.find((group) => group.name === change.name)
+      if (!target || change.name === UNGROUPED) return groups
+      const remaining = groups.filter((group) => group.name !== change.name)
       const existing = remaining.find((group) => group.name === UNGROUPED)
       const ungrouped: LayoutGroup = {
         channels: [...(existing?.channels ?? []), ...target.channels],
@@ -92,11 +92,11 @@ export function applyLayoutAction(
       return withUngroupedLast(next)
     }
     case 'moveGroup': {
-      if (action.name === UNGROUPED) return groups
+      if (change.name === UNGROUPED) return groups
       const movable = groups.filter((group) => group.name !== UNGROUPED)
-      const index = movable.findIndex((group) => group.name === action.name)
+      const index = movable.findIndex((group) => group.name === change.name)
       if (index === -1) return groups
-      const target = action.direction === 'up' ? index - 1 : index + 1
+      const target = change.direction === 'up' ? index - 1 : index + 1
       if (target < 0 || target >= movable.length) return groups
       const next = [...movable]
       ;[next[index], next[target]] = [next[target], next[index]]

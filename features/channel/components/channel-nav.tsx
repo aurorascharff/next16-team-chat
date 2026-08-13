@@ -12,8 +12,8 @@ import { Boundary } from '@/components/internal/boundary'
 import { Input } from '@/components/ui/input'
 import { channelLayoutReducer } from '@/features/channel/channel-actions'
 import {
-  applyLayoutAction,
-  type LayoutAction,
+  applyLayoutChange,
+  type LayoutChange,
   type LayoutGroup,
   UNGROUPED,
 } from '@/features/channel/utils/channel-layout-reducer'
@@ -28,16 +28,16 @@ export function ChannelNav({ groups: initialGroups }: Props) {
   const [groups, dispatch] = useActionState(channelLayoutReducer, initialGroups)
   const [optimisticGroups, addOptimistic] = useOptimistic(
     groups,
-    applyLayoutAction,
+    applyLayoutChange,
   )
   const dragging = useRef<{ groupName: string; channelId: string } | null>(null)
   const [overGroup, setOverGroup] = useState<string | null>(null)
   const [editingName, setEditingName] = useState<string | null>(null)
 
-  function runAction(action: LayoutAction) {
+  function runChange(change: LayoutChange) {
     startTransition(() => {
-      addOptimistic(action)
-      dispatch(action)
+      addOptimistic(change)
+      dispatch(change)
     })
   }
 
@@ -48,23 +48,23 @@ export function ChannelNav({ groups: initialGroups }: Props) {
       index += 1
       name = `New group ${index}`
     }
-    runAction({ name, type: 'addGroup' })
+    runChange({ name, type: 'addGroup' })
     setEditingName(name)
   }
 
   function deleteGroup(name: string) {
-    runAction({ name, type: 'deleteGroup' })
+    runChange({ name, type: 'deleteGroup' })
   }
 
   function renameGroup(oldName: string, rawName: string) {
     setEditingName(null)
     const name = rawName.trim()
     if (!name || name === oldName) return
-    runAction({ from: oldName, to: name, type: 'renameGroup' })
+    runChange({ from: oldName, to: name, type: 'renameGroup' })
   }
 
   function moveGroup(name: string, direction: 'up' | 'down') {
-    runAction({ direction, name, type: 'moveGroup' })
+    runChange({ direction, name, type: 'moveGroup' })
   }
 
   const movableGroups = optimisticGroups.filter(
@@ -102,7 +102,7 @@ export function ChannelNav({ groups: initialGroups }: Props) {
                 const state = dragging.current
                 if (!state) return
                 event.preventDefault()
-                runAction({
+                runChange({
                   channelId: state.channelId,
                   toGroup: group.name,
                   toIndex: group.channels.length,
@@ -262,7 +262,7 @@ export function ChannelNav({ groups: initialGroups }: Props) {
                           fromIndex < channelIndex
                             ? channelIndex - 1
                             : channelIndex
-                        runAction({
+                        runChange({
                           channelId: state.channelId,
                           toGroup: group.name,
                           toIndex,
