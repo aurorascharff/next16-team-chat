@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { toast } from 'sonner'
 import { Boundary } from '@/components/internal/boundary'
 import { Input } from '@/components/ui/input'
 import { saveChannelLayout } from '@/features/channel/channel-actions'
@@ -25,7 +26,17 @@ type Props = {
 }
 
 export function ChannelNav({ groups: initialGroups }: Props) {
-  const [groups, dispatch] = useActionState(saveChannelLayout, initialGroups)
+  const [groups, dispatch] = useActionState(
+    async (groups: LayoutGroup[], change: LayoutChange) => {
+      try {
+        return await saveChannelLayout(groups, change)
+      } catch {
+        toast.error('Could not save channel layout. Try again.')
+        return groups
+      }
+    },
+    initialGroups,
+  )
   const [optimisticGroups, addOptimistic] = useOptimistic(
     groups,
     channelLayoutReducer,
