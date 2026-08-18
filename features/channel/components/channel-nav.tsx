@@ -27,12 +27,12 @@ type Props = {
 
 export function ChannelNav({ groups: initialGroups }: Props) {
   const [groups, dispatch] = useActionState(
-    async (groups: LayoutGroup[], change: LayoutChange) => {
+    async (previousGroups: LayoutGroup[], change: LayoutChange) => {
       try {
-        return await saveChannelLayout(groups, change)
+        return await saveChannelLayout(previousGroups, change)
       } catch {
         toast.error('Could not save channel layout. Try again.')
-        return groups
+        return previousGroups
       }
     },
     initialGroups,
