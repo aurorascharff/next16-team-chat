@@ -39,7 +39,7 @@ export async function searchUsers(query: string): Promise<User[]> {
 export async function getCurrentUser(): Promise<User> {
   'use cache: private'
   cacheTag(userTags.current)
-  cacheLife({ stale: 60 })
+  cacheLife({ stale: Infinity })
   const cookieStore = await cookies()
   const userId = cookieStore.get(SESSION_COOKIE)?.value
   const users = await getUsers()
