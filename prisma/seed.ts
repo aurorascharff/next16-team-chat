@@ -185,14 +185,14 @@ const messages = [
     'm-8',
     'team-frontend',
     'ada',
-    'The hover case is separate. The costly path here is full runtime prefetch on every visible link.',
+    'The hover case is separate. The costly path here is a full prefetch on every visible link.',
     '2026-07-29T13:03:00.000Z',
   ],
   [
     'm-9',
     'team-frontend',
     'grace',
-    'I linked the runtime prefetching guide and kept the warning short. No need to copy the docs into the skill.',
+    'I linked the optimizing prefetching guide and kept the warning short. No need to copy the docs into the skill.',
     '2026-07-29T13:06:00.000Z',
   ],
   [
