@@ -3,6 +3,7 @@ import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import { Suspense } from 'react'
 import { BoundaryProvider } from '@/components/internal/boundary'
+import { AnimatedSuspense } from '@/components/ui/animated-suspense'
 import { Toaster } from '@/components/ui/toaster'
 import { CommandPalette } from '@/features/channel/components/command-palette'
 import { BotDriver } from '@/features/demo/components/bot-driver'
@@ -57,9 +58,9 @@ export default function RootLayout({
         <Providers>
           <BoundaryProvider>
             {children}
-            <Suspense fallback={<MobileTabBarSkeleton />}>
+            <AnimatedSuspense fallback={<MobileTabBarSkeleton />}>
               <MobileTabBar />
-            </Suspense>
+            </AnimatedSuspense>
             <Suspense fallback={null}>
               <CommandPalette />
             </Suspense>

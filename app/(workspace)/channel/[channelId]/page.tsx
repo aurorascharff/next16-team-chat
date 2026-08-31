@@ -1,5 +1,4 @@
-import { Suspense } from 'react'
-import { Crossfade } from '@/components/ui/crossfade'
+import { AnimatedSuspense } from '@/components/ui/animated-suspense'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import {
   ChannelDetails,
@@ -27,13 +26,11 @@ export default function ChannelPage({
 }: PageProps<'/channel/[channelId]'>) {
   return (
     <ErrorBoundary title="Channel details unavailable">
-      <Suspense fallback={<ChannelDetailsSkeleton />}>
-        <Crossfade>
-          {params.then(({ channelId }) => (
-            <ChannelDetails channelId={channelId} />
-          ))}
-        </Crossfade>
-      </Suspense>
+      <AnimatedSuspense fallback={<ChannelDetailsSkeleton />}>
+        {params.then(({ channelId }) => (
+          <ChannelDetails channelId={channelId} />
+        ))}
+      </AnimatedSuspense>
     </ErrorBoundary>
   )
 }

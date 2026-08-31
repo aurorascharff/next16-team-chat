@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
-import { Suspense } from 'react'
-import { Crossfade } from '@/components/ui/crossfade'
+import { AnimatedSuspense } from '@/components/ui/animated-suspense'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import { ResizablePanel } from '@/components/ui/resizable-panel'
 import {
@@ -19,23 +18,19 @@ export default function ChannelLayout({
 }: LayoutProps<'/channel/[channelId]'> & { children: ReactNode }) {
   return (
     <div className="grid h-full grid-rows-[auto_minmax(0,1fr)]">
-      <Suspense fallback={<ChannelHeaderSkeleton />}>
+      <AnimatedSuspense fallback={<ChannelHeaderSkeleton />}>
         {params.then(({ channelId }) => (
-          <Crossfade>
-            <ChannelHeader channelId={channelId} />
-          </Crossfade>
+          <ChannelHeader channelId={channelId} />
         ))}
-      </Suspense>
+      </AnimatedSuspense>
       <div className="flex min-h-0 lg:grid lg:grid-cols-[minmax(0,1fr)_auto]">
         <div className="grid min-h-0 min-w-0 flex-1 grid-rows-[minmax(0,1fr)_auto]">
           <ErrorBoundary title="Messages unavailable">
-            <Suspense fallback={<MessageThreadSkeleton />}>
-              <Crossfade>
-                {params.then(({ channelId }) => (
-                  <MessageThread channelId={channelId} />
-                ))}
-              </Crossfade>
-            </Suspense>
+            <AnimatedSuspense fallback={<MessageThreadSkeleton />}>
+              {params.then(({ channelId }) => (
+                <MessageThread channelId={channelId} />
+              ))}
+            </AnimatedSuspense>
           </ErrorBoundary>
           <MessageComposer />
         </div>

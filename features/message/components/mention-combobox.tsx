@@ -4,7 +4,8 @@ import * as Ariakit from '@ariakit/react'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import type { KeyboardEvent, RefObject } from 'react'
-import { Suspense, useDeferredValue } from 'react'
+import { useDeferredValue } from 'react'
+import { AnimatedSuspense } from '@/components/ui/animated-suspense'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import { Textarea } from '@/components/ui/textarea'
 import { UserAvatar } from '@/components/ui/user-avatar'
@@ -145,14 +146,14 @@ export function MentionCombobox({
         unmountOnHide
       >
         <ErrorBoundary compact title="Couldn’t load people">
-          <Suspense fallback={<MentionResultsFallback />}>
+          <AnimatedSuspense fallback={<MentionResultsFallback />}>
             <div className={isStale ? 'opacity-60 transition-opacity' : ''}>
               <MentionResults
                 onSelect={onSelectMention}
                 query={deferredSearch}
               />
             </div>
-          </Suspense>
+          </AnimatedSuspense>
         </ErrorBoundary>
       </Ariakit.ComboboxPopover>
     </>

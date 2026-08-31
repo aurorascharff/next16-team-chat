@@ -6,7 +6,6 @@ import type { Route } from 'next'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   type Ref,
-  Suspense,
   useDeferredValue,
   useEffect,
   useImperativeHandle,
@@ -14,6 +13,7 @@ import {
   useState,
 } from 'react'
 import { Boundary } from '@/components/internal/boundary'
+import { AnimatedSuspense } from '@/components/ui/animated-suspense'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -206,7 +206,7 @@ function ClientSearchResults({
   if (!mounted) return <WorkspaceSearchResultsFallbackList />
 
   return (
-    <Suspense fallback={<WorkspaceSearchResultsFallbackList />}>
+    <AnimatedSuspense fallback={<WorkspaceSearchResultsFallbackList />}>
       <WorkspaceSearchResults
         isStale={isStale}
         key={query}
@@ -214,7 +214,7 @@ function ClientSearchResults({
         query={query}
         ref={ref}
       />
-    </Suspense>
+    </AnimatedSuspense>
   )
 }
 

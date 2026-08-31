@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+import { AnimatedSuspense } from '@/components/ui/animated-suspense'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import {
@@ -20,9 +20,9 @@ export default function ChannelsPage() {
       <div className="flex min-h-0 flex-col gap-4 p-3 md:hidden">
         <WorkspaceNav />
         <ErrorBoundary compact title="Channels unavailable">
-          <Suspense fallback={<ChannelListSkeleton />}>
+          <AnimatedSuspense fallback={<ChannelListSkeleton />}>
             <ChannelList />
-          </Suspense>
+          </AnimatedSuspense>
         </ErrorBoundary>
       </div>
       <div className="hidden h-full items-center justify-center md:flex">
