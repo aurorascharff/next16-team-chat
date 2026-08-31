@@ -11,10 +11,7 @@ import {
 } from '@/features/user/components/current-user-card'
 import { ChannelSidebar } from '@/features/workspace/components/channel-sidebar'
 import { SearchButton } from '@/features/workspace/components/search-button'
-import {
-  WorkspaceNav,
-  WorkspaceNavSkeleton,
-} from '@/features/workspace/components/workspace-nav'
+import { WorkspaceNav } from '@/features/workspace/components/workspace-nav'
 import { WorkspaceRail } from '@/features/workspace/components/workspace-rail'
 
 export default function WorkspaceLayout({ children }: { children: ReactNode }) {
@@ -29,9 +26,7 @@ export default function WorkspaceLayout({ children }: { children: ReactNode }) {
             }
           >
             <ChannelSidebar>
-              <Suspense fallback={<WorkspaceNavSkeleton />}>
-                <WorkspaceNav />
-              </Suspense>
+              <WorkspaceNav />
               <SearchButton />
               <div className="relative -mx-1 min-h-0 flex-1 overflow-hidden">
                 <div className="h-full [scrollbar-gutter:stable] overflow-y-auto overscroll-contain px-1 pt-3 pb-3">
@@ -56,7 +51,9 @@ export default function WorkspaceLayout({ children }: { children: ReactNode }) {
           </Suspense>
         </div>
         <Suspense fallback={<CurrentUserCardSkeleton />}>
-          <CurrentUserCard />
+          <Crossfade>
+            <CurrentUserCard />
+          </Crossfade>
         </Suspense>
       </div>
       <main className="min-h-0 min-w-0 flex-1 overflow-hidden">{children}</main>
