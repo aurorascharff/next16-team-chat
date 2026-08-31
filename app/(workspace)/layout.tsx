@@ -1,4 +1,5 @@
 import { Suspense, type ReactNode } from 'react'
+import { Crossfade } from '@/components/ui/crossfade'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import {
   ChannelList,
@@ -36,7 +37,9 @@ export default function WorkspaceLayout({ children }: { children: ReactNode }) {
                 <div className="h-full [scrollbar-gutter:stable] overflow-y-auto overscroll-contain px-1 pt-3 pb-3">
                   <ErrorBoundary compact title="Channels unavailable">
                     <Suspense fallback={<ChannelListSkeleton />}>
-                      <ChannelList />
+                      <Crossfade>
+                        <ChannelList />
+                      </Crossfade>
                     </Suspense>
                   </ErrorBoundary>
                 </div>
