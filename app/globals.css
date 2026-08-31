@@ -62,6 +62,22 @@
   animation: message-highlight 1.6s ease-out;
 }
 
+@keyframes channel-link-active {
+  from {
+    background-color: transparent;
+  }
+}
+
+.channel-link-active {
+  animation: channel-link-active 180ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .channel-link-active {
+    animation: none;
+  }
+}
+
 @media (width < 64rem) {
   .channel-route-panel:has(
     > [data-thread-panel]:not([style*='display: none'])
