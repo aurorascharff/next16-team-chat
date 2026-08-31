@@ -23,21 +23,3 @@ export function WorkspaceNav() {
     </div>
   )
 }
-
-export function WorkspaceNavSkeleton() {
-  return (
-    <div className="flex items-center justify-between gap-2">
-      <span className="flex items-center gap-2.5 p-1.5">
-        <HuddleMark className="size-7" />
-        <span className="flex flex-col leading-tight">
-          <strong className="text-[0.9375rem] font-semibold tracking-tight">
-            Huddle
-          </strong>
-          <small className="text-muted dark:text-muted-dark text-xs">
-            Team workspace
-          </small>
-        </span>
-      </span>
-    </div>
-  )
-}

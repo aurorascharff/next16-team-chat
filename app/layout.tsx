@@ -4,6 +4,7 @@ import { GeistSans } from 'geist/font/sans'
 import { Suspense } from 'react'
 import { preload, SWRConfig } from 'swr'
 import { BoundaryProvider } from '@/components/internal/boundary'
+import { AnimatedSuspense } from '@/components/ui/animated-suspense'
 import { Toaster } from '@/components/ui/toaster'
 import { channelKeys } from '@/features/channel/channel-cache'
 import { CommandPalette } from '@/features/channel/components/command-palette'
@@ -70,9 +71,9 @@ export default function RootLayout({
               }}
             >
               {children}
-              <Suspense fallback={<MobileTabBarSkeleton />}>
+              <AnimatedSuspense fallback={<MobileTabBarSkeleton />}>
                 <MobileTabBar />
-              </Suspense>
+              </AnimatedSuspense>
               <Suspense fallback={null}>
                 <CommandPalette />
               </Suspense>

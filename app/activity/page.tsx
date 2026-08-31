@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+import { AnimatedSuspense } from '@/components/ui/animated-suspense'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import {
   ActivityList,
@@ -27,9 +27,9 @@ export default function ActivityPage() {
         </p>
       </header>
       <ErrorBoundary title="Activity unavailable">
-        <Suspense fallback={<ActivityListSkeleton />}>
+        <AnimatedSuspense fallback={<ActivityListSkeleton />}>
           <ActivityList />
-        </Suspense>
+        </AnimatedSuspense>
       </ErrorBoundary>
     </section>
   )

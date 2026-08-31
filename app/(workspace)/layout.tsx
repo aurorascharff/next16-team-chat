@@ -1,4 +1,5 @@
-import { Suspense, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
+import { AnimatedSuspense } from '@/components/ui/animated-suspense'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import {
   ChannelList,
@@ -10,10 +11,7 @@ import {
 } from '@/features/user/components/current-user-card'
 import { ChannelSidebar } from '@/features/workspace/components/channel-sidebar'
 import { SearchButton } from '@/features/workspace/components/search-button'
-import {
-  WorkspaceNav,
-  WorkspaceNavSkeleton,
-} from '@/features/workspace/components/workspace-nav'
+import { WorkspaceNav } from '@/features/workspace/components/workspace-nav'
 import { WorkspaceRail } from '@/features/workspace/components/workspace-rail'
 
 export default function WorkspaceLayout({ children }: { children: ReactNode }) {
@@ -22,39 +20,31 @@ export default function WorkspaceLayout({ children }: { children: ReactNode }) {
       <div className="sticky top-0 z-30 hidden h-dvh shrink-0 flex-col md:flex">
         <div className="flex min-h-0 flex-1">
           <WorkspaceRail />
-          <Suspense
-            fallback={
-              <div className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark h-full w-64 shrink-0 border-r" />
-            }
-          >
-            <ChannelSidebar>
-              <Suspense fallback={<WorkspaceNavSkeleton />}>
-                <WorkspaceNav />
-              </Suspense>
-              <SearchButton />
-              <div className="relative -mx-1 min-h-0 flex-1 overflow-hidden">
-                <div className="h-full [scrollbar-gutter:stable] overflow-y-auto overscroll-contain px-1 pt-3 pb-3">
-                  <ErrorBoundary compact title="Channels unavailable">
-                    <Suspense fallback={<ChannelListSkeleton />}>
-                      <ChannelList />
-                    </Suspense>
-                  </ErrorBoundary>
-                </div>
-                <div
-                  aria-hidden
-                  className="from-surface dark:from-surface-dark pointer-events-none absolute inset-x-0 top-0 h-5 bg-gradient-to-b to-transparent"
-                />
-                <div
-                  aria-hidden
-                  className="from-surface dark:from-surface-dark pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t to-transparent"
-                />
+          <ChannelSidebar>
+            <WorkspaceNav />
+            <SearchButton />
+            <div className="relative -mx-1 min-h-0 flex-1 overflow-hidden">
+              <div className="h-full [scrollbar-gutter:stable] overflow-y-auto overscroll-contain px-1 pt-3 pb-3">
+                <ErrorBoundary compact title="Channels unavailable">
+                  <AnimatedSuspense fallback={<ChannelListSkeleton />}>
+                    <ChannelList />
+                  </AnimatedSuspense>
+                </ErrorBoundary>
               </div>
-            </ChannelSidebar>
-          </Suspense>
+              <div
+                aria-hidden
+                className="from-surface dark:from-surface-dark pointer-events-none absolute inset-x-0 top-0 h-5 bg-gradient-to-b to-transparent"
+              />
+              <div
+                aria-hidden
+                className="from-surface dark:from-surface-dark pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t to-transparent"
+              />
+            </div>
+          </ChannelSidebar>
         </div>
-        <Suspense fallback={<CurrentUserCardSkeleton />}>
+        <AnimatedSuspense fallback={<CurrentUserCardSkeleton />}>
           <CurrentUserCard />
-        </Suspense>
+        </AnimatedSuspense>
       </div>
       <main className="min-h-0 min-w-0 flex-1 overflow-hidden">{children}</main>
     </div>

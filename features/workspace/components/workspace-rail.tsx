@@ -1,5 +1,5 @@
 import type { Route } from 'next'
-import { Suspense } from 'react'
+import { AnimatedSuspense } from '@/components/ui/animated-suspense'
 import { listChannelsForUser } from '@/features/channel/channel-queries'
 import { getCurrentUser } from '@/features/user/user-queries'
 import {
@@ -30,12 +30,16 @@ export function WorkspaceRail() {
       aria-label="Primary"
       className="border-divider dark:border-divider-dark bg-elevated dark:bg-elevated-dark flex h-full w-18 shrink-0 flex-col items-center gap-1 border-r pt-3"
     >
-      <Suspense fallback={<WorkspaceRailLinkSkeleton item={homeItem('/')} />}>
+      <AnimatedSuspense
+        fallback={<WorkspaceRailLinkSkeleton item={homeItem('/')} />}
+      >
         <HomeRailLink />
-      </Suspense>
-      <Suspense fallback={<WorkspaceRailLinkShell item={ACTIVITY_ITEM} />}>
+      </AnimatedSuspense>
+      <AnimatedSuspense
+        fallback={<WorkspaceRailLinkShell item={ACTIVITY_ITEM} />}
+      >
         <WorkspaceRailLink item={ACTIVITY_ITEM} />
-      </Suspense>
+      </AnimatedSuspense>
     </nav>
   )
 }
