@@ -9,10 +9,7 @@ import {
   CurrentUserCard,
   CurrentUserCardSkeleton,
 } from '@/features/user/components/current-user-card'
-import {
-  ChannelSidebar,
-  ChannelSidebarSkeleton,
-} from '@/features/workspace/components/channel-sidebar'
+import { ChannelSidebar } from '@/features/workspace/components/channel-sidebar'
 import { SearchButton } from '@/features/workspace/components/search-button'
 import { WorkspaceNav } from '@/features/workspace/components/workspace-nav'
 import { WorkspaceRail } from '@/features/workspace/components/workspace-rail'
@@ -23,31 +20,29 @@ export default function WorkspaceLayout({ children }: { children: ReactNode }) {
       <div className="sticky top-0 z-30 hidden h-dvh shrink-0 flex-col md:flex">
         <div className="flex min-h-0 flex-1">
           <WorkspaceRail />
-          <Suspense fallback={<ChannelSidebarSkeleton />}>
-            <ChannelSidebar>
-              <WorkspaceNav />
-              <SearchButton />
-              <div className="relative -mx-1 min-h-0 flex-1 overflow-hidden">
-                <div className="h-full [scrollbar-gutter:stable] overflow-y-auto overscroll-contain px-1 pt-3 pb-3">
-                  <ErrorBoundary compact title="Channels unavailable">
-                    <Suspense fallback={<ChannelListSkeleton />}>
-                      <Crossfade>
-                        <ChannelList />
-                      </Crossfade>
-                    </Suspense>
-                  </ErrorBoundary>
-                </div>
-                <div
-                  aria-hidden
-                  className="from-surface dark:from-surface-dark pointer-events-none absolute inset-x-0 top-0 h-5 bg-gradient-to-b to-transparent"
-                />
-                <div
-                  aria-hidden
-                  className="from-surface dark:from-surface-dark pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t to-transparent"
-                />
+          <ChannelSidebar>
+            <WorkspaceNav />
+            <SearchButton />
+            <div className="relative -mx-1 min-h-0 flex-1 overflow-hidden">
+              <div className="h-full [scrollbar-gutter:stable] overflow-y-auto overscroll-contain px-1 pt-3 pb-3">
+                <ErrorBoundary compact title="Channels unavailable">
+                  <Suspense fallback={<ChannelListSkeleton />}>
+                    <Crossfade>
+                      <ChannelList />
+                    </Crossfade>
+                  </Suspense>
+                </ErrorBoundary>
               </div>
-            </ChannelSidebar>
-          </Suspense>
+              <div
+                aria-hidden
+                className="from-surface dark:from-surface-dark pointer-events-none absolute inset-x-0 top-0 h-5 bg-gradient-to-b to-transparent"
+              />
+              <div
+                aria-hidden
+                className="from-surface dark:from-surface-dark pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t to-transparent"
+              />
+            </div>
+          </ChannelSidebar>
         </div>
         <Suspense fallback={<CurrentUserCardSkeleton />}>
           <Crossfade>

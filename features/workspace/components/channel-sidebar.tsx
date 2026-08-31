@@ -7,9 +7,3 @@ export function ChannelSidebar({ children }: { children: ReactNode }) {
     </aside>
   )
 }
-
-export function ChannelSidebarSkeleton() {
-  return (
-    <div className="border-divider dark:border-divider-dark bg-surface dark:bg-surface-dark h-full w-64 shrink-0 border-r" />
-  )
-}
