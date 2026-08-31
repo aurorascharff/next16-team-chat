@@ -30,10 +30,14 @@ export function WorkspaceRail() {
       aria-label="Primary"
       className="border-divider dark:border-divider-dark bg-elevated dark:bg-elevated-dark flex h-full w-18 shrink-0 flex-col items-center gap-1 border-r pt-3"
     >
-      <AnimatedSuspense fallback={<WorkspaceRailLinkSkeleton item={homeItem('/')} />}>
+      <AnimatedSuspense
+        fallback={<WorkspaceRailLinkSkeleton item={homeItem('/')} />}
+      >
         <HomeRailLink />
       </AnimatedSuspense>
-      <AnimatedSuspense fallback={<WorkspaceRailLinkShell item={ACTIVITY_ITEM} />}>
+      <AnimatedSuspense
+        fallback={<WorkspaceRailLinkShell item={ACTIVITY_ITEM} />}
+      >
         <WorkspaceRailLink item={ACTIVITY_ITEM} />
       </AnimatedSuspense>
     </nav>

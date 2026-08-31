@@ -15,10 +15,6 @@ const variants: Record<Variant, string> = {
   unstyled: 'placeholder-gray text-black outline-none dark:text-white',
 }
 
-export function Input({
-  className,
-  variant = 'default',
-  ...props
-}: Props) {
+export function Input({ className, variant = 'default', ...props }: Props) {
   return <input className={cn(variants[variant], className)} {...props} />
 }
