@@ -2,6 +2,7 @@
 
 import { revalidateTag, updateTag } from 'next/cache'
 import { after } from 'next/server'
+import { moderateText } from '@/lib/moderation'
 import { channelTags } from '@/features/channel/channel-cache'
 import { replyAsBotIfMentioned } from '@/features/demo/bot-replies'
 import { verifyAuth } from '@/features/user/user-queries'
@@ -32,6 +33,9 @@ export async function sendMessage({
   }
 
   const user = await verifyAuth()
+  const flagged = await moderateText(text)
+  if (flagged) return { error: flagged, ok: false }
+
   const message = await addMessage({
     body: text,
     channelId,
