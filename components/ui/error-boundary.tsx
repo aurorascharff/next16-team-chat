@@ -1,14 +1,18 @@
 'use client'
 
 import { catchError, type ErrorInfo } from 'next/error'
+import { useTransition } from 'react'
 import { Boundary } from '@/components/internal/boundary'
 import { Button } from '@/components/ui/button'
 import { HuddleMark } from '@/components/ui/huddle-mark'
+import { Spinner } from '@/components/ui/spinner'
 
 function ErrorFallback(
   { compact, title }: { compact?: boolean; title?: string },
   { retry }: ErrorInfo,
 ) {
+  const [isPending, startTransition] = useTransition()
+
   return (
     <Boundary label="ErrorBoundary" asChild>
       <div
@@ -24,8 +28,15 @@ function ErrorFallback(
         <p className="text-muted dark:text-muted-dark text-sm">
           {title ?? 'Something went wrong'}
         </p>
-        <Button onClick={retry} size="sm" variant="secondary">
-          Try again
+        <Button
+          aria-busy={isPending}
+          disabled={isPending}
+          onClick={() => startTransition(() => retry())}
+          size="sm"
+          variant="secondary"
+        >
+          {isPending && <Spinner />}
+          {isPending ? 'Retrying…' : 'Try again'}
         </Button>
       </div>
     </Boundary>
