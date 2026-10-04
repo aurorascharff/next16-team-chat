@@ -211,16 +211,8 @@ export async function getMessagesForUser(
   userId: string,
   slow: boolean,
 ) {
-  return getMessagesCached(channelId, userId, slow)
-}
-
-async function getMessagesCached(
-  channelId: string,
-  userId: string,
-  slow: boolean,
-) {
   'use cache'
-  cacheTag(messageTags.all, messageTags.channel(channelId))
+  cacheTag(messageTags.channel(channelId))
   cacheLife('max')
   await delay(1000, slow)
   return listMessages(channelId, userId)
@@ -236,16 +228,8 @@ export async function getRepliesForUser(
   userId: string,
   slow: boolean,
 ) {
-  return getRepliesCached(messageId, userId, slow)
-}
-
-async function getRepliesCached(
-  messageId: string,
-  userId: string,
-  slow: boolean,
-) {
   'use cache'
-  cacheTag(messageTags.repliesAll, messageTags.replies(messageId))
+  cacheTag(messageTags.replies(messageId))
   cacheLife('max')
   await delay(500, slow)
   return listReplies(messageId, userId)
