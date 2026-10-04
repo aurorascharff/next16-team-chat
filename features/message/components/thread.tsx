@@ -1,8 +1,7 @@
 import { preload, SWRConfig } from 'swr'
-import { cacheLife, cacheTag } from 'next/cache'
 import { Skeleton } from '@/components/ui/skeleton'
 import { isSlowMode } from '@/features/demo/slow-mode'
-import { messageKeys, messageTags } from '@/features/message/message-cache'
+import { messageKeys } from '@/features/message/message-cache'
 import {
   getMessagesForUser,
   getRepliesForUser,
@@ -18,36 +17,12 @@ export async function Thread({
   messageId: string
 }) {
   const [user, slow] = await Promise.all([getCurrentUser(), isSlowMode()])
-  return (
-    <CachedThread
-      channelId={channelId}
-      messageId={messageId}
-      slow={slow}
-      userId={user.id}
-    />
-  )
-}
-
-async function CachedThread({
-  channelId,
-  messageId,
-  slow,
-  userId,
-}: {
-  channelId: string
-  messageId: string
-  slow: boolean
-  userId: string
-}) {
-  'use cache'
-  cacheLife('max')
-  cacheTag(messageTags.channel(channelId), messageTags.replies(messageId))
 
   const messages = preload(messageKeys.channel(channelId), () =>
-    getMessagesForUser(channelId, userId, slow),
+    getMessagesForUser(channelId, user.id, slow),
   )
   const replies = preload(messageKeys.replies(messageId), () =>
-    getRepliesForUser(messageId, userId, slow),
+    getRepliesForUser(messageId, user.id, slow),
   )
 
   return (

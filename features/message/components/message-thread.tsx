@@ -1,50 +1,27 @@
 import { preload, SWRConfig } from 'swr'
-import { cacheLife, cacheTag } from 'next/cache'
 import { Skeleton } from '@/components/ui/skeleton'
-import { channelTags } from '@/features/channel/channel-cache'
 import { getLastReadAt } from '@/features/channel/channel-queries'
 import { isSlowMode } from '@/features/demo/slow-mode'
-import { messageKeys, messageTags } from '@/features/message/message-cache'
+import { messageKeys } from '@/features/message/message-cache'
 import { getMessagesForUser } from '@/features/message/message-queries'
-import { userKeys, userTags } from '@/features/user/user-cache'
+import { userKeys } from '@/features/user/user-cache'
 import { getCurrentUser, getUsers } from '@/features/user/user-queries'
 import { MessageList } from './message-list'
 
 export async function MessageThread({ channelId }: { channelId: string }) {
   const [user, slow] = await Promise.all([getCurrentUser(), isSlowMode()])
-  return (
-    <CachedMessageThread channelId={channelId} slow={slow} userId={user.id} />
-  )
-}
-
-async function CachedMessageThread({
-  channelId,
-  slow,
-  userId,
-}: {
-  channelId: string
-  slow: boolean
-  userId: string
-}) {
-  'use cache'
-  cacheLife('max')
-  cacheTag(
-    channelTags.lastRead(channelId, userId),
-    messageTags.channel(channelId),
-    userTags.all,
-  )
 
   const userData = preload(userKeys.all, getUsers)
   const messageData = preload(messageKeys.channel(channelId), () =>
-    getMessagesForUser(channelId, userId, slow),
+    getMessagesForUser(channelId, user.id, slow),
   )
-  const lastReadAt = await getLastReadAt(channelId, userId)
+  const lastReadAt = await getLastReadAt(channelId, user.id)
 
   return (
     <SWRConfig value={{ cacheData: { ...messageData, ...userData } }}>
       <MessageList
         channelId={channelId}
-        currentUserId={userId}
+        currentUserId={user.id}
         key={channelId}
         lastReadAt={lastReadAt}
       />
