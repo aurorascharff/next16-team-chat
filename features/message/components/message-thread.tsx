@@ -7,6 +7,7 @@ import { cacheLife, cacheTag } from 'next/cache'
 import { Skeleton } from '@/components/ui/skeleton'
 import { channelKeys, channelTags } from '@/features/channel/channel-cache'
 import { getLastReadAt } from '@/features/channel/channel-queries'
+import { isSlowMode } from '@/features/demo/slow-mode'
 import { messageKeys, messageTags } from '@/features/message/message-cache'
 import { getMessagesForUser } from '@/features/message/message-queries'
 import { userKeys, userTags } from '@/features/user/user-cache'
@@ -14,22 +15,35 @@ import { getCurrentUser, getUsers } from '@/features/user/user-queries'
 import { MessageList } from './message-list'
 
 export async function MessageThread({ channelId }: { channelId: string }) {
-  'use cache: private'
-  cacheLife({ stale: 60 })
+  const [user, slow] = await Promise.all([getCurrentUser(), isSlowMode()])
+  return (
+    <CachedMessageThread channelId={channelId} slow={slow} userId={user.id} />
+  )
+}
 
-  const user = await getCurrentUser()
-  const [messages, users, lastReadAt] = await Promise.all([
-    getMessagesForUser(channelId, user.id),
-    getUsers(),
-    getLastReadAt(channelId, user.id),
-  ])
+async function CachedMessageThread({
+  channelId,
+  slow,
+  userId,
+}: {
+  channelId: string
+  slow: boolean
+  userId: string
+}) {
+  'use cache'
+  cacheLife('max')
   cacheTag(
-    channelTags.lastRead(channelId, user.id),
+    channelTags.lastRead(channelId, userId),
     messageTags.all,
     messageTags.channel(channelId),
     userTags.all,
-    userTags.current,
   )
+
+  const [messages, users, lastReadAt] = await Promise.all([
+    getMessagesForUser(channelId, userId, slow),
+    getUsers(),
+    getLastReadAt(channelId, userId),
+  ])
 
   const queryClient = new QueryClient()
   queryClient.setQueryData(channelKeys.lastRead(channelId), lastReadAt)
@@ -40,7 +54,7 @@ export async function MessageThread({ channelId }: { channelId: string }) {
     <HydrationBoundary state={dehydrate(queryClient)}>
       <MessageList
         channelId={channelId}
-        currentUserId={user.id}
+        currentUserId={userId}
         key={channelId}
         lastReadAt={lastReadAt}
       />

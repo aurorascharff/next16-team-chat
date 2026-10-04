@@ -7,20 +7,33 @@ import { cacheLife, cacheTag } from 'next/cache'
 import { Skeleton } from '@/components/ui/skeleton'
 import { channelKeys, channelTags } from '@/features/channel/channel-cache'
 import {
-  getCurrentChannelLayout,
-  getUnreadChannels,
+  getChannelLayoutForUser,
+  getUnreadChannelsForUser,
 } from '@/features/channel/channel-queries'
+import { isSlowMode } from '@/features/demo/slow-mode'
+import { getCurrentUser } from '@/features/user/user-queries'
 import { ChannelNav } from './channel-nav'
 
 export async function ChannelList() {
-  'use cache: private'
-  cacheLife({ stale: 60 })
+  const [user, slow] = await Promise.all([getCurrentUser(), isSlowMode()])
+  return <CachedChannelList slow={slow} userId={user.id} />
+}
 
-  const [{ groups, userId }, unread] = await Promise.all([
-    getCurrentChannelLayout(),
-    getUnreadChannels(),
-  ])
+async function CachedChannelList({
+  slow,
+  userId,
+}: {
+  slow: boolean
+  userId: string
+}) {
+  'use cache'
+  cacheLife('hours')
   cacheTag(channelTags.all, channelTags.user(userId), channelTags.unread)
+
+  const [groups, unread] = await Promise.all([
+    getChannelLayoutForUser(userId, slow),
+    getUnreadChannelsForUser(userId),
+  ])
 
   const groupsWithUnread = groups.map((group) => {
     return {

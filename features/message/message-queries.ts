@@ -203,11 +203,15 @@ export async function toggleReaction({
 
 export async function getMessages(channelId: string) {
   const user = await getCurrentUser()
-  return getMessagesForUser(channelId, user.id)
+  return getMessagesForUser(channelId, user.id, await isSlowMode())
 }
 
-export async function getMessagesForUser(channelId: string, userId: string) {
-  return getMessagesCached(channelId, userId, await isSlowMode())
+export async function getMessagesForUser(
+  channelId: string,
+  userId: string,
+  slow: boolean,
+) {
+  return getMessagesCached(channelId, userId, slow)
 }
 
 async function getMessagesCached(
@@ -224,7 +228,15 @@ async function getMessagesCached(
 
 export async function getReplies(messageId: string) {
   const user = await getCurrentUser()
-  return getRepliesCached(messageId, user.id, await isSlowMode())
+  return getRepliesForUser(messageId, user.id, await isSlowMode())
+}
+
+export async function getRepliesForUser(
+  messageId: string,
+  userId: string,
+  slow: boolean,
+) {
+  return getRepliesCached(messageId, userId, slow)
 }
 
 async function getRepliesCached(

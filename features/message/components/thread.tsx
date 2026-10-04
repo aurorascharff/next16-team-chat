@@ -5,12 +5,12 @@ import {
 } from '@tanstack/react-query'
 import { cacheLife, cacheTag } from 'next/cache'
 import { Skeleton } from '@/components/ui/skeleton'
+import { isSlowMode } from '@/features/demo/slow-mode'
 import { messageKeys, messageTags } from '@/features/message/message-cache'
 import {
   getMessagesForUser,
-  getReplies,
+  getRepliesForUser,
 } from '@/features/message/message-queries'
-import { userTags } from '@/features/user/user-cache'
 import { getCurrentUser } from '@/features/user/user-queries'
 import { ThreadBody } from './thread-panel'
 
@@ -21,21 +21,41 @@ export async function Thread({
   channelId: string
   messageId: string
 }) {
-  'use cache: private'
-  cacheLife({ stale: 60 })
+  const [user, slow] = await Promise.all([getCurrentUser(), isSlowMode()])
+  return (
+    <CachedThread
+      channelId={channelId}
+      messageId={messageId}
+      slow={slow}
+      userId={user.id}
+    />
+  )
+}
 
-  const user = await getCurrentUser()
-  const [messages, replies] = await Promise.all([
-    getMessagesForUser(channelId, user.id),
-    getReplies(messageId),
-  ])
+async function CachedThread({
+  channelId,
+  messageId,
+  slow,
+  userId,
+}: {
+  channelId: string
+  messageId: string
+  slow: boolean
+  userId: string
+}) {
+  'use cache'
+  cacheLife('max')
   cacheTag(
     messageTags.all,
     messageTags.channel(channelId),
     messageTags.repliesAll,
     messageTags.replies(messageId),
-    userTags.current,
   )
+
+  const [messages, replies] = await Promise.all([
+    getMessagesForUser(channelId, userId, slow),
+    getRepliesForUser(messageId, userId, slow),
+  ])
 
   const queryClient = new QueryClient()
   queryClient.setQueryData(messageKeys.channel(channelId), messages)
