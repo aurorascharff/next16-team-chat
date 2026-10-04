@@ -1,10 +1,12 @@
 import { preload, SWRConfig } from 'swr'
+import { cacheLife, cacheTag } from 'next/cache'
 import { Skeleton } from '@/components/ui/skeleton'
-import { messageKeys } from '@/features/message/message-cache'
+import { messageKeys, messageTags } from '@/features/message/message-cache'
 import {
   getMessagesForUser,
   getReplies,
 } from '@/features/message/message-queries'
+import { userTags } from '@/features/user/user-cache'
 import { getCurrentUser } from '@/features/user/user-queries'
 import { ThreadBody } from './thread-panel'
 
@@ -15,12 +17,22 @@ export async function Thread({
   channelId: string
   messageId: string
 }) {
+  'use cache: private'
+  cacheLife({ stale: 60 })
+
   const user = await getCurrentUser()
   const messages = preload(messageKeys.channel(channelId), () =>
     getMessagesForUser(channelId, user.id),
   )
   const replies = preload(messageKeys.replies(messageId), () =>
     getReplies(messageId),
+  )
+  cacheTag(
+    messageTags.all,
+    messageTags.channel(channelId),
+    messageTags.repliesAll,
+    messageTags.replies(messageId),
+    userTags.current,
   )
 
   return (

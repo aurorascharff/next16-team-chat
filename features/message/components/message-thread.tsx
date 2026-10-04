@@ -1,19 +1,31 @@
 import { preload, SWRConfig } from 'swr'
+import { cacheLife, cacheTag } from 'next/cache'
 import { Skeleton } from '@/components/ui/skeleton'
+import { channelTags } from '@/features/channel/channel-cache'
 import { getLastReadAt } from '@/features/channel/channel-queries'
-import { messageKeys } from '@/features/message/message-cache'
+import { messageKeys, messageTags } from '@/features/message/message-cache'
 import { getMessagesForUser } from '@/features/message/message-queries'
-import { userKeys } from '@/features/user/user-cache'
+import { userKeys, userTags } from '@/features/user/user-cache'
 import { getCurrentUser, getUsers } from '@/features/user/user-queries'
 import { MessageList } from './message-list'
 
 export async function MessageThread({ channelId }: { channelId: string }) {
+  'use cache: private'
+  cacheLife({ stale: 60 })
+
   const userData = preload(userKeys.all, getUsers)
   const user = await getCurrentUser()
   const messageData = preload(messageKeys.channel(channelId), () =>
     getMessagesForUser(channelId, user.id),
   )
   const lastReadAt = await getLastReadAt(channelId, user.id)
+  cacheTag(
+    channelTags.lastRead(channelId, user.id),
+    messageTags.all,
+    messageTags.channel(channelId),
+    userTags.all,
+    userTags.current,
+  )
 
   return (
     <SWRConfig value={{ cacheData: { ...messageData, ...userData } }}>
