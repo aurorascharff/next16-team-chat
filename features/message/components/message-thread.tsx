@@ -1,4 +1,9 @@
-import { HydrationBoundary } from '@tanstack/react-query'
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from '@tanstack/react-query'
+import { cacheLife, cacheTag } from 'next/cache'
 import { Skeleton } from '@/components/ui/skeleton'
 import { channelKeys, channelTags } from '@/features/channel/channel-cache'
 import { getLastReadAt } from '@/features/channel/channel-queries'
@@ -6,34 +11,33 @@ import { messageKeys, messageTags } from '@/features/message/message-cache'
 import { getMessagesForUser } from '@/features/message/message-queries'
 import { userKeys, userTags } from '@/features/user/user-cache'
 import { getCurrentUser, getUsers } from '@/features/user/user-queries'
-import { dehydrate } from '@/lib/react-query-hydration'
 import { MessageList } from './message-list'
 
 export async function MessageThread({ channelId }: { channelId: string }) {
+  'use cache: private'
+  cacheLife({ stale: 60 })
+
   const user = await getCurrentUser()
   const [messages, users, lastReadAt] = await Promise.all([
     getMessagesForUser(channelId, user.id),
     getUsers(),
     getLastReadAt(channelId, user.id),
   ])
+  cacheTag(
+    channelTags.lastRead(channelId, user.id),
+    messageTags.all,
+    messageTags.channel(channelId),
+    userTags.all,
+    userTags.current,
+  )
+
+  const queryClient = new QueryClient()
+  queryClient.setQueryData(channelKeys.lastRead(channelId), lastReadAt)
+  queryClient.setQueryData(messageKeys.channel(channelId), messages)
+  queryClient.setQueryData(userKeys.all, users)
 
   return (
-    <HydrationBoundary
-      state={await dehydrate(
-        [
-          { queryKey: channelKeys.lastRead(channelId), data: lastReadAt },
-          { queryKey: messageKeys.channel(channelId), data: messages },
-          { queryKey: userKeys.all, data: users },
-        ],
-        {
-          tags: [
-            channelTags.lastRead(channelId, user.id),
-            messageTags.channel(channelId),
-            userTags.all,
-          ],
-        },
-      )}
-    >
+    <HydrationBoundary state={dehydrate(queryClient)}>
       <MessageList
         channelId={channelId}
         currentUserId={user.id}

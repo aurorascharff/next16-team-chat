@@ -1,12 +1,17 @@
-import { HydrationBoundary } from '@tanstack/react-query'
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from '@tanstack/react-query'
+import { cacheLife, cacheTag } from 'next/cache'
 import { Skeleton } from '@/components/ui/skeleton'
 import { messageKeys, messageTags } from '@/features/message/message-cache'
 import {
   getMessagesForUser,
   getReplies,
 } from '@/features/message/message-queries'
+import { userTags } from '@/features/user/user-cache'
 import { getCurrentUser } from '@/features/user/user-queries'
-import { dehydrate } from '@/lib/react-query-hydration'
 import { ThreadBody } from './thread-panel'
 
 export async function Thread({
@@ -16,27 +21,28 @@ export async function Thread({
   channelId: string
   messageId: string
 }) {
+  'use cache: private'
+  cacheLife({ stale: 60 })
+
   const user = await getCurrentUser()
   const [messages, replies] = await Promise.all([
     getMessagesForUser(channelId, user.id),
     getReplies(messageId),
   ])
+  cacheTag(
+    messageTags.all,
+    messageTags.channel(channelId),
+    messageTags.repliesAll,
+    messageTags.replies(messageId),
+    userTags.current,
+  )
+
+  const queryClient = new QueryClient()
+  queryClient.setQueryData(messageKeys.channel(channelId), messages)
+  queryClient.setQueryData(messageKeys.replies(messageId), replies)
 
   return (
-    <HydrationBoundary
-      state={await dehydrate(
-        [
-          { queryKey: messageKeys.channel(channelId), data: messages },
-          { queryKey: messageKeys.replies(messageId), data: replies },
-        ],
-        {
-          tags: [
-            messageTags.channel(channelId),
-            messageTags.replies(messageId),
-          ],
-        },
-      )}
-    >
+    <HydrationBoundary state={dehydrate(queryClient)}>
       <ThreadBody channelId={channelId} messageId={messageId} />
     </HydrationBoundary>
   )
