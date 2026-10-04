@@ -45,12 +45,7 @@ async function CachedThread({
 }) {
   'use cache'
   cacheLife('max')
-  cacheTag(
-    messageTags.all,
-    messageTags.channel(channelId),
-    messageTags.repliesAll,
-    messageTags.replies(messageId),
-  )
+  cacheTag(messageTags.channel(channelId), messageTags.replies(messageId))
 
   const [messages, replies] = await Promise.all([
     getMessagesForUser(channelId, userId, slow),

@@ -34,7 +34,6 @@ async function CachedMessageThread({
   cacheLife('max')
   cacheTag(
     channelTags.lastRead(channelId, userId),
-    messageTags.all,
     messageTags.channel(channelId),
     userTags.all,
   )
