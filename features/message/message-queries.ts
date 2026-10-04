@@ -203,20 +203,16 @@ export async function toggleReaction({
 
 export async function getMessages(channelId: string) {
   const user = await getCurrentUser()
-  return getMessagesForUser(channelId, user.id)
+  return getMessagesForUser(channelId, user.id, await isSlowMode())
 }
 
-export async function getMessagesForUser(channelId: string, userId: string) {
-  return getMessagesCached(channelId, userId, await isSlowMode())
-}
-
-async function getMessagesCached(
+export async function getMessagesForUser(
   channelId: string,
   userId: string,
   slow: boolean,
 ) {
   'use cache'
-  cacheTag(messageTags.all, messageTags.channel(channelId))
+  cacheTag(messageTags.channel(channelId))
   cacheLife('max')
   await delay(1000, slow)
   return listMessages(channelId, userId)
@@ -224,16 +220,16 @@ async function getMessagesCached(
 
 export async function getReplies(messageId: string) {
   const user = await getCurrentUser()
-  return getRepliesCached(messageId, user.id, await isSlowMode())
+  return getRepliesForUser(messageId, user.id, await isSlowMode())
 }
 
-async function getRepliesCached(
+export async function getRepliesForUser(
   messageId: string,
   userId: string,
   slow: boolean,
 ) {
   'use cache'
-  cacheTag(messageTags.repliesAll, messageTags.replies(messageId))
+  cacheTag(messageTags.replies(messageId))
   cacheLife('max')
   await delay(500, slow)
   return listReplies(messageId, userId)

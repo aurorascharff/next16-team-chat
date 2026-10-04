@@ -1,25 +1,20 @@
 import 'server-only'
 
-import { cacheLife, cacheTag } from 'next/cache'
 import {
   defaultShouldDehydrateQuery,
   QueryClient,
   type DehydratedState,
   type QueryKey,
 } from '@tanstack/react-query'
+import { cacheLife, cacheTag } from 'next/cache'
 
 type HydratedQuery = {
   queryKey: QueryKey
   data: unknown
 }
 
-type HydrationOptions = {
-  tags: string[]
-}
-
 async function getHydrationUpdatedAt(tags: string[]) {
   'use cache'
-  // The seeded reads stay stable until writes invalidate these same tags.
   cacheTag(...tags)
   cacheLife('max')
   return Date.now()
@@ -27,16 +22,13 @@ async function getHydrationUpdatedAt(tags: string[]) {
 
 export async function dehydrate(
   queries: HydratedQuery[],
-  options: HydrationOptions,
+  { tags }: { tags: string[] },
 ): Promise<DehydratedState> {
-  const updatedAt = await getHydrationUpdatedAt(options.tags)
-
+  const updatedAt = await getHydrationUpdatedAt(tags)
   const queryClient = new QueryClient()
 
   for (const query of queries) {
-    queryClient.setQueryData(query.queryKey, query.data, {
-      updatedAt,
-    })
+    queryClient.setQueryData(query.queryKey, query.data, { updatedAt })
   }
 
   return {

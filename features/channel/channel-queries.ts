@@ -106,8 +106,16 @@ async function listChannelLayout(userId: string) {
 
 export async function getCurrentChannelLayout() {
   const user = await getCurrentUser()
-  const groups = await getChannelLayoutCached(user.id, await isSlowMode())
+  const groups = await getChannelLayoutForUser(user.id, await isSlowMode())
   return { groups, userId: user.id }
+}
+
+export async function getChannelLayoutForUser(userId: string, slow: boolean) {
+  'use cache'
+  cacheTag(channelTags.all, channelTags.user(userId))
+  cacheLife('hours')
+  await delay(400, slow)
+  return listChannelLayout(userId)
 }
 
 export async function listChannelsForUser(userId: string) {
@@ -122,7 +130,7 @@ export async function getUnreadChannels() {
   return getUnreadChannelsForUser(user.id)
 }
 
-async function getUnreadChannelsForUser(userId: string) {
+export async function getUnreadChannelsForUser(userId: string) {
   'use cache'
   cacheTag(channelTags.unread)
   cacheLife('max')
@@ -149,14 +157,6 @@ async function getUnreadChannelsForUser(userId: string) {
       return [channelId, Number(unread)]
     }),
   ) as Record<string, number>
-}
-
-async function getChannelLayoutCached(userId: string, slow: boolean) {
-  'use cache'
-  cacheTag(channelTags.all, channelTags.user(userId))
-  cacheLife('hours')
-  await delay(400, slow)
-  return listChannelLayout(userId)
 }
 
 export async function getChannel(channelId: string) {

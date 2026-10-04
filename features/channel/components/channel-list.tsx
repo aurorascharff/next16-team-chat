@@ -2,17 +2,22 @@ import { HydrationBoundary } from '@tanstack/react-query'
 import { Skeleton } from '@/components/ui/skeleton'
 import { channelKeys, channelTags } from '@/features/channel/channel-cache'
 import {
-  getCurrentChannelLayout,
-  getUnreadChannels,
+  getChannelLayoutForUser,
+  getUnreadChannelsForUser,
 } from '@/features/channel/channel-queries'
-import { dehydrate } from '@/lib/react-query-hydration'
+import { isSlowMode } from '@/features/demo/slow-mode'
+import { getCurrentUser } from '@/features/user/user-queries'
+import { dehydrate } from '@/lib/dehydrate'
 import { ChannelNav } from './channel-nav'
 
 export async function ChannelList() {
-  const [{ groups, userId }, unread] = await Promise.all([
-    getCurrentChannelLayout(),
-    getUnreadChannels(),
+  const [user, slow] = await Promise.all([getCurrentUser(), isSlowMode()])
+
+  const [groups, unread] = await Promise.all([
+    getChannelLayoutForUser(user.id, slow),
+    getUnreadChannelsForUser(user.id),
   ])
+
   const groupsWithUnread = groups.map((group) => {
     return {
       ...group,
@@ -21,14 +26,14 @@ export async function ChannelList() {
       }),
     }
   })
+  const state = await dehydrate(
+    [{ queryKey: channelKeys.unread, data: unread }],
+    { tags: [channelTags.unread] },
+  )
 
   return (
-    <HydrationBoundary
-      state={await dehydrate([{ queryKey: channelKeys.unread, data: unread }], {
-        tags: [channelTags.unread],
-      })}
-    >
-      <ChannelNav groups={groupsWithUnread} key={userId} />
+    <HydrationBoundary state={state}>
+      <ChannelNav groups={groupsWithUnread} key={user.id} />
     </HydrationBoundary>
   )
 }
