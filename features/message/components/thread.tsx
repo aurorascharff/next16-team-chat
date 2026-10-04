@@ -1,9 +1,4 @@
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from '@tanstack/react-query'
-import { cacheLife, cacheTag } from 'next/cache'
+import { HydrationBoundary } from '@tanstack/react-query'
 import { Skeleton } from '@/components/ui/skeleton'
 import { isSlowMode } from '@/features/demo/slow-mode'
 import { messageKeys, messageTags } from '@/features/message/message-cache'
@@ -12,6 +7,7 @@ import {
   getRepliesForUser,
 } from '@/features/message/message-queries'
 import { getCurrentUser } from '@/features/user/user-queries'
+import { dehydrate } from '@/lib/dehydrate'
 import { ThreadBody } from './thread-panel'
 
 export async function Thread({
@@ -22,42 +18,24 @@ export async function Thread({
   messageId: string
 }) {
   const [user, slow] = await Promise.all([getCurrentUser(), isSlowMode()])
-  return (
-    <CachedThread
-      channelId={channelId}
-      messageId={messageId}
-      slow={slow}
-      userId={user.id}
-    />
-  )
-}
-
-async function CachedThread({
-  channelId,
-  messageId,
-  slow,
-  userId,
-}: {
-  channelId: string
-  messageId: string
-  slow: boolean
-  userId: string
-}) {
-  'use cache'
-  cacheLife('max')
-  cacheTag(messageTags.channel(channelId), messageTags.replies(messageId))
 
   const [messages, replies] = await Promise.all([
-    getMessagesForUser(channelId, userId, slow),
-    getRepliesForUser(messageId, userId, slow),
+    getMessagesForUser(channelId, user.id, slow),
+    getRepliesForUser(messageId, user.id, slow),
   ])
 
-  const queryClient = new QueryClient()
-  queryClient.setQueryData(messageKeys.channel(channelId), messages)
-  queryClient.setQueryData(messageKeys.replies(messageId), replies)
+  const state = await dehydrate(
+    [
+      { queryKey: messageKeys.channel(channelId), data: messages },
+      { queryKey: messageKeys.replies(messageId), data: replies },
+    ],
+    {
+      tags: [messageTags.channel(channelId), messageTags.replies(messageId)],
+    },
+  )
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
+    <HydrationBoundary state={state}>
       <ThreadBody channelId={channelId} messageId={messageId} />
     </HydrationBoundary>
   )

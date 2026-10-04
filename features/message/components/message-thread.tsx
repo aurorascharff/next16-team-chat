@@ -1,9 +1,4 @@
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from '@tanstack/react-query'
-import { cacheLife, cacheTag } from 'next/cache'
+import { HydrationBoundary } from '@tanstack/react-query'
 import { Skeleton } from '@/components/ui/skeleton'
 import { channelKeys, channelTags } from '@/features/channel/channel-cache'
 import { getLastReadAt } from '@/features/channel/channel-queries'
@@ -12,48 +7,38 @@ import { messageKeys, messageTags } from '@/features/message/message-cache'
 import { getMessagesForUser } from '@/features/message/message-queries'
 import { userKeys, userTags } from '@/features/user/user-cache'
 import { getCurrentUser, getUsers } from '@/features/user/user-queries'
+import { dehydrate } from '@/lib/dehydrate'
 import { MessageList } from './message-list'
 
 export async function MessageThread({ channelId }: { channelId: string }) {
   const [user, slow] = await Promise.all([getCurrentUser(), isSlowMode()])
-  return (
-    <CachedMessageThread channelId={channelId} slow={slow} userId={user.id} />
-  )
-}
-
-async function CachedMessageThread({
-  channelId,
-  slow,
-  userId,
-}: {
-  channelId: string
-  slow: boolean
-  userId: string
-}) {
-  'use cache'
-  cacheLife('max')
-  cacheTag(
-    channelTags.lastRead(channelId, userId),
-    messageTags.channel(channelId),
-    userTags.all,
-  )
 
   const [messages, users, lastReadAt] = await Promise.all([
-    getMessagesForUser(channelId, userId, slow),
+    getMessagesForUser(channelId, user.id, slow),
     getUsers(),
-    getLastReadAt(channelId, userId),
+    getLastReadAt(channelId, user.id),
   ])
 
-  const queryClient = new QueryClient()
-  queryClient.setQueryData(channelKeys.lastRead(channelId), lastReadAt)
-  queryClient.setQueryData(messageKeys.channel(channelId), messages)
-  queryClient.setQueryData(userKeys.all, users)
+  const state = await dehydrate(
+    [
+      { queryKey: channelKeys.lastRead(channelId), data: lastReadAt },
+      { queryKey: messageKeys.channel(channelId), data: messages },
+      { queryKey: userKeys.all, data: users },
+    ],
+    {
+      tags: [
+        channelTags.lastRead(channelId, user.id),
+        messageTags.channel(channelId),
+        userTags.all,
+      ],
+    },
+  )
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
+    <HydrationBoundary state={state}>
       <MessageList
         channelId={channelId}
-        currentUserId={userId}
+        currentUserId={user.id}
         key={channelId}
         lastReadAt={lastReadAt}
       />
