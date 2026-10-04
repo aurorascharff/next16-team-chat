@@ -10,5 +10,4 @@ export const messageTags = {
   all: 'messages',
   channel: (channelId: string) => `messages:${channelId}`,
   replies: (messageId: string) => `replies:${messageId}`,
-  repliesAll: 'replies',
 }

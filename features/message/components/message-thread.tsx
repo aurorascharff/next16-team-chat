@@ -1,6 +1,7 @@
 import { preload, SWRConfig } from 'swr'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getLastReadAt } from '@/features/channel/channel-queries'
+import { isSlowMode } from '@/features/demo/slow-mode'
 import { messageKeys } from '@/features/message/message-cache'
 import { getMessagesForUser } from '@/features/message/message-queries'
 import { userKeys } from '@/features/user/user-cache'
@@ -8,10 +9,11 @@ import { getCurrentUser, getUsers } from '@/features/user/user-queries'
 import { MessageList } from './message-list'
 
 export async function MessageThread({ channelId }: { channelId: string }) {
+  const [user, slow] = await Promise.all([getCurrentUser(), isSlowMode()])
+
   const userData = preload(userKeys.all, getUsers)
-  const user = await getCurrentUser()
   const messageData = preload(messageKeys.channel(channelId), () =>
-    getMessagesForUser(channelId, user.id),
+    getMessagesForUser(channelId, user.id, slow),
   )
   const lastReadAt = await getLastReadAt(channelId, user.id)
 

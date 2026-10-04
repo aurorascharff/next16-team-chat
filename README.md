@@ -6,9 +6,9 @@
 
 A "Slack"-like team chat demo built with [Next.js 16.3 Cache Components](https://nextjs.org/docs/app/api-reference/config/next-config-js/cacheComponents), React 19, Tailwind CSS v4, and Prisma 7. The app is available in equivalent [TanStack Query](https://tanstack.com/query) and [SWR](https://swr.vercel.app/) implementations.
 
-[TanStack Query source →](https://github.com/aurorascharff/next16-messaging/tree/main) · [Demo →](https://next16-team-chat.vercel.app)
+[TanStack Query source →](https://github.com/aurorascharff/next16-team-chat/tree/main) · [Demo →](https://next16-team-chat.vercel.app)
 
-[SWR source →](https://github.com/aurorascharff/next16-messaging/tree/swr) · [Demo →](https://next16-team-chat-git-swr-aurora-scharffs-projects.vercel.app/)
+[SWR source →](https://github.com/aurorascharff/next16-team-chat/tree/swr) · [Demo →](https://next16-team-chat-git-swr-aurora-scharffs-projects.vercel.app/)
 
 </div>
 
@@ -23,7 +23,7 @@ Both implementations demonstrate the same client data patterns:
 - **Client-only Suspense:** Workspace search and `@mention` autocomplete keep their inputs interactive while results load behind local Suspense boundaries.
 - **Server-seeded live data:** Channel messages, thread replies, users, and unread state render on the server before the client cache takes over.
 
-Related guide work: [Client-side data fetching guide PR](https://github.com/vercel/next.js/pull/96341)
+See the Next.js client-side data fetching guides for [TanStack Query](https://nextjs.org/docs/app/guides/client-side-data-fetching/tanstack-query) and [SWR](https://nextjs.org/docs/app/guides/client-side-data-fetching/swr).
 
 ## Features
 
